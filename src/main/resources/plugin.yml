@@ -1,0 +1,18 @@
+name: Clandestinos
+version: 1.0
+author: FoxSGR
+main: foxsgr.clandestinos.application.Clandestinos
+api-version: 1.14
+
+commands:
+  clan:
+    description: Clan command.
+    usage: "Use: /clan"
+    aliases:
+      - clans
+permissions:
+  clandestinos.*:
+    description: Allows every Clandestinos command.
+    children:
+      clandestinos.create: true
+      clandestinos.reload: true
