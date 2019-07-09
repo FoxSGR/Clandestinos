@@ -11,13 +11,13 @@ import foxsgr.clandestinos.persistence.PersistenceContext;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class CreateClanHandler {
+class CreateClanHandler {
 
     private final ClanRepository clanRepository = PersistenceContext.repositories().clans();
     private final ClanPlayerRepository clanPlayerRepository = PersistenceContext.repositories().players();
 
-    public void createClan(CommandSender sender, String[] args) {
-        if (!PermissionsManager.hasPermissionSubCommandWarn(sender, args[0]) || !validate(sender, args)) {
+    void createClan(CommandSender sender, String[] args) {
+        if (!validate(sender, args)) {
             return;
         }
 
@@ -64,13 +64,7 @@ public class CreateClanHandler {
     }
 
     private static boolean validate(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(LanguageManager.get(LanguageManager.MUST_BE_PLAYER));
-            return false;
-        }
-
-        if (args.length < 2) { // Must be at least 2: "create" and clan tag (name is optional and can be multiple words)
-            sender.sendMessage(LanguageManager.get(LanguageManager.WRONG_CREATE_USAGE));
+        if (!PlayerCommandValidator.validate(sender, args, 2, LanguageManager.WRONG_CREATE_USAGE)) {
             return false;
         }
 

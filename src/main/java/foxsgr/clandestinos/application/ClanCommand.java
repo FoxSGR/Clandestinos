@@ -41,7 +41,7 @@ public class ClanCommand implements CommandExecutor {
                 sender.sendMessage(ChatColor.AQUA + "Reloaded config and language.");
             }
         } else if (args[0].equalsIgnoreCase(INVITE_COMMAND)) {
-
+            new InvitePlayerHandler().invitePlayer(sender, args);
         }
 
         return true;

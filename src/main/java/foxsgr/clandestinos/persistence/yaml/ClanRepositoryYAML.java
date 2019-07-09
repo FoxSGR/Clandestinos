@@ -7,6 +7,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.List;
 
 class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
 
@@ -24,7 +25,8 @@ class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
         String name = clanSection.getString("name");
         String ownerId = clanSection.getString("ownerId");
         String coloredTag = clanSection.getString("colored-tag");
-        return new Clan(coloredTag, name, ownerId);
+        List<String> members = clanSection.getStringList("members");
+        return new Clan(coloredTag, name, ownerId, members);
     }
 
     @Override
@@ -46,6 +48,7 @@ class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
         clanSection.set("name", clan.name().value());
         clanSection.set("owner-id", clan.ownerId());
         clanSection.set("colored-tag", clan.coloredTag().value());
+        clanSection.set("members", clan.members());
         return true;
     }
 

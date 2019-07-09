@@ -4,10 +4,7 @@ import clandestino.lib.Preconditions;
 import clandestino.lib.TextUtil;
 import org.bukkit.ChatColor;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 public class Clan {
 
@@ -17,7 +14,7 @@ public class Clan {
     private String ownerId;
     private Set<String> members;
 
-    public Clan(String tagWithColor, String name, String ownerId) {
+    public Clan(String tagWithColor, String name, String ownerId, List<String> members) {
         Preconditions.ensureNotEmpty(ownerId, "The owner of a clan cannot be null or empty.");
 
         tagWithColor = TextUtil.translateColoredText(tagWithColor);
@@ -25,7 +22,11 @@ public class Clan {
         coloredTag = new ClanTag(tagWithColor);
         this.name = new ClanName(name);
         this.ownerId = ownerId;
-        members = new LinkedHashSet<>();
+        this.members = new LinkedHashSet<>(members);
+    }
+
+    public Clan(String tagWithColor, String name, String ownerId) {
+        this(tagWithColor, name, ownerId, new ArrayList<>());
     }
 
     public ClanTag tag() {
@@ -48,7 +49,7 @@ public class Clan {
         return new HashSet<>(members);
     }
 
-    public void addMembers(Collection<String> members) {
-        this.members.addAll(members);
+    public void addMember(String player) {
+        this.members.add(player);
     }
 }

@@ -22,13 +22,18 @@ public class LanguageManager {
     public static final String MUST_BE_PLAYER = "must-be-player";
     public static final String ONLY_LETTERS_TAG = "only-letters-tag";
     public static final String FORBIDDEN_TAG = "forbidden-tag";
-    public static final String WRONG_CREATE_USAGE = "wrong-create-usage";
     public static final String CLAN_CREATED = "clan-created";
     public static final String CANNOT_IN_CLAN = "cannot-in-clan";
     public static final String TAG_ALREADY_EXISTS = "tag-already-exists";
+    public static final String MUST_BE_IN_CLAN = "must-be-in-clan";
+    public static final String PLAYER_NOT_ONLINE = "player-not-online";
+
+    public static final String WRONG_CREATE_USAGE = "wrong-create-usage";
+    public static final String WRONG_INVITE_USAGE = "wrong-invite-usage";
 
     public static final String COMMANDS_HEADER = "commands-header";
     public static final String CREATE_USAGE = "create-usage";
+    public static final String INVITE_USAGE = "invite-usage";
     public static final String RELOAD_USAGE = "reload-usage";
 
     private JavaPlugin plugin;
@@ -117,13 +122,18 @@ public class LanguageManager {
         fileConfiguration.addDefault(MUST_BE_PLAYER, "&cOnly a player can perform that command!");
         fileConfiguration.addDefault(FORBIDDEN_TAG, "&cYou can't use that tag.");
         fileConfiguration.addDefault(ONLY_LETTERS_TAG, "&cThe tag can only contain letters.");
-        fileConfiguration.addDefault(WRONG_CREATE_USAGE, "&bTo create a clan, use: &9/clan create (tag) (name)");
         fileConfiguration.addDefault(CLAN_CREATED, "&aThe clan {0} &awas created!");
         fileConfiguration.addDefault(CANNOT_IN_CLAN, "&cYou cannot use that command because you are in a clan.");
         fileConfiguration.addDefault(TAG_ALREADY_EXISTS, "&cA clan with that tag already exists.");
+        fileConfiguration.addDefault(MUST_BE_IN_CLAN, "&cYou must be in a clan to use that command.");
+        fileConfiguration.addDefault(PLAYER_NOT_ONLINE, "&cThat player is not online.");
+
+        fileConfiguration.addDefault(WRONG_CREATE_USAGE, "&bTo create a clan, use: &9/clan create (tag) [name]");
+        fileConfiguration.addDefault(WRONG_INVITE_USAGE, "&bTo invite a player, use: &9/clan invite (player)");
 
         fileConfiguration.addDefault(COMMANDS_HEADER, "&9Clan Commands");
         fileConfiguration.addDefault(CREATE_USAGE, "&b/clan create (tag) [name] - Create a clan.");
+        fileConfiguration.addDefault(INVITE_USAGE, "&b/clan invite (player) - Invite a player to your clan.");
         fileConfiguration.addDefault(RELOAD_USAGE, "&b/clan reload - Reload configurations.");
         return fileConfiguration;
     }
