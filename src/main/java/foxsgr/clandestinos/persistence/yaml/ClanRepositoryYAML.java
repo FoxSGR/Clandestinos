@@ -1,13 +1,11 @@
 package foxsgr.clandestinos.persistence.yaml;
 
-import foxsgr.clandestinos.domain.model.Clan;
+import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.persistence.ClanRepository;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.List;
 
 class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
 
@@ -16,8 +14,8 @@ class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
     }
 
     @Override
-    public Clan find(String tag) {
-        ConfigurationSection clanSection = subSection(tag);
+    public Clan findByTag(String tag) {
+/*        ConfigurationSection clanSection = subSection(tag);
         if (clanSection == null) {
             return null;
         }
@@ -26,12 +24,14 @@ class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
         String ownerId = clanSection.getString("ownerId");
         String coloredTag = clanSection.getString("colored-tag");
         List<String> members = clanSection.getStringList("members");
-        return new Clan(coloredTag, name, ownerId, members);
+        return new Clan(coloredTag, name, ownerId, members);*/
+
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean save(Clan clan) {
-        ConfigurationSection section = section();
+    public Clan save(Clan clan) {
+/*        ConfigurationSection section = section();
 
         String tag = clan.tag().value();
         for (String otherClanTag : section.getKeys(false)) {
@@ -49,11 +49,8 @@ class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
         clanSection.set("owner-id", clan.ownerId());
         clanSection.set("colored-tag", clan.coloredTag().value());
         clanSection.set("members", clan.members());
-        return true;
-    }
+        return true;*/
 
-    @Override
-    public Clan changeTag(Clan clan, String newTag) {
         return null;
     }
 }

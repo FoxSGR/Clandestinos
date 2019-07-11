@@ -2,6 +2,7 @@ package foxsgr.clandestinos.persistence.yaml;
 
 import foxsgr.clandestinos.persistence.ClanPlayerRepository;
 import foxsgr.clandestinos.persistence.ClanRepository;
+import foxsgr.clandestinos.persistence.InviteRepository;
 import foxsgr.clandestinos.persistence.RepositoryFactory;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -37,6 +38,11 @@ public class YAMLRepositoryFactory implements RepositoryFactory {
     @NotNull
     public ClanRepository clans() {
         return clanRepository;
+    }
+
+    @Override
+    public @NotNull InviteRepository invites() {
+        throw new UnsupportedOperationException();
     }
 
     @NotNull

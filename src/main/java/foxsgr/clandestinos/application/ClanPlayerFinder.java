@@ -1,6 +1,6 @@
 package foxsgr.clandestinos.application;
 
-import foxsgr.clandestinos.domain.model.ClanPlayer;
+import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.persistence.ClanPlayerRepository;
 import foxsgr.clandestinos.persistence.PersistenceContext;
 import org.bukkit.entity.Player;

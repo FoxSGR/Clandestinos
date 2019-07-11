@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 public final class PlayerCommandValidator {
 
     public static boolean validate(CommandSender sender, String[] args, int minArgsLength, String underMinArgsMessage) {
-        if (!PermissionsManager.hasPermissionSubCommandWarn(sender, args[0])) {
+        if (!PermissionsManager.hasForSubCommandWarn(sender, args[0])) {
             return false;
         }
 

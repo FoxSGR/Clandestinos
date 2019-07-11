@@ -1,9 +1,7 @@
 package foxsgr.clandestinos.persistence.yaml;
 
-import foxsgr.clandestinos.domain.model.ClanPlayer;
-import foxsgr.clandestinos.domain.model.ClanTag;
+import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.persistence.ClanPlayerRepository;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +15,7 @@ class ClanPlayerRepositoryYAML extends YAMLRepository implements ClanPlayerRepos
 
     @Override
     public ClanPlayer find(String id) {
-        ConfigurationSection playerSection = subSection(id);
+/*        ConfigurationSection playerSection = subSection(id);
         if (playerSection == null) {
             return null;
         }
@@ -28,12 +26,14 @@ class ClanPlayerRepositoryYAML extends YAMLRepository implements ClanPlayerRepos
             return new ClanPlayer(id, killCount, null);
         } else {
             return new ClanPlayer(id, killCount, new ClanTag(clanTag));
-        }
+        }*/
+
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public void save(ClanPlayer clanPlayer) {
-        ConfigurationSection section = section();
+    public ClanPlayer save(ClanPlayer clanPlayer) {
+/*        ConfigurationSection section = section();
         ConfigurationSection playerSection = section.getConfigurationSection(clanPlayer.id());
         if (playerSection == null) {
             playerSection = section.createSection(clanPlayer.id());
@@ -46,6 +46,8 @@ class ClanPlayerRepositoryYAML extends YAMLRepository implements ClanPlayerRepos
             playerSection.set("clan-tag", clanTag.value());
         }
 
-        update();
+        update();*/
+
+        throw new UnsupportedOperationException();
     }
 }

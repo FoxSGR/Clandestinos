@@ -16,10 +16,19 @@ import java.util.Set;
 @SuppressWarnings("WeakerAccess")
 public class LanguageManager {
 
+    public static final String COMMANDS_HEADER = "commands-header";
+    public static final String CREATE_USAGE = "create-usage";
+    public static final String INVITE_USAGE = "invite-usage";
+    public static final String RELOAD_USAGE = "reload-usage";
+
+    public static final String WRONG_CREATE_USAGE = "wrong-create-usage";
+    public static final String WRONG_INVITE_USAGE = "wrong-invite-usage";
+
     public static final String NO_PERMISSION = "no-permission";
     public static final String WRONG_SIZE_TAG = "wrong-size-tag";
     public static final String WRONG_SIZE_NAME = "wrong-size-name";
     public static final String MUST_BE_PLAYER = "must-be-player";
+    public static final String MUST_BE_LEADER = "must-be-leader";
     public static final String ONLY_LETTERS_TAG = "only-letters-tag";
     public static final String FORBIDDEN_TAG = "forbidden-tag";
     public static final String CLAN_CREATED = "clan-created";
@@ -27,14 +36,9 @@ public class LanguageManager {
     public static final String TAG_ALREADY_EXISTS = "tag-already-exists";
     public static final String MUST_BE_IN_CLAN = "must-be-in-clan";
     public static final String PLAYER_NOT_ONLINE = "player-not-online";
-
-    public static final String WRONG_CREATE_USAGE = "wrong-create-usage";
-    public static final String WRONG_INVITE_USAGE = "wrong-invite-usage";
-
-    public static final String COMMANDS_HEADER = "commands-header";
-    public static final String CREATE_USAGE = "create-usage";
-    public static final String INVITE_USAGE = "invite-usage";
-    public static final String RELOAD_USAGE = "reload-usage";
+    public static final String PLAYER_INVITED = "player-invited";
+    public static final String RECEIVED_INVITE = "received-invite";
+    public static final String ALREADY_INVITED = "already-invited";
 
     private JavaPlugin plugin;
     private Map<String, String> strings;
@@ -49,6 +53,10 @@ public class LanguageManager {
 
     public static String get(String key) {
         return instance.strings.get(key);
+    }
+
+    public static String placeholder(int index) {
+        return String.format("{%d}", index);
     }
 
     static void init(JavaPlugin plugin) {
@@ -99,10 +107,10 @@ public class LanguageManager {
 
     private void setupStrings() {
         // Replace {0} with the the proper value
-        replaceString(WRONG_SIZE_TAG, "{0}", ConfigManager.getInt(ConfigManager.MIN_TAG_LENGTH));
-        replaceString(WRONG_SIZE_TAG, "{1}", ConfigManager.getInt(ConfigManager.MAX_TAG_LENGTH));
-        replaceString(WRONG_SIZE_NAME, "{0}", ConfigManager.getInt(ConfigManager.MIN_NAME_LENGTH));
-        replaceString(WRONG_SIZE_NAME, "{1}", ConfigManager.getInt(ConfigManager.MAX_NAME_LENGTH));
+        replaceString(WRONG_SIZE_TAG, placeholder(0), ConfigManager.getInt(ConfigManager.MIN_TAG_LENGTH));
+        replaceString(WRONG_SIZE_TAG, placeholder(1), ConfigManager.getInt(ConfigManager.MAX_TAG_LENGTH));
+        replaceString(WRONG_SIZE_NAME, placeholder(0), ConfigManager.getInt(ConfigManager.MIN_NAME_LENGTH));
+        replaceString(WRONG_SIZE_NAME, placeholder(1), ConfigManager.getInt(ConfigManager.MAX_NAME_LENGTH));
     }
 
     private void replaceString(String key, String toReplace, Object replaceInto) {
@@ -116,10 +124,20 @@ public class LanguageManager {
 
     private static FileConfiguration createFileConfiguration() {
         FileConfiguration fileConfiguration = new YamlConfiguration();
+
+        fileConfiguration.addDefault(COMMANDS_HEADER, "&9Clan Commands");
+        fileConfiguration.addDefault(CREATE_USAGE, "&b/clan create (tag) [name] - Create a clan.");
+        fileConfiguration.addDefault(INVITE_USAGE, "&b/clan invite (player) - Invite a player to your clan.");
+        fileConfiguration.addDefault(RELOAD_USAGE, "&b/clan reload - Reload configurations.");
+
+        fileConfiguration.addDefault(WRONG_CREATE_USAGE, "&bTo create a clan, use: &9/clan create (tag) [name]");
+        fileConfiguration.addDefault(WRONG_INVITE_USAGE, "&bTo invite a player, use: &9/clan invite (player)");
+
         fileConfiguration.addDefault(NO_PERMISSION, "&cYou don't have permission to use that command.");
         fileConfiguration.addDefault(WRONG_SIZE_TAG, "&cThe tag must be between {0} and {1} characters long.");
         fileConfiguration.addDefault(WRONG_SIZE_NAME, "&cThe name must be between {0} and {1} characters long.");
         fileConfiguration.addDefault(MUST_BE_PLAYER, "&cOnly a player can perform that command!");
+        fileConfiguration.addDefault(MUST_BE_LEADER, "&cYou must be a leader to use that command.");
         fileConfiguration.addDefault(FORBIDDEN_TAG, "&cYou can't use that tag.");
         fileConfiguration.addDefault(ONLY_LETTERS_TAG, "&cThe tag can only contain letters.");
         fileConfiguration.addDefault(CLAN_CREATED, "&aThe clan {0} &awas created!");
@@ -127,14 +145,9 @@ public class LanguageManager {
         fileConfiguration.addDefault(TAG_ALREADY_EXISTS, "&cA clan with that tag already exists.");
         fileConfiguration.addDefault(MUST_BE_IN_CLAN, "&cYou must be in a clan to use that command.");
         fileConfiguration.addDefault(PLAYER_NOT_ONLINE, "&cThat player is not online.");
-
-        fileConfiguration.addDefault(WRONG_CREATE_USAGE, "&bTo create a clan, use: &9/clan create (tag) [name]");
-        fileConfiguration.addDefault(WRONG_INVITE_USAGE, "&bTo invite a player, use: &9/clan invite (player)");
-
-        fileConfiguration.addDefault(COMMANDS_HEADER, "&9Clan Commands");
-        fileConfiguration.addDefault(CREATE_USAGE, "&b/clan create (tag) [name] - Create a clan.");
-        fileConfiguration.addDefault(INVITE_USAGE, "&b/clan invite (player) - Invite a player to your clan.");
-        fileConfiguration.addDefault(RELOAD_USAGE, "&b/clan reload - Reload configurations.");
+        fileConfiguration.addDefault(PLAYER_INVITED, "&aThe player {0} &ahas been invited to join your clan.");
+        fileConfiguration.addDefault(RECEIVED_INVITE, "&aYou were invited to join the {0} &aclan. Use /clan join {1} to accept.");
+        fileConfiguration.addDefault(ALREADY_INVITED, "&cThat player has already been invited to your clan.");
         return fileConfiguration;
     }
 }

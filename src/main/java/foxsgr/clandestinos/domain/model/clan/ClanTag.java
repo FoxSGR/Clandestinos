@@ -1,4 +1,4 @@
-package foxsgr.clandestinos.domain.model;
+package foxsgr.clandestinos.domain.model.clan;
 
 import clandestino.lib.Preconditions;
 import clandestino.lib.TextUtil;
@@ -7,18 +7,34 @@ import foxsgr.clandestinos.domain.exceptions.NonLetterInTagException;
 import foxsgr.clandestinos.domain.exceptions.WrongTagSizeException;
 import org.bukkit.ChatColor;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
+@Embeddable
 public class ClanTag {
 
-    private final String tag;
+    @Column(unique = true)
+    private final String tagValue;
 
-    public ClanTag(String tag) {
-        tag = TextUtil.translateColoredText(tag);
-        validate(tag);
-        this.tag = tag;
+    public ClanTag(String tagValue) {
+        tagValue = TextUtil.translateColoredText(tagValue);
+        validate(tagValue);
+        this.tagValue = tagValue;
+    }
+
+    /**
+     * Creates the clan tag. For ORM only.
+     */
+    protected ClanTag() {
+        tagValue = null;
     }
 
     public String value() {
-        return tag;
+        return tagValue;
+    }
+
+    public ClanTag withoutColor() {
+        return new ClanTag(ChatColor.stripColor(tagValue));
     }
 
     private void validate(String tag) {

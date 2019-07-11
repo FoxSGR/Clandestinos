@@ -1,9 +1,9 @@
 package foxsgr.clandestinos.persistence;
 
-import foxsgr.clandestinos.domain.model.ClanPlayer;
+import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 
 public interface ClanPlayerRepository {
 
     ClanPlayer find(String id);
-    void save(ClanPlayer clanPlayer);
+    ClanPlayer save(ClanPlayer clanPlayer);
 }

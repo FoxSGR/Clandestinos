@@ -1,8 +1,11 @@
-package foxsgr.clandestinos.domain.model;
+package foxsgr.clandestinos.domain.model.clanplayer;
 
+import javax.persistence.Embeddable;
+
+@Embeddable
 public class KillCount {
 
-    private int value;
+    private Integer value;
 
     public KillCount(int value) {
         this.value = value;

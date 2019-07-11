@@ -1,10 +1,13 @@
-package foxsgr.clandestinos.domain.model;
+package foxsgr.clandestinos.domain.model.clan;
 
 import clandestino.lib.Preconditions;
 import foxsgr.clandestinos.application.ConfigManager;
 import foxsgr.clandestinos.domain.exceptions.WrongNameSizeException;
 import org.bukkit.ChatColor;
 
+import javax.persistence.Embeddable;
+
+@Embeddable
 @SuppressWarnings("WeakerAccess")
 public class ClanName {
 
@@ -13,6 +16,13 @@ public class ClanName {
     public ClanName(String name) {
         validate(name);
         this.name = name;
+    }
+
+    /**
+     * Creates the clan name. For ORM only.
+     */
+    protected ClanName() {
+        name = null;
     }
 
     public String value() {

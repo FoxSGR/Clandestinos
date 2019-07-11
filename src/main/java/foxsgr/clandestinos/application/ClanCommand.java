@@ -15,7 +15,6 @@ public class ClanCommand implements CommandExecutor {
      */
     private JavaPlugin plugin;
 
-    private static final String PERMISSIONS_ROOT = "clans.";
     private static final String CREATE_COMMAND = "create";
     private static final String INVITE_COMMAND = "invite";
     private static final String RELOAD_COMMAND = "reload";
@@ -34,7 +33,7 @@ public class ClanCommand implements CommandExecutor {
         if (args[0].equalsIgnoreCase(CREATE_COMMAND)) {
             new CreateClanHandler().createClan(sender, args);
         } else if (args[0].equalsIgnoreCase(RELOAD_COMMAND)) {
-            if (PermissionsManager.hasPermissionSubCommandWarn(sender, RELOAD_COMMAND)) {
+            if (PermissionsManager.hasForSubCommandWarn(sender, RELOAD_COMMAND)) {
                 ConfigManager.init(plugin);
                 LanguageManager.init(plugin);
                 PersistenceContext.init(plugin);
@@ -56,7 +55,7 @@ public class ClanCommand implements CommandExecutor {
     }
 
     private static void appendSubCommand(CommandSender sender, StringBuilder builder, String command, String commandDescriptionId) {
-        if (PermissionsManager.hasPermissionSubCommand(sender, command)) {
+        if (PermissionsManager.hasForSubCommand(sender, command)) {
             builder.append('\n').append(LanguageManager.get(commandDescriptionId));
         }
     }

@@ -9,4 +9,7 @@ public interface RepositoryFactory {
 
     @NotNull
     ClanRepository clans();
+
+    @NotNull
+    InviteRepository invites();
 }

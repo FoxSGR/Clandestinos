@@ -3,8 +3,8 @@ package foxsgr.clandestinos.application;
 import foxsgr.clandestinos.domain.exceptions.NonLetterInTagException;
 import foxsgr.clandestinos.domain.exceptions.WrongNameSizeException;
 import foxsgr.clandestinos.domain.exceptions.WrongTagSizeException;
-import foxsgr.clandestinos.domain.model.Clan;
-import foxsgr.clandestinos.domain.model.ClanPlayer;
+import foxsgr.clandestinos.domain.model.clan.Clan;
+import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.persistence.ClanPlayerRepository;
 import foxsgr.clandestinos.persistence.ClanRepository;
 import foxsgr.clandestinos.persistence.PersistenceContext;
@@ -41,16 +41,19 @@ class CreateClanHandler {
 
     private void createAndSaveClan(Player player, ClanPlayer clanPlayer, String[] args) {
         String clanName = clanNameFromArgs(args);
-        Clan clan = new Clan(args[1], clanName, clanPlayer.id());
-        if (clanRepository.save(clan)) {
-            clanPlayer.changeClan(args[1]);
-            clanPlayerRepository.save(clanPlayer);
-
-            String message = LanguageManager.get(LanguageManager.CLAN_CREATED).replace("{0}", args[1]);
-            player.getServer().broadcastMessage(message);
-        } else {
+        if (clanRepository.findByTag(args[1]) != null) {
             player.sendMessage(LanguageManager.get(LanguageManager.TAG_ALREADY_EXISTS));
+            return;
         }
+
+        Clan clan = new Clan(args[1], clanName, clanPlayer);
+        clan = clanRepository.save(clan);
+
+        clanPlayer.joinClan(clan);
+        clanPlayerRepository.save(clanPlayer);
+
+        String message = LanguageManager.get(LanguageManager.CLAN_CREATED).replace("{0}", args[1]);
+        player.getServer().broadcastMessage(message);
     }
 
     private static String clanNameFromArgs(String[] args) {
