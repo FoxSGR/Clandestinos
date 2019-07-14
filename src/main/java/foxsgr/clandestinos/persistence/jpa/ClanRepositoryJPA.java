@@ -24,4 +24,14 @@ class ClanRepositoryJPA extends JPARepository<Clan, Integer> implements ClanRepo
     public boolean add(Clan clan) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public void update(Clan clan) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void remove(Clan clan) {
+        throw new UnsupportedOperationException();
+    }
 }

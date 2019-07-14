@@ -31,6 +31,7 @@ public class ChatManager implements Listener {
 
     ChatManager(Clandestinos plugin) {
         this.plugin = plugin;
+        // Must call setup to initialize other fields
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -64,6 +65,11 @@ public class ChatManager implements Listener {
 
         messageFormat = TextUtil.translateColoredText(messageFormat);
         event.setFormat(messageFormat);
+
+        if (player.hasPermission("essentials.chat.color")) {
+            String message = TextUtil.translateColoredText(event.getMessage().replace("&k", ""));
+            event.setMessage(message);
+        }
     }
 
     void setup() {

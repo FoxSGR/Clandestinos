@@ -15,7 +15,7 @@ public final class PermissionsManager {
 
     public static boolean hasForSubCommandWarn(CommandSender player, String subCommand) {
         if (!hasForSubCommand(player, subCommand)) {
-            player.sendMessage(LanguageManager.get(LanguageManager.NO_PERMISSION));
+            player.sendMessage(LanguageManager.getInstance().get(LanguageManager.NO_PERMISSION));
             return false;
         }
 

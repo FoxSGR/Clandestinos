@@ -34,7 +34,6 @@ class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
 
     @Override
     public boolean add(Clan clan) {
-        String tag = clan.tag().value();
         String tagWithoutColor = clan.tag().withoutColor().value();
         for (String otherClanTag : fileConfiguration.getKeys(false)) {
             if (tagWithoutColor.equalsIgnoreCase(otherClanTag)) {
@@ -43,12 +42,32 @@ class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
         }
 
         ConfigurationSection clanSection = fileConfiguration.createSection(tagWithoutColor);
-        clanSection.set("tag", tag);
+        fillSection(clanSection, clan);
+        return true;
+    }
+
+    @Override
+    public void update(Clan clan) {
+        ConfigurationSection clanSection = fileConfiguration.getConfigurationSection(clan.tag().withoutColor().value());
+        if (clanSection == null) {
+            throw new IllegalStateException("Could not update a clan because it does not exist.");
+        }
+
+        fillSection(clanSection, clan);
+    }
+
+    @Override
+    public void remove(Clan clan) {
+        fileConfiguration.set(clan.tag().withoutColor().value(), null);
+        update(fileConfiguration);
+    }
+
+    private void fillSection(ConfigurationSection clanSection, Clan clan) {
+        clanSection.set("tag", clan.tag().value());
         clanSection.set("name", clan.name().value());
         clanSection.set("owner", clan.owner());
-        clanSection.set("leaders", clan.members());
+        clanSection.set("leaders", clan.leaders());
         clanSection.set("members", clan.members());
         update(fileConfiguration);
-        return true;
     }
 }

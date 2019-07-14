@@ -1,6 +1,7 @@
 package foxsgr.clandestinos.application;
 
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -18,6 +19,22 @@ public class EconomyManager {
         if (economy == null) {
             throw new IllegalStateException("Could not setup economy. This plugin requires Vault.");
         }
+    }
+
+    public boolean take(Player player, double amount) {
+        return economy.withdrawPlayer(player, amount).transactionSuccess();
+    }
+
+    public boolean hasEnough(Player player, double amount) {
+        return economy.has(player, amount);
+    }
+
+    public String format(double amount) {
+        return economy.format(amount);
+    }
+
+    public static EconomyManager getInstance() {
+        return instance;
     }
 
     static void init(JavaPlugin plugin) {

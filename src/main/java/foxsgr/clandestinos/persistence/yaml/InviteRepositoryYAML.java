@@ -1,6 +1,7 @@
 package foxsgr.clandestinos.persistence.yaml;
 
 import foxsgr.clandestinos.domain.model.Invite;
+import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clan.ClanTag;
 import foxsgr.clandestinos.persistence.InviteRepository;
 import org.bukkit.configuration.ConfigurationSection;
@@ -17,7 +18,7 @@ public class InviteRepositoryYAML extends YAMLRepository implements InviteReposi
     public void add(Invite invite) {
         FileConfiguration fileConfiguration = load();
         ConfigurationSection section = fileConfiguration.createSection(invite.id());
-        section.set("invited-to", invite.invitedTo().value());
+        section.set("invited-to", invite.invitedTo().withoutColor().value());
         section.set("invited-player", invite.invitedPlayer());
         update(fileConfiguration);
     }
@@ -35,9 +36,23 @@ public class InviteRepositoryYAML extends YAMLRepository implements InviteReposi
         return new Invite(id, clanTag, invitedPlayer);
     }
 
+    @Override
     public void remove(Invite invite) {
         FileConfiguration fileConfiguration = load();
         fileConfiguration.set(invite.id(), null);
+        update(fileConfiguration);
+    }
+
+    @Override
+    public void removeAllFrom(Clan clan) {
+        FileConfiguration fileConfiguration = load();
+
+        for (String key : fileConfiguration.getKeys(false)) {
+            if (key.contains(clan.tag().withoutColor().value())) {
+                fileConfiguration.set(key, null);
+            }
+        }
+
         update(fileConfiguration);
     }
 }

@@ -18,6 +18,7 @@ public class ConfigManager {
     public static final String FORBIDDEN_TAGS = "forbidden-tags";
     public static final String CHAT_FORMAT = "chat-format";
     public static final String CLAN_FORMAT = "clan-format";
+    public static final String CREATE_CLAN_COST = "create-clan-cost";
 
     private final JavaPlugin plugin;
 
@@ -45,6 +46,10 @@ public class ConfigManager {
         return plugin.getConfig().getStringList(key);
     }
 
+    public double getDouble(String key) {
+        return plugin.getConfig().getDouble(key);
+    }
+
     public static ConfigManager getInstance() {
         return instance;
     }
@@ -69,19 +74,19 @@ public class ConfigManager {
 
     private void createDefaultConfig() {
         Configuration config = plugin.getConfig();
-        config.addDefault(CHAT_FORMAT, "");
         config.addDefault(MIN_TAG_LENGTH, 3);
         config.addDefault(MAX_TAG_LENGTH, 5);
-        config.addDefault(MIN_NAME_LENGTH, 3);
-        config.addDefault(MAX_NAME_LENGTH, 10);
+        config.addDefault(MIN_NAME_LENGTH, 0);
+        config.addDefault(MAX_NAME_LENGTH, 20);
         config.addDefault(ONLINE_MODE, false); // TODO: Change if plugin gets published
         config.addDefault(FORBIDDEN_TAGS, new ArrayList<>());
 
         // Must have at least "{player}" and "{content}"
-        config.addDefault(CHAT_FORMAT, String.format("%s%s%s > %s", ChatManager.PREFIX_PLACEHOLDER,
-                ChatManager.FORMATTED_CLAN_TAG_PLACEHOLDER, ChatManager.PLAYER_PLACEHOLDER,
+        config.addDefault(CHAT_FORMAT, String.format("%s%s&f%s &f> &7%s", ChatManager.FORMATTED_CLAN_TAG_PLACEHOLDER,
+                ChatManager.PREFIX_PLACEHOLDER, ChatManager.PLAYER_PLACEHOLDER,
                 ChatManager.CONTENT_PLACEHOLDER));
         config.addDefault(CLAN_FORMAT, "&8[" + ChatManager.COLORED_CLAN_TAG_PLACEHOLDER + "&8] ");
+        config.addDefault(CREATE_CLAN_COST, 1500);
         config.options().copyDefaults(true);
     }
 }

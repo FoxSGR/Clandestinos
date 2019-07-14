@@ -1,13 +1,13 @@
-package foxsgr.clandestinos.domain.model.clans.clanplayer;
+package foxsgr.clandestinos.domain.model.clanplayer;
 
-import javax.persistence.Embeddable;
+import foxsgr.clandestinos.util.Preconditions;
 
-@Embeddable
 public class KillCount {
 
     private Integer value;
 
     public KillCount(int value) {
+        Preconditions.ensure(value >= 0, "The kill count cannot be negative.");
         this.value = value;
     }
 

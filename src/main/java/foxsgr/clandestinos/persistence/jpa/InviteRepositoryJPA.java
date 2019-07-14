@@ -1,6 +1,7 @@
 package foxsgr.clandestinos.persistence.jpa;
 
 import foxsgr.clandestinos.domain.model.Invite;
+import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.persistence.InviteRepository;
 
 public class InviteRepositoryJPA implements InviteRepository {
@@ -16,6 +17,16 @@ public class InviteRepositoryJPA implements InviteRepository {
         query.setParameter("invited", invited);
         query.setParameter("clanTag", clanTag);
         return (Invite) singleResult(query);*/
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void remove(Invite invite) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void removeAllFrom(Clan clan) {
         throw new UnsupportedOperationException();
     }
 }

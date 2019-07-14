@@ -1,9 +1,11 @@
-package foxsgr.clandestinos.application;
+package foxsgr.clandestinos.application.clans;
 
+import foxsgr.clandestinos.application.LanguageManager;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.domain.model.clan.ClanTag;
-import foxsgr.clandestinos.domain.model.invite.Invite;
+import foxsgr.clandestinos.domain.model.Invite;
+import foxsgr.clandestinos.persistence.ClanRepository;
 import foxsgr.clandestinos.persistence.InviteRepository;
 import foxsgr.clandestinos.persistence.PersistenceContext;
 import org.bukkit.Bukkit;
@@ -12,7 +14,9 @@ import org.bukkit.entity.Player;
 
 class InvitePlayerHandler {
 
+    private final ClanRepository clanRepository = PersistenceContext.repositories().clans();
     private final InviteRepository inviteRepository = PersistenceContext.repositories().invites();
+    private final LanguageManager languageManager = LanguageManager.getInstance();
 
     void invitePlayer(CommandSender sender, String[] args) {
         if (!PlayerCommandValidator.validate(sender, args, 2, LanguageManager.WRONG_INVITE_USAGE)) {
@@ -20,53 +24,72 @@ class InvitePlayerHandler {
         }
 
         Player inviter = (Player) sender;
-        ClanPlayer inviterClanPlayer = ClanPlayerFinder.find(inviter);
-        if (!canInvite(sender, inviterClanPlayer)) {
+        ClanPlayer inviterClanPlayer = ClanPlayerFinder.get(inviter);
+        Clan clan = canInvite(sender, inviterClanPlayer);
+        if (clan == null) {
             return;
         }
 
         Player invited = Bukkit.getPlayerExact(args[1]);
         if (invited == null) {
-            inviter.sendMessage(LanguageManager.get(LanguageManager.PLAYER_NOT_ONLINE));
+            inviter.sendMessage(languageManager.get(LanguageManager.PLAYER_NOT_ONLINE));
             return;
         }
 
-        ClanPlayer invitedClanPlayer = ClanPlayerFinder.find(invited);
-        inviteAndSave(inviter, inviterClanPlayer, invited, invitedClanPlayer);
+        inviteAndSave(inviter, invited, clan);
     }
 
-    private void inviteAndSave(Player inviter, ClanPlayer inviterClanPlayer, Player invited, ClanPlayer invitedClanPlayer) {
-        Clan clan = inviterClanPlayer.clan();
-        if (inviteRepository.findPending(invitedClanPlayer.id(), clan.tag().value()) != null) {
-            inviter.sendMessage(LanguageManager.get(LanguageManager.ALREADY_INVITED));
+    private void inviteAndSave(Player inviter, Player invited, Clan clan) {
+        ClanPlayer invitedClanPlayer = canBeInvited(inviter, invited, clan);
+        if (invitedClanPlayer == null) {
             return;
         }
 
         Invite invite = new Invite(clan, invitedClanPlayer);
-        inviteRepository.save(invite);
+        inviteRepository.add(invite);
 
-        String inviterMessage = LanguageManager.get(LanguageManager.PLAYER_INVITED)
+        String inviterMessage = languageManager.get(LanguageManager.PLAYER_INVITED)
                 .replace(LanguageManager.placeholder(0), invited.getName());
         inviter.sendMessage(inviterMessage);
 
         ClanTag clanTag = clan.tag();
-        String invitedMessage = LanguageManager.get(LanguageManager.RECEIVED_INVITE)
+        String invitedMessage = languageManager.get(LanguageManager.RECEIVED_INVITE)
                 .replace(LanguageManager.placeholder(0), clanTag.value())
                 .replace(LanguageManager.placeholder(1), clanTag.withoutColor().value());
         invited.sendMessage(invitedMessage);
     }
 
-    private static boolean canInvite(CommandSender sender, ClanPlayer inviterClanPlayer) {
+    private Clan canInvite(CommandSender sender, ClanPlayer inviterClanPlayer) {
         if (!inviterClanPlayer.inClan()) {
-            sender.sendMessage(LanguageManager.get(LanguageManager.MUST_BE_IN_CLAN));
-            return false;
+            sender.sendMessage(languageManager.get(LanguageManager.MUST_BE_IN_CLAN));
+            return null;
         }
 
-        if (inviterClanPlayer.clan().isLeader(inviterClanPlayer)) {
-            sender.sendMessage(LanguageManager.get(LanguageManager.MUST_BE_LEADER));
-            return false;
+        Clan clan = clanRepository.findByTag(inviterClanPlayer.clan().withoutColor().value());
+        if (clan.isLeader(inviterClanPlayer)) {
+            sender.sendMessage(languageManager.get(LanguageManager.MUST_BE_LEADER));
+            return null;
         }
 
-        return true;
+        return clan;
+    }
+
+    private ClanPlayer canBeInvited(CommandSender inviter, Player invited, Clan clan) {
+        ClanPlayer invitedClanPlayer = ClanPlayerFinder.get(invited);
+        if (!invitedClanPlayer.inClan()) {
+            return invitedClanPlayer;
+        }
+
+        if (invitedClanPlayer.clan().equalsIgnoreColor(clan.tag())) {
+            inviter.sendMessage(languageManager.get(LanguageManager.ALREADY_IN_YOUR_CLAN));
+            return null;
+        }
+
+        if (inviteRepository.find(invitedClanPlayer.id(), clan.tag().withoutColor().value()) != null) {
+            inviter.sendMessage(languageManager.get(LanguageManager.ALREADY_INVITED));
+            return null;
+        }
+
+        return invitedClanPlayer;
     }
 }

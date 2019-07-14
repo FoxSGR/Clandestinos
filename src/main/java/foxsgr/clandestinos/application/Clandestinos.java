@@ -11,11 +11,13 @@ public class Clandestinos extends JavaPlugin {
 
     private boolean usingPAPI;
     private ChatManager chatManager;
+    private JoinQuitListener joinQuitListener;
     private static final String CLAN_COMMAND = "clan";
 
     public Clandestinos() {
         super();
         chatManager = new ChatManager(this);
+        joinQuitListener = new JoinQuitListener();
     }
 
     @Override
@@ -28,11 +30,14 @@ public class Clandestinos extends JavaPlugin {
         LanguageManager.init(this);
         PersistenceContext.init(this);
 
+        // Must be after PersistenceContext.init(this)
         chatManager.setup();
+        joinQuitListener.setup();
+
         EconomyManager.init(this);
 
         Plugins.registerCommand(this, CLAN_COMMAND, new ClanCommand(this));
-        Bukkit.getPluginManager().registerEvents(new ChatManager(this), this);
+        Bukkit.getPluginManager().registerEvents(chatManager, this);
     }
 
     boolean isUsingPAPI() {

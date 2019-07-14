@@ -1,39 +1,71 @@
-package foxsgr.clandestinos.domain.model.clans.clanplayer;
+package foxsgr.clandestinos.domain.model.clanplayer;
 
-import clandestino.lib.Preconditions;
 import foxsgr.clandestinos.domain.exceptions.AlreadyInClanException;
-import foxsgr.clandestinos.domain.model.clans.clan.Clan;
+import foxsgr.clandestinos.domain.model.clan.Clan;
+import foxsgr.clandestinos.domain.model.clan.ClanTag;
+import foxsgr.clandestinos.util.Preconditions;
 
-import javax.persistence.*;
+import java.util.Objects;
 
-@Entity
 public class ClanPlayer {
 
-    @Id
     private final String id;
-
-    @Embedded
     private KillCount killCount;
-
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Clan clan;
+    private DeathCount deathCount;
+    private ClanTag clan;
 
     public ClanPlayer(String id) {
+        Preconditions.ensureNotEmpty(id, "The id of a player cannot be null or empty.");
         this.id = id;
         killCount = new KillCount();
+        deathCount = new DeathCount();
         clan = null;
     }
 
-    protected ClanPlayer() {
-        id = null; // gotta initialize final field
+    public ClanPlayer(String id, int killCount, int deathCount, String clanTag) {
+        Preconditions.ensureNotEmpty(id, "The id of a player cannot be null or empty.");
+        this.id = id;
+        this.killCount = new KillCount(killCount);
+        this.deathCount = new DeathCount(deathCount);
+
+        if (clanTag != null) {
+            this.clan = new ClanTag(clanTag);
+        }
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+
+        if (!(object instanceof ClanPlayer)) {
+            return false;
+        }
+
+        ClanPlayer otherPlayer = (ClanPlayer) object;
+        return id.equals(otherPlayer.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public String id() {
         return id;
     }
 
-    public Clan clan() {
+    public ClanTag clan() {
         return clan;
+    }
+
+    public KillCount killCount() {
+        return killCount;
+    }
+
+    public DeathCount deathCount() {
+        return deathCount;
     }
 
     public boolean inClan() {
@@ -46,6 +78,10 @@ public class ClanPlayer {
         }
 
         Preconditions.ensureNotNull(clanToJoin, "The clan to join cannot be null.");
-        clan = clanToJoin;
+        clan = clanToJoin.tag();
+    }
+
+    public void leaveClan() {
+        clan = null;
     }
 }

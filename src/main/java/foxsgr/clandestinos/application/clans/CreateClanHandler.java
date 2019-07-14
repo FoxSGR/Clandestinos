@@ -1,5 +1,8 @@
-package foxsgr.clandestinos.application;
+package foxsgr.clandestinos.application.clans;
 
+import foxsgr.clandestinos.application.ConfigManager;
+import foxsgr.clandestinos.application.EconomyManager;
+import foxsgr.clandestinos.application.LanguageManager;
 import foxsgr.clandestinos.domain.exceptions.NonLetterInTagException;
 import foxsgr.clandestinos.domain.exceptions.WrongNameSizeException;
 import foxsgr.clandestinos.domain.exceptions.WrongTagSizeException;
@@ -8,6 +11,8 @@ import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.persistence.ClanPlayerRepository;
 import foxsgr.clandestinos.persistence.ClanRepository;
 import foxsgr.clandestinos.persistence.PersistenceContext;
+import foxsgr.clandestinos.util.TextUtil;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -15,6 +20,11 @@ class CreateClanHandler {
 
     private final ClanRepository clanRepository = PersistenceContext.repositories().clans();
     private final ClanPlayerRepository clanPlayerRepository = PersistenceContext.repositories().players();
+    private final LanguageManager languageManager = LanguageManager.getInstance();
+    private final ConfigManager configManager = ConfigManager.getInstance();
+    private final EconomyManager economyManager = EconomyManager.getInstance();
+
+    private static final ChatColor DEFAULT_COLOR = ChatColor.GRAY;
 
     void createClan(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
@@ -22,38 +32,64 @@ class CreateClanHandler {
         }
 
         Player player = (Player) sender;
-        ClanPlayer clanPlayer = ClanPlayerFinder.find(player);
-        if (clanPlayer.inClan()) {
-            player.sendMessage(LanguageManager.get(LanguageManager.CANNOT_IN_CLAN));
+        ClanPlayer clanPlayer = canCreate(player);
+        if (clanPlayer == null) {
             return;
         }
 
         try {
             createAndSaveClan(player, clanPlayer, args);
         } catch (WrongTagSizeException e) {
-            player.sendMessage(LanguageManager.get(LanguageManager.WRONG_SIZE_TAG));
+            player.sendMessage(languageManager.get(LanguageManager.WRONG_SIZE_TAG));
         } catch (WrongNameSizeException e) {
-            player.sendMessage(LanguageManager.get(LanguageManager.WRONG_SIZE_NAME));
+            player.sendMessage(languageManager.get(LanguageManager.WRONG_SIZE_NAME));
         } catch (NonLetterInTagException e) {
-            player.sendMessage(LanguageManager.get(LanguageManager.ONLY_LETTERS_TAG));
+            player.sendMessage(languageManager.get(LanguageManager.ONLY_LETTERS_TAG));
         }
     }
 
     private void createAndSaveClan(Player player, ClanPlayer clanPlayer, String[] args) {
         String clanName = clanNameFromArgs(args);
-        if (clanRepository.findByTag(args[1]) != null) {
-            player.sendMessage(LanguageManager.get(LanguageManager.TAG_ALREADY_EXISTS));
-            return;
+        String clanTag = args[1];
+        if (!TextUtil.containsColorCodes(clanTag)) {
+            clanTag = DEFAULT_COLOR + clanTag;
         }
 
-        Clan clan = new Clan(args[1], clanName, clanPlayer);
-        clan = clanRepository.save(clan);
+        Clan clan = new Clan(clanTag, clanName, clanPlayer);
+
+        if (!economyManager.take(player, configManager.getDouble(ConfigManager.CREATE_CLAN_COST))) {
+            throw new IllegalStateException("Could not take money from player after checking that they have enough.");
+        }
+
+        if (!clanRepository.add(clan)) {
+            player.sendMessage(languageManager.get(LanguageManager.TAG_ALREADY_EXISTS));
+            return;
+        }
 
         clanPlayer.joinClan(clan);
         clanPlayerRepository.save(clanPlayer);
 
-        String message = LanguageManager.get(LanguageManager.CLAN_CREATED).replace("{0}", args[1]);
+        String message = languageManager.get(LanguageManager.CLAN_CREATED).replace("{0}", clan.tag().value());
+        message = TextUtil.translateColoredText(message);
         player.getServer().broadcastMessage(message);
+    }
+
+    private ClanPlayer canCreate(Player player) {
+        ClanPlayer clanPlayer = ClanPlayerFinder.get(player);
+        if (clanPlayer.inClan()) {
+            player.sendMessage(languageManager.get(LanguageManager.CANNOT_IN_CLAN));
+            return null;
+        }
+
+        double cost = configManager.getDouble(ConfigManager.CREATE_CLAN_COST);
+        if (!economyManager.hasEnough(player, cost)) {
+            String formattedCost = economyManager.format(cost);
+            player.sendMessage(languageManager.get(LanguageManager.NO_MONEY_CREATE)
+                    .replace(LanguageManager.placeholder(0), formattedCost));
+            return null;
+        }
+
+        return clanPlayer;
     }
 
     private static String clanNameFromArgs(String[] args) {
@@ -66,13 +102,13 @@ class CreateClanHandler {
         }
     }
 
-    private static boolean validate(CommandSender sender, String[] args) {
+    private boolean validate(CommandSender sender, String[] args) {
         if (!PlayerCommandValidator.validate(sender, args, 2, LanguageManager.WRONG_CREATE_USAGE)) {
             return false;
         }
 
-        if (ConfigManager.getStringList(ConfigManager.FORBIDDEN_TAGS).contains(args[1])) {
-            sender.sendMessage(LanguageManager.get(LanguageManager.FORBIDDEN_TAG));
+        if (configManager.getStringList(ConfigManager.FORBIDDEN_TAGS).contains(args[1])) {
+            sender.sendMessage(languageManager.get(LanguageManager.FORBIDDEN_TAG));
             return false;
         }
 

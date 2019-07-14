@@ -22,6 +22,9 @@ permissions:
   clandestinos.*:
     description: Allows every Clandestinos command.
     children:
-      clandestinos.create: true
       clandestinos.reload: false
+      clandestinos.create: true
       clandestinos.invite: true
+      clandestinos.leave: true
+      clandestinos.join: true
+      clandestinos.disband: true
