@@ -4,15 +4,24 @@ author: FoxSGR
 main: foxsgr.clandestinos.application.Clandestinos
 api-version: 1.14
 
+depend:
+  - Vault
+
+softdepend:
+  - PlaceholderAPI
+
 commands:
   clan:
     description: Clan command.
     usage: "Use: /clan"
+    permission-message: You not have have permission to use this command.
     aliases:
       - clans
+
 permissions:
   clandestinos.*:
     description: Allows every Clandestinos command.
     children:
       clandestinos.create: true
-      clandestinos.reload: true
+      clandestinos.reload: false
+      clandestinos.invite: true

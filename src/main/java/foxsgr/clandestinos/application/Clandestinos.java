@@ -1,20 +1,41 @@
 package foxsgr.clandestinos.application;
 
-import clandestino.lib.Plugins;
+import foxsgr.clandestinos.application.clans.ClanCommand;
+import foxsgr.clandestinos.util.Plugins;
 import foxsgr.clandestinos.persistence.PersistenceContext;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @SuppressWarnings("unused")
 public class Clandestinos extends JavaPlugin {
 
+    private boolean usingPAPI;
+    private ChatManager chatManager;
     private static final String CLAN_COMMAND = "clan";
+
+    public Clandestinos() {
+        super();
+        chatManager = new ChatManager(this);
+    }
 
     @Override
     public void onEnable() {
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            usingPAPI = true;
+        }
+
         ConfigManager.init(this);
         LanguageManager.init(this);
         PersistenceContext.init(this);
 
+        chatManager.setup();
+        EconomyManager.init(this);
+
         Plugins.registerCommand(this, CLAN_COMMAND, new ClanCommand(this));
+        Bukkit.getPluginManager().registerEvents(new ChatManager(this), this);
+    }
+
+    boolean isUsingPAPI() {
+        return usingPAPI;
     }
 }

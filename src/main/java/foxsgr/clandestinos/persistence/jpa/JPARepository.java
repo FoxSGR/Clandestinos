@@ -1,9 +1,7 @@
 package foxsgr.clandestinos.persistence.jpa;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -19,7 +17,7 @@ public class JPARepository<T, I extends Serializable> {
     /**
      * The entity manager.
      */
-    private EntityManager entityManager;
+    // private EntityManager entityManager;
 
     /**
      * The class of the entity.
@@ -29,13 +27,13 @@ public class JPARepository<T, I extends Serializable> {
     /**
      * The entity manager factory.
      */
-    @PersistenceUnit
-    private static EntityManagerFactory entityManagerFactory;
+    /**@PersistenceUnit
+    private static EntityManagerFactory entityManagerFactory;*/
 
     /**
      * The name of the persistence unit.
      */
-    private static final String PERSISTENCE_UNIT_NAME = "JPA";
+    private static final String PERSISTENCE_UNIT_NAME = "JPAClandestinos";
 
     /**
      * Creates the repository.
@@ -53,7 +51,8 @@ public class JPARepository<T, I extends Serializable> {
      * @return the found entity or null if it wasn't found.
      */
     public T find(final I id) {
-        return entityManager().find(entityClass, id);
+        // return entityManager().find(entityClass, id);
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -63,8 +62,9 @@ public class JPARepository<T, I extends Serializable> {
      */
     @SuppressWarnings("unchecked")
     public List<T> findAll() {
-        Query query = entityManager().createQuery("SELECT e FROM " + entityClass.getSimpleName() + " e");
-        return query.getResultList();
+        /* Query query = entityManager().createQuery("SELECT e FROM " + entityClass.getSimpleName() + " e");
+        return query.getResultList(); */
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -74,7 +74,7 @@ public class JPARepository<T, I extends Serializable> {
      * @return the stored entity.
      */
     public T save(final T entity) {
-        EntityManager em = entityManager();
+        /* EntityManager em = entityManager();
         EntityTransaction tx = em.getTransaction();
 
         tx.begin();
@@ -86,7 +86,8 @@ public class JPARepository<T, I extends Serializable> {
         tx.commit();
         em.close();
 
-        return obj;
+        return obj; */
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -96,7 +97,7 @@ public class JPARepository<T, I extends Serializable> {
      * @return the stored entities.
      */
     public Set<T> saveAll(Collection<T> entities) {
-        Set<T> persisted = new HashSet<>();
+        /* Set<T> persisted = new HashSet<>();
 
         EntityManager em = entityManager();
         EntityTransaction tx = em.getTransaction();
@@ -109,7 +110,9 @@ public class JPARepository<T, I extends Serializable> {
         tx.commit();
         em.close();
 
-        return persisted;
+        return persisted; */
+
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -118,13 +121,15 @@ public class JPARepository<T, I extends Serializable> {
      * @param key the key of the entity to delete.
      */
     public boolean delete(I key) {
-        T entity = find(key);
+        /* T entity = find(key);
         if (entity != null) {
             entityManager().remove(entity);
             return true;
         }
 
-        return false;
+        return false; */
+
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -133,8 +138,10 @@ public class JPARepository<T, I extends Serializable> {
      * @return the amount of persisted entities.
      */
     public long count() {
-        Query query = entityManager().createQuery("SELECT COUNT(e) FROM " + entityClass.getSimpleName() + " e");
-        return (Long) query.getSingleResult();
+        /* Query query = entityManager().createQuery("SELECT COUNT(e) FROM " + entityClass.getSimpleName() + " e");
+        return (Long) query.getSingleResult(); */
+
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -142,13 +149,13 @@ public class JPARepository<T, I extends Serializable> {
      *
      * @return the entity manager.
      */
-    protected EntityManager entityManager() {
+    /* protected EntityManager entityManager() {
         if (entityManager == null || !entityManager.isOpen()) {
             entityManager = entityManagerFactory().createEntityManager();
         }
 
         return entityManager;
-    }
+    } */
 
     /**
      * Finds the result of a single result query.
@@ -156,24 +163,24 @@ public class JPARepository<T, I extends Serializable> {
      * @param query the query to execute.
      * @return the result of the query or null if none was found.
      */
-    protected static Object singleResult(Query query) {
+    /*protected static Object singleResult(Query query) {
         try {
             return query.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
-    }
+    }*/
 
     /**
      * Creates the entity manager factory if it hasn't already been created.
      *
      * @return the entity manager factory.
      */
-    private static EntityManagerFactory entityManagerFactory() {
+    /*private static EntityManagerFactory entityManagerFactory() {
         if (entityManagerFactory == null) {
-            entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+            entityManagerFactory = new HibernatePersistenceProvider().createEntityManagerFactory(PERSISTENCE_UNIT_NAME, null);
         }
 
         return entityManagerFactory;
-    }
+    }*/
 }

@@ -1,6 +1,6 @@
 package foxsgr.clandestinos.persistence;
 
-import foxsgr.clandestinos.persistence.jpa.JPARepositoryFactory;
+import foxsgr.clandestinos.persistence.yaml.YAMLRepositoryFactory;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class PersistenceContext {
@@ -20,7 +20,6 @@ public final class PersistenceContext {
 
     @SuppressWarnings({"unused", "squid:CommentedOutCodeLine"})
     public static void init(JavaPlugin plugin) {
-        // repositoryFactory = new YAMLRepositoryFactory(plugin);
-        repositoryFactory = new JPARepositoryFactory();
+        repositoryFactory = new YAMLRepositoryFactory(plugin);
     }
 }

@@ -1,53 +1,53 @@
 package foxsgr.clandestinos.persistence.yaml;
 
+import foxsgr.clandestinos.domain.model.clan.ClanTag;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.persistence.ClanPlayerRepository;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 class ClanPlayerRepositoryYAML extends YAMLRepository implements ClanPlayerRepository {
 
-    ClanPlayerRepositoryYAML(@NotNull File configurationFile, @NotNull FileConfiguration fileConfiguration) {
-        super(configurationFile, fileConfiguration, "players");
+    private List<ClanPlayer> cache;
+
+    ClanPlayerRepositoryYAML(JavaPlugin plugin) {
+        super(plugin, "players.yml");
+        cache = new ArrayList<>();
     }
 
     @Override
     public ClanPlayer find(String id) {
-/*        ConfigurationSection playerSection = subSection(id);
+        ConfigurationSection playerSection = section(id);
         if (playerSection == null) {
             return null;
         }
 
         int killCount = playerSection.getInt("kill-count");
+        int deathCount = playerSection.getInt("death-count");
         String clanTag = playerSection.getString("clan-tag");
-        if (clanTag == null) {
-            return new ClanPlayer(id, killCount, null);
-        } else {
-            return new ClanPlayer(id, killCount, new ClanTag(clanTag));
-        }*/
-
-        throw new UnsupportedOperationException();
+        return new ClanPlayer(id, killCount, deathCount, clanTag);
     }
 
     @Override
-    public ClanPlayer save(ClanPlayer clanPlayer) {
-/*        ConfigurationSection section = section();
-        ConfigurationSection playerSection = section.getConfigurationSection(clanPlayer.id());
-        if (playerSection == null) {
-            playerSection = section.createSection(clanPlayer.id());
+    public void save(ClanPlayer clanPlayer) {
+        FileConfiguration fileConfiguration = load();
+        ConfigurationSection section = fileConfiguration.getConfigurationSection(clanPlayer.id());
+        if (section == null) {
+            section = fileConfiguration.createSection(clanPlayer.id());
         }
 
-        playerSection.set("kill-count", clanPlayer.killCount());
+        section.set("kill-count", clanPlayer.killCount().value());
+        section.set("death-count", clanPlayer.deathCount().value());
 
-        ClanTag clanTag = clanPlayer.clanTag();
+        ClanTag clanTag = clanPlayer.clan();
         if (clanTag != null) {
-            playerSection.set("clan-tag", clanTag.value());
+            section.set("clan-tag", clanTag.value());
         }
 
-        update();*/
-
-        throw new UnsupportedOperationException();
+        update(fileConfiguration);
     }
 }

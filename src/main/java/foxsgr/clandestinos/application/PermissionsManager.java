@@ -2,9 +2,16 @@ package foxsgr.clandestinos.application;
 
 import org.bukkit.command.CommandSender;
 
-public class PermissionsManager {
+public final class PermissionsManager {
 
     private static final String PERMISSIONS_ROOT = "clandestinos.";
+
+    /**
+     * Private constructor to hide the implicit public one.
+     */
+    private PermissionsManager() {
+        // Should be empty.
+    }
 
     public static boolean hasForSubCommandWarn(CommandSender player, String subCommand) {
         if (!hasForSubCommand(player, subCommand)) {

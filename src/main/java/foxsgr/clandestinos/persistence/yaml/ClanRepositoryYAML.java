@@ -2,55 +2,53 @@ package foxsgr.clandestinos.persistence.yaml;
 
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.persistence.ClanRepository;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
+import java.util.List;
 
 class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
 
-    ClanRepositoryYAML(@NotNull File configurationFile, @NotNull FileConfiguration fileConfiguration) {
-        super(configurationFile, fileConfiguration, "clans");
+    private FileConfiguration fileConfiguration;
+
+    ClanRepositoryYAML(JavaPlugin plugin) {
+        super(plugin, "clans.yml");
+        fileConfiguration = load();
     }
 
     @Override
     public Clan findByTag(String tag) {
-/*        ConfigurationSection clanSection = subSection(tag);
+        ConfigurationSection clanSection = fileConfiguration.getConfigurationSection(tag);
         if (clanSection == null) {
             return null;
         }
 
         String name = clanSection.getString("name");
-        String ownerId = clanSection.getString("ownerId");
-        String coloredTag = clanSection.getString("colored-tag");
+        String owner = clanSection.getString("owner");
+        String coloredTag = clanSection.getString("tag");
+        List<String> leaders = clanSection.getStringList("leaders");
         List<String> members = clanSection.getStringList("members");
-        return new Clan(coloredTag, name, ownerId, members);*/
-
-        throw new UnsupportedOperationException();
+        return new Clan(coloredTag, name, owner, leaders, members);
     }
 
     @Override
-    public Clan save(Clan clan) {
-/*        ConfigurationSection section = section();
-
+    public boolean add(Clan clan) {
         String tag = clan.tag().value();
-        for (String otherClanTag : section.getKeys(false)) {
-            if (tag.equalsIgnoreCase(otherClanTag)) {
+        String tagWithoutColor = clan.tag().withoutColor().value();
+        for (String otherClanTag : fileConfiguration.getKeys(false)) {
+            if (tagWithoutColor.equalsIgnoreCase(otherClanTag)) {
                 return false;
             }
         }
 
-        ConfigurationSection clanSection = section.getConfigurationSection(clan.tag().value());
-        if (clanSection == null) {
-            clanSection = section.createSection(clan.tag().value());
-        }
-
+        ConfigurationSection clanSection = fileConfiguration.createSection(tagWithoutColor);
+        clanSection.set("tag", tag);
         clanSection.set("name", clan.name().value());
-        clanSection.set("owner-id", clan.ownerId());
-        clanSection.set("colored-tag", clan.coloredTag().value());
+        clanSection.set("owner", clan.owner());
+        clanSection.set("leaders", clan.members());
         clanSection.set("members", clan.members());
-        return true;*/
-
-        return null;
+        update(fileConfiguration);
+        return true;
     }
 }

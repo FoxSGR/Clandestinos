@@ -1,7 +1,7 @@
-package foxsgr.clandestinos.domain.model.clan;
+package foxsgr.clandestinos.domain.model.clans.clan;
 
 import clandestino.lib.Preconditions;
-import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
+import foxsgr.clandestinos.domain.model.clans.clanplayer.ClanPlayer;
 
 import javax.persistence.*;
 import java.util.*;

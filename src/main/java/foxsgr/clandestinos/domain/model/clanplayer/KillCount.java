@@ -1,4 +1,4 @@
-package foxsgr.clandestinos.domain.model.clanplayer;
+package foxsgr.clandestinos.domain.model.clans.clanplayer;
 
 import javax.persistence.Embeddable;
 

@@ -15,6 +15,7 @@ public class JPARepositoryFactory implements RepositoryFactory {
     public JPARepositoryFactory() {
         clanPlayerRepository = new ClanPlayerRepositoryJPA();
         clanRepository = new ClanRepositoryJPA();
+        inviteRepository = new InviteRepositoryJPA();
     }
 
     @Override

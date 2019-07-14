@@ -1,4 +1,4 @@
-package foxsgr.clandestinos.domain.model.clan;
+package foxsgr.clandestinos.domain.model.clans.clan;
 
 import clandestino.lib.Preconditions;
 import foxsgr.clandestinos.application.ConfigManager;

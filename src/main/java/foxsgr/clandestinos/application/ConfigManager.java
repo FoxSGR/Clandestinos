@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("WeakerAccess")
 public class ConfigManager {
 
     public static final String MIN_TAG_LENGTH = "min-tag-length";
@@ -17,6 +16,8 @@ public class ConfigManager {
     public static final String MAX_NAME_LENGTH = "max-name-length";
     public static final String ONLINE_MODE = "online-mode";
     public static final String FORBIDDEN_TAGS = "forbidden-tags";
+    public static final String CHAT_FORMAT = "chat-format";
+    public static final String CLAN_FORMAT = "clan-format";
 
     private final JavaPlugin plugin;
 
@@ -28,25 +29,28 @@ public class ConfigManager {
         createDefaultConfig();
     }
 
-    public static Integer getInt(String key) {
-        return instance.plugin.getConfig().getInt(key);
+    public Integer getInt(String key) {
+        return plugin.getConfig().getInt(key);
     }
 
-    public static String getString(String key) {
-        return instance.plugin.getConfig().getString(key);
+    public String getString(String key) {
+        return plugin.getConfig().getString(key);
     }
 
-    public static boolean getBoolean(String key) {
-        return instance.plugin.getConfig().getBoolean(key);
+    public boolean getBoolean(String key) {
+        return plugin.getConfig().getBoolean(key);
     }
 
-    public static List<String> getStringList(String key) {
-        return instance.plugin.getConfig().getStringList(key);
+    public List<String> getStringList(String key) {
+        return plugin.getConfig().getStringList(key);
+    }
+
+    public static ConfigManager getInstance() {
+        return instance;
     }
 
     static void init(JavaPlugin plugin) {
         instance = new ConfigManager(plugin);
-        plugin.reloadConfig();
         instance.save();
     }
 
@@ -65,12 +69,19 @@ public class ConfigManager {
 
     private void createDefaultConfig() {
         Configuration config = plugin.getConfig();
+        config.addDefault(CHAT_FORMAT, "");
         config.addDefault(MIN_TAG_LENGTH, 3);
         config.addDefault(MAX_TAG_LENGTH, 5);
         config.addDefault(MIN_NAME_LENGTH, 3);
         config.addDefault(MAX_NAME_LENGTH, 10);
-        config.addDefault(ONLINE_MODE, true);
+        config.addDefault(ONLINE_MODE, false); // TODO: Change if plugin gets published
         config.addDefault(FORBIDDEN_TAGS, new ArrayList<>());
+
+        // Must have at least "{player}" and "{content}"
+        config.addDefault(CHAT_FORMAT, String.format("%s%s%s > %s", ChatManager.PREFIX_PLACEHOLDER,
+                ChatManager.FORMATTED_CLAN_TAG_PLACEHOLDER, ChatManager.PLAYER_PLACEHOLDER,
+                ChatManager.CONTENT_PLACEHOLDER));
+        config.addDefault(CLAN_FORMAT, "&8[" + ChatManager.COLORED_CLAN_TAG_PLACEHOLDER + "&8] ");
         config.options().copyDefaults(true);
     }
 }

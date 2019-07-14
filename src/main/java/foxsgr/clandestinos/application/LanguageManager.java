@@ -1,6 +1,6 @@
 package foxsgr.clandestinos.application;
 
-import clandestino.lib.TextUtil;
+import foxsgr.clandestinos.util.TextUtil;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -39,6 +39,7 @@ public class LanguageManager {
     public static final String PLAYER_INVITED = "player-invited";
     public static final String RECEIVED_INVITE = "received-invite";
     public static final String ALREADY_INVITED = "already-invited";
+    public static final String ALREADY_IN_YOUR_CLAN = "already-in-your-clan";
 
     private JavaPlugin plugin;
     private Map<String, String> strings;
@@ -106,11 +107,13 @@ public class LanguageManager {
     }
 
     private void setupStrings() {
+        ConfigManager configManager = ConfigManager.getInstance();
+
         // Replace {0} with the the proper value
-        replaceString(WRONG_SIZE_TAG, placeholder(0), ConfigManager.getInt(ConfigManager.MIN_TAG_LENGTH));
-        replaceString(WRONG_SIZE_TAG, placeholder(1), ConfigManager.getInt(ConfigManager.MAX_TAG_LENGTH));
-        replaceString(WRONG_SIZE_NAME, placeholder(0), ConfigManager.getInt(ConfigManager.MIN_NAME_LENGTH));
-        replaceString(WRONG_SIZE_NAME, placeholder(1), ConfigManager.getInt(ConfigManager.MAX_NAME_LENGTH));
+        replaceString(WRONG_SIZE_TAG, placeholder(0), configManager.getInt(ConfigManager.MIN_TAG_LENGTH));
+        replaceString(WRONG_SIZE_TAG, placeholder(1), configManager.getInt(ConfigManager.MAX_TAG_LENGTH));
+        replaceString(WRONG_SIZE_NAME, placeholder(0), configManager.getInt(ConfigManager.MIN_NAME_LENGTH));
+        replaceString(WRONG_SIZE_NAME, placeholder(1), configManager.getInt(ConfigManager.MAX_NAME_LENGTH));
     }
 
     private void replaceString(String key, String toReplace, Object replaceInto) {
@@ -148,6 +151,8 @@ public class LanguageManager {
         fileConfiguration.addDefault(PLAYER_INVITED, "&aThe player {0} &ahas been invited to join your clan.");
         fileConfiguration.addDefault(RECEIVED_INVITE, "&aYou were invited to join the {0} &aclan. Use /clan join {1} to accept.");
         fileConfiguration.addDefault(ALREADY_INVITED, "&cThat player has already been invited to your clan.");
+        fileConfiguration.addDefault(ALREADY_IN_YOUR_CLAN, "&cThat player is already in your clan.");
+        fileConfiguration.options().copyDefaults(true);
         return fileConfiguration;
     }
 }

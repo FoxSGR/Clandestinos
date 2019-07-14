@@ -1,9 +1,9 @@
 package foxsgr.clandestinos.persistence;
 
-import foxsgr.clandestinos.domain.model.invite.Invite;
+import foxsgr.clandestinos.domain.model.Invite;
 
 public interface InviteRepository {
 
-    Invite save(Invite invite);
-    Invite findPending(String invited, String clanTag);
+    void add(Invite invite);
+    Invite find(String invited, String clanTag);
 }
