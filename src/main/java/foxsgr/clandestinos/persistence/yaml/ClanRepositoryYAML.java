@@ -2,72 +2,85 @@ package foxsgr.clandestinos.persistence.yaml;
 
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.persistence.ClanRepository;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 
 class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
 
-    private FileConfiguration fileConfiguration;
+    private Map<String, Clan> cache;
 
     ClanRepositoryYAML(JavaPlugin plugin) {
-        super(plugin, "clans.yml");
-        fileConfiguration = load();
+        super(plugin, "clans");
+        cache = new HashMap<>();
     }
 
     @Override
     public Clan findByTag(String tag) {
-        ConfigurationSection clanSection = fileConfiguration.getConfigurationSection(tag);
-        if (clanSection == null) {
+        if (cache.containsKey(tag)) {
+            return cache.get(tag);
+        }
+
+        FileConfiguration fileConfiguration = file(tag);
+        if (fileConfiguration == null) {
             return null;
         }
 
-        String name = clanSection.getString("name");
-        String owner = clanSection.getString("owner");
-        String coloredTag = clanSection.getString("tag");
-        List<String> leaders = clanSection.getStringList("leaders");
-        List<String> members = clanSection.getStringList("members");
+        String name = fileConfiguration.getString("name");
+        String owner = fileConfiguration.getString("owner");
+        String coloredTag = fileConfiguration.getString("tag");
+        List<String> leaders = fileConfiguration.getStringList("leaders");
+        List<String> members = fileConfiguration.getStringList("members");
         return new Clan(coloredTag, name, owner, leaders, members);
     }
 
     @Override
     public boolean add(Clan clan) {
-        String tagWithoutColor = clan.tag().withoutColor().value();
-        for (String otherClanTag : fileConfiguration.getKeys(false)) {
-            if (tagWithoutColor.equalsIgnoreCase(otherClanTag)) {
-                return false;
+        File[] clanFiles = repositoryFolder.listFiles();
+
+        if (clanFiles != null) {
+            String tagWithoutColor = clan.tag().withoutColor().value();
+            for (File clanFile : clanFiles) {
+                String fileName = clanFile.getName().replace(".yml", "");
+                if (tagWithoutColor.equalsIgnoreCase(fileName)) {
+                    return false;
+                }
             }
         }
 
-        ConfigurationSection clanSection = fileConfiguration.createSection(tagWithoutColor);
-        fillSection(clanSection, clan);
+        fillConfiguration(new YamlConfiguration(), clan);
         return true;
     }
 
     @Override
     public void update(Clan clan) {
-        ConfigurationSection clanSection = fileConfiguration.getConfigurationSection(clan.tag().withoutColor().value());
-        if (clanSection == null) {
-            throw new IllegalStateException("Could not update a clan because it does not exist.");
-        }
+        FileConfiguration fileConfiguration = file(clan.tag().withoutColor().value());
+        fillConfiguration(fileConfiguration, clan);
 
-        fillSection(clanSection, clan);
+        cache.put(clan.tag().withoutColor().value(), clan);
     }
 
     @Override
     public void remove(Clan clan) {
-        fileConfiguration.set(clan.tag().withoutColor().value(), null);
-        update(fileConfiguration);
+        if (!makeFile(clan.tag().value()).delete()) {
+            logger().log(Level.WARNING, "Could not delete the clan file {0}", clan.tag().withoutColor().value());
+        } else {
+            cache.remove(clan.tag().withoutColor().value());
+        }
     }
 
-    private void fillSection(ConfigurationSection clanSection, Clan clan) {
-        clanSection.set("tag", clan.tag().value());
-        clanSection.set("name", clan.name().value());
-        clanSection.set("owner", clan.owner());
-        clanSection.set("leaders", clan.leaders());
-        clanSection.set("members", clan.members());
-        update(fileConfiguration);
+    private void fillConfiguration(FileConfiguration fileConfiguration, Clan clan) {
+        fileConfiguration.set("tag", clan.tag().value());
+        fileConfiguration.set("name", clan.name().value());
+        fileConfiguration.set("owner", clan.owner());
+        fileConfiguration.set("leaders", clan.leaders());
+        fileConfiguration.set("members", clan.members());
+        update(fileConfiguration, clan.tag().withoutColor().value());
     }
 }

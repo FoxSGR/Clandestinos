@@ -16,10 +16,10 @@ class ClanPlayerRepositoryYAML extends YAMLRepository implements ClanPlayerRepos
 
     private Map<String, ClanPlayer> cache;
 
-    public static final String CLAN_TAG = "clan-tag";
+    private static final String CLAN_TAG = "clan-tag";
 
     ClanPlayerRepositoryYAML(JavaPlugin plugin) {
-        super(plugin, "players.yml");
+        super(plugin, "players");
         cache = new HashMap<>();
     }
 
@@ -30,7 +30,7 @@ class ClanPlayerRepositoryYAML extends YAMLRepository implements ClanPlayerRepos
             return clanPlayer;
         }
 
-        ConfigurationSection playerSection = section(id);
+        ConfigurationSection playerSection = file(id);
         if (playerSection == null) {
             return null;
         }
@@ -43,27 +43,24 @@ class ClanPlayerRepositoryYAML extends YAMLRepository implements ClanPlayerRepos
         String id = clanPlayer.id();
         cache.put(id, clanPlayer);
 
-        FileConfiguration fileConfiguration = load();
-        ConfigurationSection section = fileConfiguration.getConfigurationSection(id);
-        if (section == null) {
-            section = fileConfiguration.createSection(id);
-        }
-
-        section.set("kill-count", clanPlayer.killCount().value());
-        section.set("death-count", clanPlayer.deathCount().value());
+        FileConfiguration fileConfiguration = loadFile(id);
+        fileConfiguration.set("kill-count", clanPlayer.killCount().value());
+        fileConfiguration.set("death-count", clanPlayer.deathCount().value());
 
         ClanTag clanTag = clanPlayer.clan();
         if (clanTag != null) {
-            section.set(CLAN_TAG, clanTag.value());
+            fileConfiguration.set(CLAN_TAG, clanTag.value());
+        } else {
+            fileConfiguration.set(CLAN_TAG, null);
         }
 
-        update(fileConfiguration);
+        update(fileConfiguration, id);
     }
 
     @Override
     public void load(String id) {
         ClanPlayer clanPlayer = find(id);
-        if (id != null) {
+        if (clanPlayer != null) {
             cache.put(clanPlayer.id(), clanPlayer);
         }
     }
@@ -75,25 +72,19 @@ class ClanPlayerRepositoryYAML extends YAMLRepository implements ClanPlayerRepos
 
     @Override
     public void leaveFromClan(Clan clan) {
-        FileConfiguration fileConfiguration = load();
-
         List<String> ids = clan.members();
         ids.addAll(clan.leaders());
 
         for (String id : ids) {
-            ConfigurationSection section = fileConfiguration.getConfigurationSection(id);
-            System.out.println("removing " + id + " from the clan");
-            if (section != null) {
-                System.out.println("it aint null");
-                section.set(CLAN_TAG, null);
+            FileConfiguration fileConfiguration = loadFile(id);
+            fileConfiguration.set(CLAN_TAG, null);
 
-                if (cache.containsKey(id)) {
-                    cache.put(id, constructPlayer(section, id));
-                }
+            if (cache.containsKey(id)) {
+                cache.put(id, constructPlayer(fileConfiguration, id));
             }
-        }
 
-        update(fileConfiguration);
+            update(fileConfiguration, id);
+        }
     }
 
     private static ClanPlayer constructPlayer(ConfigurationSection playerSection, String id) {

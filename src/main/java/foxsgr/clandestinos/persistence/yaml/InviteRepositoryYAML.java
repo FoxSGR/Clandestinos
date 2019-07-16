@@ -4,31 +4,34 @@ import foxsgr.clandestinos.domain.model.Invite;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clan.ClanTag;
 import foxsgr.clandestinos.persistence.InviteRepository;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.util.logging.Level;
 
 public class InviteRepositoryYAML extends YAMLRepository implements InviteRepository {
 
     InviteRepositoryYAML(JavaPlugin plugin) {
-        super(plugin, "invites.yml");
+        super(plugin, "invites");
     }
 
     @Override
     public void add(Invite invite) {
-        FileConfiguration fileConfiguration = load();
-        ConfigurationSection section = fileConfiguration.createSection(invite.id());
-        section.set("invited-to", invite.invitedTo().withoutColor().value());
-        section.set("invited-player", invite.invitedPlayer());
-        update(fileConfiguration);
+        FileConfiguration fileConfiguration = new YamlConfiguration();
+
+        fileConfiguration.set("invited-to", invite.invitedTo().withoutColor().value());
+        fileConfiguration.set("invited-player", invite.invitedPlayer());
+
+        update(fileConfiguration, invite.id());
     }
 
     @Override
     public Invite find(String invitedPlayer, String clanInvitedTo) {
-        FileConfiguration fileConfiguration = load();
         String id = clanInvitedTo + invitedPlayer;
-        ConfigurationSection section = fileConfiguration.getConfigurationSection(id);
-        if (section == null) {
+        File file = makeFile(id);
+        if (!file.exists()) {
             return null;
         }
 
@@ -38,21 +41,22 @@ public class InviteRepositoryYAML extends YAMLRepository implements InviteReposi
 
     @Override
     public void remove(Invite invite) {
-        FileConfiguration fileConfiguration = load();
-        fileConfiguration.set(invite.id(), null);
-        update(fileConfiguration);
+        if (!makeFile(invite.id()).delete()) {
+            logger().log(Level.WARNING, "Could not delete the invite file {0}.yml", invite.id());
+        }
     }
 
     @Override
     public void removeAllFrom(Clan clan) {
-        FileConfiguration fileConfiguration = load();
-
-        for (String key : fileConfiguration.getKeys(false)) {
-            if (key.contains(clan.tag().withoutColor().value())) {
-                fileConfiguration.set(key, null);
-            }
+        File[] inviteFiles = repositoryFolder.listFiles();
+        if (inviteFiles == null) {
+            return;
         }
 
-        update(fileConfiguration);
+        for (File inviteFile : inviteFiles) {
+            if (!inviteFile.delete()) {
+                logger().log(Level.WARNING, "Could not delete the invite file {0}.yml", inviteFile.getName());
+            }
+        }
     }
 }
