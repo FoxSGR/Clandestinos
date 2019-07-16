@@ -66,7 +66,7 @@ class InvitePlayerHandler {
         }
 
         Clan clan = clanRepository.findByTag(inviterClanPlayer.clan().withoutColor().value());
-        if (clan.isLeader(inviterClanPlayer)) {
+        if (!clan.isLeader(inviterClanPlayer)) {
             sender.sendMessage(languageManager.get(LanguageManager.MUST_BE_LEADER));
             return null;
         }

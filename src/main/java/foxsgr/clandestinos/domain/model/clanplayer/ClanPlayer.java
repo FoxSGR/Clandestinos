@@ -84,4 +84,12 @@ public class ClanPlayer {
     public void leaveClan() {
         clan = null;
     }
+
+    public void incKillCount() {
+        killCount = killCount.increment();
+    }
+
+    public void incDeathCount() {
+        deathCount = deathCount.increment();
+    }
 }

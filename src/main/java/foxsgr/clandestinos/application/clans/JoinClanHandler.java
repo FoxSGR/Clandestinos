@@ -31,6 +31,12 @@ class JoinClanHandler {
 
         Player player = (Player) sender;
         String id = ClanPlayerFinder.idFromPlayer(player);
+        ClanPlayer clanPlayer = clanPlayerRepository.find(id);
+        if (clanPlayer != null && clanPlayer.inClan()) {
+            sender.sendMessage(languageManager.get(LanguageManager.CANNOT_IN_CLAN));
+            return;
+        }
+
         Invite invite = inviteRepository.find(id, args[1]);
         if (invite == null) {
             sender.sendMessage(languageManager.get(LanguageManager.NOT_INVITED));

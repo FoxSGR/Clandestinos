@@ -18,4 +18,8 @@ public class KillCount {
     public int value() {
         return value;
     }
+
+    public KillCount increment() {
+        return new KillCount(value + 1);
+    }
 }

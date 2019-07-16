@@ -18,4 +18,8 @@ public class DeathCount {
     public int value() {
         return value;
     }
+
+    public DeathCount increment() {
+        return new DeathCount(value + 1);
+    }
 }

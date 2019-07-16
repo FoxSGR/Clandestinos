@@ -51,6 +51,7 @@ public class LanguageManager {
     public static final String OWNER_CANT_LEAVE = "owner-cant-leave";
     public static final String MUST_BE_OWNER = "must-be-owner";
     public static final String CLAN_DISBANDED = "clan-disbanded";
+    public static final String LEFT_CLAN = "left-clan";
 
     private JavaPlugin plugin;
     private Map<String, String> strings;
@@ -179,6 +180,7 @@ public class LanguageManager {
         fileConfiguration.addDefault(OWNER_CANT_LEAVE, "&cYou are the owner of your clan. To leave your clan, you must use &b/clan makeowner (player) &cor &b/clan disband");
         fileConfiguration.addDefault(MUST_BE_OWNER, "&cOnly the owner of the clan can perform that command.");
         fileConfiguration.addDefault(CLAN_DISBANDED, "&aThe clan {0} &awas disbanded.");
+        fileConfiguration.addDefault(LEFT_CLAN, "&a{0} &aleft {1}&a.");
         fileConfiguration.options().copyDefaults(true);
         return fileConfiguration;
     }

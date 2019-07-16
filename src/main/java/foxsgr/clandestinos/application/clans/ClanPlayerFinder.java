@@ -26,7 +26,7 @@ public final class ClanPlayerFinder {
      * @param player the player to look for.
      * @return the found or created player.
      */
-    static ClanPlayer get(Player player) {
+    public static ClanPlayer get(Player player) {
         String id = idFromPlayer(player);
 
         ClanPlayerRepository clanPlayerRepository = PersistenceContext.repositories().players();
