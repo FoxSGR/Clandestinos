@@ -3,7 +3,7 @@ package foxsgr.clandestinos.persistence;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 
-public interface ClanPlayerRepository {
+public interface PlayerRepository {
 
     ClanPlayer find(String id);
 

@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 public interface RepositoryFactory {
 
     @NotNull
-    ClanPlayerRepository players();
+    PlayerRepository players();
 
     @NotNull
     ClanRepository clans();

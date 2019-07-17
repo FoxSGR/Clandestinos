@@ -2,9 +2,9 @@ package foxsgr.clandestinos.persistence.jpa;
 
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
-import foxsgr.clandestinos.persistence.ClanPlayerRepository;
+import foxsgr.clandestinos.persistence.PlayerRepository;
 
-class ClanPlayerRepositoryJPA implements ClanPlayerRepository {
+class PlayerRepositoryJPA implements PlayerRepository {
 
     @Override
     public ClanPlayer find(String id) {

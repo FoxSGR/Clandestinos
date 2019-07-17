@@ -3,7 +3,7 @@ package foxsgr.clandestinos.persistence.yaml;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clan.ClanTag;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
-import foxsgr.clandestinos.persistence.ClanPlayerRepository;
+import foxsgr.clandestinos.persistence.PlayerRepository;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -12,13 +12,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class ClanPlayerRepositoryYAML extends YAMLRepository implements ClanPlayerRepository {
+class PlayerRepositoryYAML extends YAMLRepository implements PlayerRepository {
 
     private Map<String, ClanPlayer> cache;
 
     private static final String CLAN_TAG = "clan-tag";
 
-    ClanPlayerRepositoryYAML(JavaPlugin plugin) {
+    PlayerRepositoryYAML(JavaPlugin plugin) {
         super(plugin, "players");
         cache = new HashMap<>();
     }
@@ -54,7 +54,7 @@ class ClanPlayerRepositoryYAML extends YAMLRepository implements ClanPlayerRepos
             fileConfiguration.set(CLAN_TAG, null);
         }
 
-        update(fileConfiguration, id);
+        saveFile(fileConfiguration, id);
     }
 
     @Override
@@ -72,9 +72,7 @@ class ClanPlayerRepositoryYAML extends YAMLRepository implements ClanPlayerRepos
 
     @Override
     public void leaveFromClan(Clan clan) {
-        List<String> ids = clan.members();
-        ids.addAll(clan.leaders());
-
+        List<String> ids = clan.allPlayers();
         for (String id : ids) {
             FileConfiguration fileConfiguration = loadFile(id);
             fileConfiguration.set(CLAN_TAG, null);
@@ -83,7 +81,8 @@ class ClanPlayerRepositoryYAML extends YAMLRepository implements ClanPlayerRepos
                 cache.put(id, constructPlayer(fileConfiguration, id));
             }
 
-            update(fileConfiguration, id);
+            cache.remove(id);
+            saveFile(fileConfiguration, id);
         }
     }
 
