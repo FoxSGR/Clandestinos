@@ -24,7 +24,7 @@ public class LeaveClanHandler {
         }
 
         Clan clan = clanRepository.findByTag(clanPlayer.clan().withoutColor().value());
-        if (clan.isOwner(clanPlayer.id())) {
+        if (clan.isOwner(clanPlayer)) {
             sender.sendMessage(languageManager.get(LanguageManager.OWNER_CANT_LEAVE));
             return;
         }

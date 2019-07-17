@@ -68,11 +68,11 @@ public class Clan {
     }
 
     public boolean isMember(ClanPlayer player) {
-        return members.contains(player);
+        return members.contains(player.id());
     }
 
-    public void remove(ClanPlayer clanPlayer) {
-        leaders.remove(clanPlayer.id());
-        members.remove(clanPlayer.id());
+    public void remove(ClanPlayer player) {
+        leaders.remove(player.id());
+        members.remove(player.id());
     }
 }

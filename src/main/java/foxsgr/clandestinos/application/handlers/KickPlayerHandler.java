@@ -8,6 +8,7 @@ import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.persistence.ClanRepository;
 import foxsgr.clandestinos.persistence.PersistenceContext;
 import foxsgr.clandestinos.persistence.PlayerRepository;
+import foxsgr.clandestinos.util.TextUtil;
 import org.bukkit.command.CommandSender;
 
 public class KickPlayerHandler {
@@ -32,22 +33,40 @@ public class KickPlayerHandler {
             return;
         }
 
-        ClanPlayer kicked = Finder.playerByName(sender, args[1]);
+        String id = Finder.idFromName(args[1]);
+        ClanPlayer kicked = playerRepository.find(id);
         if (kicked == null) {
             LanguageManager.send(sender, LanguageManager.NOT_IN_YOUR_CLAN);
             return;
         }
 
+        if (kicker.equals(kicked)) {
+            LanguageManager.send(sender, LanguageManager.CANNOT_KICK_YOURSELF);
+            return;
+        }
+
         if (clan.isLeader(kicked)) {
             if (clan.isOwner(kicker)) {
-                // TODO: kick
+                kick(sender, kicked, clan);
             } else {
-                // TODO: send 'only the owner can kick a leader' message
+                LanguageManager.send(sender, LanguageManager.ONLY_OWNER_KICK_LEADER);
             }
         } else if (clan.isMember(kicked)) {
-            // TODO: kick
+            kick(sender, kicked, clan);
         } else {
             LanguageManager.send(sender, LanguageManager.NOT_IN_YOUR_CLAN);
         }
+    }
+
+    private void kick(CommandSender sender, ClanPlayer player, Clan clan) {
+        clan.remove(player);
+        player.leaveClan();
+        clanRepository.update(clan);
+        playerRepository.save(player);
+
+        String message = languageManager.get(LanguageManager.PLAYER_KICKED)
+                .replace(LanguageManager.placeholder(0), Finder.nameFromId(player.id()))
+                .replace(LanguageManager.placeholder(1), clan.tag().value());
+        sender.getServer().broadcastMessage(TextUtil.translateColoredText(message));
     }
 }

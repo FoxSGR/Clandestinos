@@ -37,6 +37,7 @@ public class LanguageManager {
     public static final String WRONG_SIZE_NAME = "wrong-size-name";
     public static final String MUST_BE_PLAYER = "must-be-player";
     public static final String MUST_BE_LEADER = "must-be-leader";
+    public static final String MUST_BE_OWNER = "must-be-owner";
     public static final String ONLY_LETTERS_TAG = "only-letters-tag";
     public static final String FORBIDDEN_TAG = "forbidden-tag";
     public static final String CLAN_CREATED = "clan-created";
@@ -54,7 +55,6 @@ public class LanguageManager {
     public static final String UNKNOWN_COMMAND = "unknown-command";
     public static final String NO_MONEY_CREATE = "no-money-create";
     public static final String OWNER_CANT_LEAVE = "owner-cant-leave";
-    public static final String MUST_BE_OWNER = "must-be-owner";
     public static final String CLAN_DISBANDED = "clan-disbanded";
     public static final String LEFT_CLAN = "left-clan";
     public static final String UNKNOWN_PLAYER = "unknown-player";
@@ -70,6 +70,9 @@ public class LanguageManager {
     public static final String PLAYER = "player";
     public static final String CLAN = "clan";
     public static final String NOT_IN_YOUR_CLAN = "not-in-your-clan";
+    public static final String ONLY_OWNER_KICK_LEADER = "only-owner-kick-leader";
+    public static final String PLAYER_KICKED = "player-kicked";
+    public static final String CANNOT_KICK_YOURSELF = "cannot-kick-yourself";
 
     private JavaPlugin plugin;
     private Map<String, String> strings;
@@ -185,6 +188,7 @@ public class LanguageManager {
         fileConfiguration.addDefault(NO_PERMISSION, "&cYou don't have permission to use that command.");
         fileConfiguration.addDefault(WRONG_SIZE_TAG, "&cThe tag must be between {0} and {1} characters long.");
         fileConfiguration.addDefault(WRONG_SIZE_NAME, "&cThe name must be between {0} and {1} characters long.");
+        fileConfiguration.addDefault(MUST_BE_OWNER, "&cOnly the owner of the clan can perform that command.");
         fileConfiguration.addDefault(MUST_BE_PLAYER, "&cOnly a player can perform that command!");
         fileConfiguration.addDefault(MUST_BE_LEADER, "&cYou must be a leader to use that command.");
         fileConfiguration.addDefault(FORBIDDEN_TAG, "&cYou can't use that tag.");
@@ -204,7 +208,6 @@ public class LanguageManager {
         fileConfiguration.addDefault(UNKNOWN_COMMAND, "&cUnkown command. Type &b/clan &cfor a list of commands.");
         fileConfiguration.addDefault(NO_MONEY_CREATE, "&cYou don't have enough money to create a clan. You need at least {0}.");
         fileConfiguration.addDefault(OWNER_CANT_LEAVE, "&cYou are the owner of your clan. To leave your clan, you must use &b/clan makeowner (player) &cor &b/clan disband");
-        fileConfiguration.addDefault(MUST_BE_OWNER, "&cOnly the owner of the clan can perform that command.");
         fileConfiguration.addDefault(CLAN_DISBANDED, "&aThe clan {0} &awas disbanded.");
         fileConfiguration.addDefault(LEFT_CLAN, "&a{0} &aleft {1}&a.");
         fileConfiguration.addDefault(UNKNOWN_PLAYER, "&cThat player is not in the clan database.");
@@ -220,6 +223,10 @@ public class LanguageManager {
         fileConfiguration.addDefault(MONEY_TAKEN, "&a{0} has been removed from your account.");
         fileConfiguration.addDefault(PLAYER, "&bPlayer&f");
         fileConfiguration.addDefault(NOT_IN_YOUR_CLAN, "&cThat player is not in your clan.");
+        fileConfiguration.addDefault(ONLY_OWNER_KICK_LEADER, "&cOnly the owner of the clan can kick a leader.");
+        fileConfiguration.addDefault(PLAYER_KICKED, "&a{0} &awas kicked out of {1}&a.");
+        fileConfiguration.addDefault(CANNOT_KICK_YOURSELF, "&cYou can't kick yourself. Use &b/clan leave &cto leave your clan or &b/clan disband &cif you're the owner.");
+
         fileConfiguration.options().copyDefaults(true);
         return fileConfiguration;
     }

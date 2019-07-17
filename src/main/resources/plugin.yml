@@ -28,3 +28,4 @@ permissions:
       clandestinos.leave: true
       clandestinos.join: true
       clandestinos.disband: true
+      clandestinos.kick: true

@@ -25,7 +25,7 @@ public class DisbandClanHandler {
         }
 
         Clan clan = clanRepository.findByTag(owner.clan().withoutColor().value());
-        if (!clan.isOwner(owner.id())) {
+        if (!clan.isOwner(owner)) {
             sender.sendMessage(languageManager.get(LanguageManager.MUST_BE_OWNER));
             return;
         }

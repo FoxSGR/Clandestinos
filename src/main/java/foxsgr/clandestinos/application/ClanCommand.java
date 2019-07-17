@@ -23,6 +23,7 @@ public class ClanCommand implements CommandExecutor {
     private static final String LEAVE_COMMAND = "leave";
     private static final String DISBAND_COMMAND = "disband";
     private static final String INFO_COMMAND = "info";
+    private static final String KICK_COMMAND = "kick";
 
     public ClanCommand(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -56,8 +57,10 @@ public class ClanCommand implements CommandExecutor {
             new DisbandClanHandler().disbandClan(sender);
         } else if (subCommand.equalsIgnoreCase(INFO_COMMAND)) {
             new InfoHandler().showInfo(sender, args);
+        } else if (subCommand.equalsIgnoreCase(KICK_COMMAND)) {
+            new KickPlayerHandler().kickPlayer(sender, args);
         } else {
-            sender.sendMessage(LanguageManager.UNKNOWN_COMMAND);
+            LanguageManager.send(sender, LanguageManager.UNKNOWN_COMMAND);
         }
 
         return true;
@@ -71,6 +74,7 @@ public class ClanCommand implements CommandExecutor {
         appendSubCommand(sender, builder, LEAVE_COMMAND, LanguageManager.LEAVE_USAGE);
         appendSubCommand(sender, builder, RELOAD_COMMAND, LanguageManager.RELOAD_USAGE);
         appendSubCommand(sender, builder, DISBAND_COMMAND, LanguageManager.DISBAND_USAGE);
+        appendSubCommand(sender, builder, KICK_COMMAND, LanguageManager.KICK_USAGE);
         appendSubCommand(sender, builder, INFO_COMMAND, LanguageManager.INFO_USAGE);
         sender.sendMessage(builder.toString());
     }

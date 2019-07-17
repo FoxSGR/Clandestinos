@@ -81,7 +81,6 @@ class PlayerRepositoryYAML extends YAMLRepository implements PlayerRepository {
                 cache.put(id, constructPlayer(fileConfiguration, id));
             }
 
-            cache.remove(id);
             saveFile(fileConfiguration, id);
         }
     }
