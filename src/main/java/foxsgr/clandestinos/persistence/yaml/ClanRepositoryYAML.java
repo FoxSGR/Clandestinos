@@ -23,11 +23,12 @@ class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
 
     @Override
     public Clan findByTag(String tag) {
-        if (cache.containsKey(tag)) {
-            return cache.get(tag);
+        String lowerCaseTag = tag.toLowerCase();
+        if (cache.containsKey(lowerCaseTag)) {
+            return cache.get(lowerCaseTag);
         }
 
-        FileConfiguration fileConfiguration = file(tag);
+        FileConfiguration fileConfiguration = file(lowerCaseTag);
         if (fileConfiguration == null) {
             return null;
         }
@@ -45,7 +46,7 @@ class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
         File[] clanFiles = repositoryFolder.listFiles();
 
         if (clanFiles != null) {
-            String tagWithoutColor = clan.tag().withoutColor().value();
+            String tagWithoutColor = properTag(clan);
             for (File clanFile : clanFiles) {
                 String fileName = clanFile.getName().replace(".yml", "");
                 if (tagWithoutColor.equalsIgnoreCase(fileName)) {
@@ -60,27 +61,31 @@ class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
 
     @Override
     public void update(Clan clan) {
-        FileConfiguration fileConfiguration = file(clan.tag().withoutColor().value());
+        FileConfiguration fileConfiguration = file(properTag(clan));
         fillConfiguration(fileConfiguration, clan);
-
-        cache.put(clan.tag().withoutColor().value(), clan);
     }
 
     @Override
     public void remove(Clan clan) {
-        if (!makeFile(clan.tag().value()).delete()) {
-            logger().log(Level.WARNING, "Could not delete the clan file {0}", clan.tag().withoutColor().value());
+        String properTag = properTag(clan);
+        if (!makeFile(properTag).delete()) {
+            logger().log(Level.WARNING, "Could not delete the clan file {0}", properTag);
         } else {
-            cache.remove(clan.tag().withoutColor().value());
+            cache.remove(properTag);
         }
     }
 
     private void fillConfiguration(FileConfiguration fileConfiguration, Clan clan) {
+        cache.put(properTag(clan), clan);
         fileConfiguration.set("tag", clan.tag().value());
         fileConfiguration.set("name", clan.name().value());
         fileConfiguration.set("owner", clan.owner());
         fileConfiguration.set("leaders", clan.leaders());
         fileConfiguration.set("members", clan.members());
-        update(fileConfiguration, clan.tag().withoutColor().value());
+        saveFile(fileConfiguration, properTag(clan));
+    }
+
+    private static String properTag(Clan clan) {
+        return clan.tag().withoutColor().value().toLowerCase();
     }
 }

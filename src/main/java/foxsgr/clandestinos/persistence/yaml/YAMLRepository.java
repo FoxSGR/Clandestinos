@@ -5,6 +5,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +28,7 @@ class YAMLRepository {
         return plugin.getLogger();
     }
 
+    @Nullable
     FileConfiguration file(String name) {
         FileConfiguration fileConfiguration = new YamlConfiguration();
         File file = makeFile(name);
@@ -43,7 +45,7 @@ class YAMLRepository {
         return fileConfiguration;
     }
 
-    void update(FileConfiguration newConfiguration, String fileName) {
+    void saveFile(FileConfiguration newConfiguration, String fileName) {
         try {
             newConfiguration.save(makeFile(fileName));
         } catch (IOException e) {

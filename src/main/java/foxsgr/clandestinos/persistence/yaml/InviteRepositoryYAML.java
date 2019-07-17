@@ -24,7 +24,7 @@ public class InviteRepositoryYAML extends YAMLRepository implements InviteReposi
         fileConfiguration.set("invited-to", invite.invitedTo().withoutColor().value());
         fileConfiguration.set("invited-player", invite.invitedPlayer());
 
-        update(fileConfiguration, invite.id());
+        saveFile(fileConfiguration, invite.id());
     }
 
     @Override

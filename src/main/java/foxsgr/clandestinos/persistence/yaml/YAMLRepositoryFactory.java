@@ -1,6 +1,6 @@
 package foxsgr.clandestinos.persistence.yaml;
 
-import foxsgr.clandestinos.persistence.ClanPlayerRepository;
+import foxsgr.clandestinos.persistence.PlayerRepository;
 import foxsgr.clandestinos.persistence.ClanRepository;
 import foxsgr.clandestinos.persistence.InviteRepository;
 import foxsgr.clandestinos.persistence.RepositoryFactory;
@@ -9,20 +9,20 @@ import org.jetbrains.annotations.NotNull;
 
 public class YAMLRepositoryFactory implements RepositoryFactory {
 
-    private ClanPlayerRepository clanPlayerRepository;
+    private PlayerRepository playerRepository;
     private ClanRepository clanRepository;
     private InviteRepository inviteRepository;
 
     public YAMLRepositoryFactory(@NotNull JavaPlugin plugin) {
-        clanPlayerRepository = new ClanPlayerRepositoryYAML(plugin);
+        playerRepository = new PlayerRepositoryYAML(plugin);
         clanRepository = new ClanRepositoryYAML(plugin);
         inviteRepository = new InviteRepositoryYAML(plugin);
     }
 
     @Override
     @NotNull
-    public ClanPlayerRepository players() {
-        return clanPlayerRepository;
+    public PlayerRepository players() {
+        return playerRepository;
     }
 
     @Override
