@@ -1,7 +1,6 @@
-package foxsgr.clandestinos.application.clans;
+package foxsgr.clandestinos.application;
 
-import foxsgr.clandestinos.application.LanguageManager;
-import foxsgr.clandestinos.application.PermissionsManager;
+import foxsgr.clandestinos.application.handlers.*;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -23,6 +22,7 @@ public class ClanCommand implements CommandExecutor {
     private static final String JOIN_COMMAND = "join";
     private static final String LEAVE_COMMAND = "leave";
     private static final String DISBAND_COMMAND = "disband";
+    private static final String INFO_COMMAND = "info";
 
     public ClanCommand(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -54,6 +54,8 @@ public class ClanCommand implements CommandExecutor {
             new LeaveClanHandler().leaveClan(sender);
         } else if (subCommand.equalsIgnoreCase(DISBAND_COMMAND)) {
             new DisbandClanHandler().disbandClan(sender);
+        } else if (subCommand.equalsIgnoreCase(INFO_COMMAND)) {
+            new InfoHandler().showInfo(sender, args);
         } else {
             sender.sendMessage(LanguageManager.UNKNOWN_COMMAND);
         }
@@ -69,6 +71,7 @@ public class ClanCommand implements CommandExecutor {
         appendSubCommand(sender, builder, LEAVE_COMMAND, LanguageManager.LEAVE_USAGE);
         appendSubCommand(sender, builder, RELOAD_COMMAND, LanguageManager.RELOAD_USAGE);
         appendSubCommand(sender, builder, DISBAND_COMMAND, LanguageManager.DISBAND_USAGE);
+        appendSubCommand(sender, builder, INFO_COMMAND, LanguageManager.INFO_USAGE);
         sender.sendMessage(builder.toString());
     }
 

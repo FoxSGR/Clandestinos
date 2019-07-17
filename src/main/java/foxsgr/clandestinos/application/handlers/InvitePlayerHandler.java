@@ -1,6 +1,8 @@
-package foxsgr.clandestinos.application.clans;
+package foxsgr.clandestinos.application.handlers;
 
+import foxsgr.clandestinos.application.Finder;
 import foxsgr.clandestinos.application.LanguageManager;
+import foxsgr.clandestinos.application.PlayerCommandValidator;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.domain.model.clan.ClanTag;
@@ -12,19 +14,19 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-class InvitePlayerHandler {
+public class InvitePlayerHandler {
 
     private final ClanRepository clanRepository = PersistenceContext.repositories().clans();
     private final InviteRepository inviteRepository = PersistenceContext.repositories().invites();
     private final LanguageManager languageManager = LanguageManager.getInstance();
 
-    void invitePlayer(CommandSender sender, String[] args) {
+    public void invitePlayer(CommandSender sender, String[] args) {
         if (!PlayerCommandValidator.validate(sender, args, 2, LanguageManager.WRONG_INVITE_USAGE)) {
             return;
         }
 
         Player inviter = (Player) sender;
-        ClanPlayer inviterClanPlayer = ClanPlayerFinder.get(inviter);
+        ClanPlayer inviterClanPlayer = Finder.getPlayer(inviter);
         Clan clan = canInvite(sender, inviterClanPlayer);
         if (clan == null) {
             return;
@@ -75,7 +77,7 @@ class InvitePlayerHandler {
     }
 
     private ClanPlayer canBeInvited(CommandSender inviter, Player invited, Clan clan) {
-        ClanPlayer invitedClanPlayer = ClanPlayerFinder.get(invited);
+        ClanPlayer invitedClanPlayer = Finder.getPlayer(invited);
         if (!invitedClanPlayer.inClan()) {
             return invitedClanPlayer;
         }

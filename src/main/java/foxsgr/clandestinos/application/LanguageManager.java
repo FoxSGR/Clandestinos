@@ -1,6 +1,7 @@
 package foxsgr.clandestinos.application;
 
 import foxsgr.clandestinos.util.TextUtil;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -21,11 +22,13 @@ public class LanguageManager {
     public static final String INVITE_USAGE = "invite-usage";
     public static final String RELOAD_USAGE = "reload-usage";
     public static final String LEAVE_USAGE = "leave-usage";
+    public static final String DISBAND_USAGE = "disband-usage";
+    public static final String INFO_USAGE = "info-usage";
 
     public static final String WRONG_CREATE_USAGE = "wrong-create-usage";
     public static final String WRONG_INVITE_USAGE = "wrong-invite-usage";
     public static final String WRONG_JOIN_USAGE = "wrong-join-usage";
-    public static final String DISBAND_USAGE = "disband-usage";
+    public static final String WRONG_INFO_USAGE = "wrong-info-usage";
 
     public static final String NO_PERMISSION = "no-permission";
     public static final String WRONG_SIZE_TAG = "wrong-size-tag";
@@ -52,6 +55,18 @@ public class LanguageManager {
     public static final String MUST_BE_OWNER = "must-be-owner";
     public static final String CLAN_DISBANDED = "clan-disbanded";
     public static final String LEFT_CLAN = "left-clan";
+    public static final String UNKNOWN_PLAYER = "unknown-player";
+    public static final String UNKNOWN_PLAYER_CLAN = "unknown-player-clan";
+    public static final String LEADERS = "leaders";
+    public static final String MEMBERS = "members";
+    public static final String INFO = "info";
+    public static final String KDR = "kdr";
+    public static final String KILLS = "kills";
+    public static final String DEATHS = "deaths";
+    public static final String NAME = "name";
+    public static final String MONEY_TAKEN = "money-taken";
+    public static final String PLAYER = "player";
+    public static final String CLAN = "clan";
 
     private JavaPlugin plugin;
     private Map<String, String> strings;
@@ -70,6 +85,10 @@ public class LanguageManager {
 
     public static LanguageManager getInstance() {
         return instance;
+    }
+
+    public static void send(CommandSender sender, String key) {
+        sender.sendMessage(instance.get(key));
     }
 
     public static String placeholder(int index) {
@@ -151,10 +170,12 @@ public class LanguageManager {
         fileConfiguration.addDefault(RELOAD_USAGE, "&b/clan reload - Reload configurations.");
         fileConfiguration.addDefault(LEAVE_USAGE, "&b/clan leave - Leave your clan.");
         fileConfiguration.addDefault(DISBAND_USAGE, "&b/clan disband - Disband your clan.");
+        fileConfiguration.addDefault(INFO_USAGE, "&b/clan info [clan/player] (tag/player name) - Show clan/player information.");
 
-        fileConfiguration.addDefault(WRONG_CREATE_USAGE, "&bTo create a clan, use: &9/clan create (tag) [name]");
-        fileConfiguration.addDefault(WRONG_INVITE_USAGE, "&bTo invite a player, use: &9/clan invite (player)");
-        fileConfiguration.addDefault(WRONG_JOIN_USAGE, "&bTo join a clan, use: &9/clan join (tag)");
+        fileConfiguration.addDefault(WRONG_CREATE_USAGE, "&cTo create a clan, use: &b/clan create (tag) [name]");
+        fileConfiguration.addDefault(WRONG_INVITE_USAGE, "&cTo invite a player, use: &b/clan invite (player)");
+        fileConfiguration.addDefault(WRONG_JOIN_USAGE, "&cTo join a clan, use: &b/clan join (tag)");
+        fileConfiguration.addDefault(WRONG_INFO_USAGE, "&cTo show clan/player information, use: &b/clan info [clan/player] (tag/player name)");
 
         fileConfiguration.addDefault(NO_PERMISSION, "&cYou don't have permission to use that command.");
         fileConfiguration.addDefault(WRONG_SIZE_TAG, "&cThe tag must be between {0} and {1} characters long.");
@@ -167,7 +188,7 @@ public class LanguageManager {
         fileConfiguration.addDefault(CANNOT_IN_CLAN, "&cYou cannot use that command because you are in a clan.");
         fileConfiguration.addDefault(TAG_ALREADY_EXISTS, "&cA clan with that tag already exists.");
         fileConfiguration.addDefault(MUST_BE_IN_CLAN, "&cYou must be in a clan to use that command.");
-        fileConfiguration.addDefault(PLAYER_NOT_ONLINE, "&cThat player is not online.");
+        fileConfiguration.addDefault(PLAYER_NOT_ONLINE, "&cThat player was not found.");
         fileConfiguration.addDefault(PLAYER_INVITED, "&aThe player {0} &ahas been invited to join your clan.");
         fileConfiguration.addDefault(RECEIVED_INVITE, "&aYou were invited to join the {0} &aclan. Use /clan join {1} &ato accept.");
         fileConfiguration.addDefault(ALREADY_INVITED, "&cThat player has already been invited to your clan.");
@@ -181,6 +202,18 @@ public class LanguageManager {
         fileConfiguration.addDefault(MUST_BE_OWNER, "&cOnly the owner of the clan can perform that command.");
         fileConfiguration.addDefault(CLAN_DISBANDED, "&aThe clan {0} &awas disbanded.");
         fileConfiguration.addDefault(LEFT_CLAN, "&a{0} &aleft {1}&a.");
+        fileConfiguration.addDefault(UNKNOWN_PLAYER, "&cThat player is not in the clan database.");
+        fileConfiguration.addDefault(UNKNOWN_PLAYER_CLAN, "&cThat player or clan is not in the clan database.");
+        fileConfiguration.addDefault(INFO, "&bInfo");
+        fileConfiguration.addDefault(LEADERS, "&bLeaders:&f");
+        fileConfiguration.addDefault(MEMBERS, "&bMembers:&f");
+        fileConfiguration.addDefault(KDR, "&bKDR:&f");
+        fileConfiguration.addDefault(KILLS, "&bKills:&f");
+        fileConfiguration.addDefault(DEATHS, "&bDeaths:&f");
+        fileConfiguration.addDefault(NAME, "&bName:&f");
+        fileConfiguration.addDefault(CLAN, "&bClan:&f");
+        fileConfiguration.addDefault(MONEY_TAKEN, "&a{0} has been removed from your account.");
+        fileConfiguration.addDefault(PLAYER, "&bPlayer&f");
         fileConfiguration.options().copyDefaults(true);
         return fileConfiguration;
     }

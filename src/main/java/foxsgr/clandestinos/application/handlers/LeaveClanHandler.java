@@ -1,23 +1,24 @@
-package foxsgr.clandestinos.application.clans;
+package foxsgr.clandestinos.application.handlers;
 
+import foxsgr.clandestinos.application.Finder;
 import foxsgr.clandestinos.application.LanguageManager;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
-import foxsgr.clandestinos.persistence.ClanPlayerRepository;
+import foxsgr.clandestinos.persistence.PlayerRepository;
 import foxsgr.clandestinos.persistence.ClanRepository;
 import foxsgr.clandestinos.persistence.PersistenceContext;
 import foxsgr.clandestinos.util.TextUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-class LeaveClanHandler {
+public class LeaveClanHandler {
 
-    private final ClanPlayerRepository clanPlayerRepository = PersistenceContext.repositories().players();
+    private final PlayerRepository playerRepository = PersistenceContext.repositories().players();
     private final ClanRepository clanRepository = PersistenceContext.repositories().clans();
     private final LanguageManager languageManager = LanguageManager.getInstance();
 
-    void leaveClan(CommandSender sender) {
-        ClanPlayer clanPlayer = ClanPlayerFinder.fromSenderInClan(sender);
+    public void leaveClan(CommandSender sender) {
+        ClanPlayer clanPlayer = Finder.fromSenderInClan(sender);
         if (clanPlayer == null) {
             return;
         }
@@ -32,7 +33,7 @@ class LeaveClanHandler {
         clanRepository.update(clan);
 
         clanPlayer.leaveClan();
-        clanPlayerRepository.save(clanPlayer);
+        playerRepository.save(clanPlayer);
 
         Player player = (Player) sender;
         String message = languageManager.get(LanguageManager.LEFT_CLAN)

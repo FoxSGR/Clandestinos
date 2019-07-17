@@ -1,14 +1,13 @@
-package foxsgr.clandestinos.application.clans;
+package foxsgr.clandestinos.application.handlers;
 
+import foxsgr.clandestinos.application.*;
 import foxsgr.clandestinos.application.ConfigManager;
-import foxsgr.clandestinos.application.EconomyManager;
-import foxsgr.clandestinos.application.LanguageManager;
 import foxsgr.clandestinos.domain.exceptions.NonLetterInTagException;
 import foxsgr.clandestinos.domain.exceptions.WrongNameSizeException;
 import foxsgr.clandestinos.domain.exceptions.WrongTagSizeException;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
-import foxsgr.clandestinos.persistence.ClanPlayerRepository;
+import foxsgr.clandestinos.persistence.PlayerRepository;
 import foxsgr.clandestinos.persistence.ClanRepository;
 import foxsgr.clandestinos.persistence.PersistenceContext;
 import foxsgr.clandestinos.util.TextUtil;
@@ -16,17 +15,17 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-class CreateClanHandler {
+public class CreateClanHandler {
 
     private final ClanRepository clanRepository = PersistenceContext.repositories().clans();
-    private final ClanPlayerRepository clanPlayerRepository = PersistenceContext.repositories().players();
+    private final PlayerRepository playerRepository = PersistenceContext.repositories().players();
     private final LanguageManager languageManager = LanguageManager.getInstance();
     private final ConfigManager configManager = ConfigManager.getInstance();
     private final EconomyManager economyManager = EconomyManager.getInstance();
 
     private static final ChatColor DEFAULT_COLOR = ChatColor.GRAY;
 
-    void createClan(CommandSender sender, String[] args) {
+    public void createClan(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
             return;
         }
@@ -56,18 +55,17 @@ class CreateClanHandler {
         }
 
         Clan clan = new Clan(clanTag, clanName, clanPlayer);
-
-        if (!economyManager.take(player, configManager.getDouble(ConfigManager.CREATE_CLAN_COST))) {
-            throw new IllegalStateException("Could not take money from player after checking that they have enough.");
-        }
-
         if (!clanRepository.add(clan)) {
             player.sendMessage(languageManager.get(LanguageManager.TAG_ALREADY_EXISTS));
             return;
         }
 
         clanPlayer.joinClan(clan);
-        clanPlayerRepository.save(clanPlayer);
+        playerRepository.save(clanPlayer);
+
+        if (!economyManager.take(player, configManager.getDouble(ConfigManager.CREATE_CLAN_COST))) {
+            throw new IllegalStateException("Could not take money from player after checking that they have enough.");
+        }
 
         String message = languageManager.get(LanguageManager.CLAN_CREATED).replace("{0}", clan.tag().value());
         message = TextUtil.translateColoredText(message);
@@ -75,7 +73,7 @@ class CreateClanHandler {
     }
 
     private ClanPlayer canCreate(Player player) {
-        ClanPlayer clanPlayer = ClanPlayerFinder.get(player);
+        ClanPlayer clanPlayer = Finder.getPlayer(player);
         if (clanPlayer.inClan()) {
             player.sendMessage(languageManager.get(LanguageManager.CANNOT_IN_CLAN));
             return null;

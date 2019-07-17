@@ -1,6 +1,8 @@
 package foxsgr.clandestinos.application;
 
-import foxsgr.clandestinos.application.clans.ClanCommand;
+import foxsgr.clandestinos.application.listeners.ChatManager;
+import foxsgr.clandestinos.application.listeners.DeathListener;
+import foxsgr.clandestinos.application.listeners.JoinQuitListener;
 import foxsgr.clandestinos.util.Plugins;
 import foxsgr.clandestinos.persistence.PersistenceContext;
 import org.bukkit.Bukkit;
@@ -24,11 +26,13 @@ public class Clandestinos extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        ClanLogger.init(this);
+        ConfigManager.init(this);
+
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             usingPAPI = true;
         }
 
-        ConfigManager.init(this);
         LanguageManager.init(this);
         PersistenceContext.init(this);
 

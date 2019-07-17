@@ -22,7 +22,13 @@ public class EconomyManager {
     }
 
     public boolean take(Player player, double amount) {
-        return economy.withdrawPlayer(player, amount).transactionSuccess();
+        if (economy.withdrawPlayer(player, amount).transactionSuccess()) {
+            player.sendMessage(LanguageManager.getInstance().get(LanguageManager.MONEY_TAKEN)
+                    .replace(LanguageManager.placeholder(0), format(amount)));
+            return true;
+        }
+
+        return false;
     }
 
     public boolean hasEnough(Player player, double amount) {

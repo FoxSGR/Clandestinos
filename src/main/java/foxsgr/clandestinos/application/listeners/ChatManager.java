@@ -1,9 +1,11 @@
-package foxsgr.clandestinos.application;
+package foxsgr.clandestinos.application.listeners;
 
-import foxsgr.clandestinos.application.clans.ClanPlayerFinder;
+import foxsgr.clandestinos.application.Clandestinos;
+import foxsgr.clandestinos.application.ConfigManager;
+import foxsgr.clandestinos.application.Finder;
 import foxsgr.clandestinos.domain.model.clan.ClanTag;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
-import foxsgr.clandestinos.persistence.ClanPlayerRepository;
+import foxsgr.clandestinos.persistence.PlayerRepository;
 import foxsgr.clandestinos.persistence.PersistenceContext;
 import foxsgr.clandestinos.util.TextUtil;
 import net.milkbowl.vault.chat.Chat;
@@ -16,20 +18,20 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class ChatManager implements Listener {
 
-    static final String FORMATTED_CLAN_TAG_PLACEHOLDER = "%formatted_clan_tag%";
-    static final String COLORED_CLAN_TAG_PLACEHOLDER = "%colored_clan_tag%";
-    static final String PREFIX_PLACEHOLDER = "{prefix}";
-    static final String PLAYER_PLACEHOLDER = "{player}";
-    static final String CONTENT_PLACEHOLDER = "{content}";
+    public static final String FORMATTED_CLAN_TAG_PLACEHOLDER = "%formatted_clan_tag%";
+    public static final String COLORED_CLAN_TAG_PLACEHOLDER = "%colored_clan_tag%";
+    public static final String PREFIX_PLACEHOLDER = "{prefix}";
+    public static final String PLAYER_PLACEHOLDER = "{player}";
+    public static final String CONTENT_PLACEHOLDER = "{content}";
 
     private Chat chat;
     private String format;
     private String clanTagFormat;
     private final Clandestinos plugin;
 
-    private ClanPlayerRepository clanPlayerRepository;
+    private PlayerRepository playerRepository;
 
-    ChatManager(Clandestinos plugin) {
+    public ChatManager(Clandestinos plugin) {
         this.plugin = plugin;
         // Must call setup to initialize other fields
     }
@@ -38,7 +40,7 @@ public class ChatManager implements Listener {
     public void onChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
 
-        ClanPlayer clanPlayer = clanPlayerRepository.find(ClanPlayerFinder.idFromPlayer(player));
+        ClanPlayer clanPlayer = playerRepository.find(Finder.idFromPlayer(player));
         ClanTag clanTag;
         if (clanPlayer == null) {
             clanTag = null;
@@ -59,7 +61,7 @@ public class ChatManager implements Listener {
 
         /*
         if (plugin.isUsingPAPI()) {
-            // do some replacing
+            // TODO: do some replacing
         }
         */
 
@@ -72,7 +74,7 @@ public class ChatManager implements Listener {
         }
     }
 
-    void setup() {
+    public void setup() {
         ConfigManager configManager = ConfigManager.getInstance();
         format = configManager.getString(ConfigManager.CHAT_FORMAT);
         clanTagFormat = configManager.getString(ConfigManager.CLAN_FORMAT);
@@ -83,6 +85,6 @@ public class ChatManager implements Listener {
         }
 
         chat = rsp.getProvider();
-        clanPlayerRepository = PersistenceContext.repositories().players();
+        playerRepository = PersistenceContext.repositories().players();
     }
 }

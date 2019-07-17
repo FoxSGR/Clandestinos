@@ -1,14 +1,12 @@
-package foxsgr.clandestinos.application.clans;
+package foxsgr.clandestinos.application;
 
-import foxsgr.clandestinos.application.LanguageManager;
-import foxsgr.clandestinos.application.PermissionsManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
  * Validates a command that should be executed by a player.
  */
-final class PlayerCommandValidator {
+public final class PlayerCommandValidator {
 
     /**
      * Private constructor to hide the implicit public one.
@@ -26,12 +24,12 @@ final class PlayerCommandValidator {
      * @param underMinArgsMessage the message to send if the number of arguments is less than the minimum.
      * @return true if the command is valid, false otherwise.
      */
-    static boolean validate(CommandSender sender, String[] args, int minArgsLength, String underMinArgsMessage) {
+    public static boolean validate(CommandSender sender, String[] args, int minArgsLength, String underMinArgsMessage) {
         if (!PermissionsManager.hasForSubCommandWarn(sender, args[0])) {
             return false;
         }
 
-        ensureIsPlayer(sender);
+        playerFromSender(sender);
 
         LanguageManager languageManager = LanguageManager.getInstance();
         if (args.length < minArgsLength) {
@@ -42,7 +40,7 @@ final class PlayerCommandValidator {
         return true;
     }
 
-    static Player ensureIsPlayer(CommandSender sender) {
+    public static Player playerFromSender(CommandSender sender) {
         LanguageManager languageManager = LanguageManager.getInstance();
 
         if (!(sender instanceof Player)) {
