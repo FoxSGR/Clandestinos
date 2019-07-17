@@ -41,6 +41,12 @@ public class Clan {
         return owner;
     }
 
+    public List<String> allPlayers() {
+        List<String> all = new ArrayList<>(leaders);
+        all.addAll(members);
+        return all;
+    }
+
     public List<String> leaders() {
         return new ArrayList<>(leaders);
     }
