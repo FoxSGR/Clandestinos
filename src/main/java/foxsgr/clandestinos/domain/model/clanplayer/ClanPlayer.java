@@ -1,6 +1,7 @@
 package foxsgr.clandestinos.domain.model.clanplayer;
 
 import foxsgr.clandestinos.domain.exceptions.AlreadyInClanException;
+import foxsgr.clandestinos.domain.model.KDR;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clan.ClanTag;
 import foxsgr.clandestinos.util.Preconditions;
@@ -91,5 +92,9 @@ public class ClanPlayer {
 
     public void incDeathCount() {
         deathCount = deathCount.increment();
+    }
+
+    public KDR kdr() {
+        return new KDR(killCount, deathCount);
     }
 }

@@ -3,11 +3,10 @@ package foxsgr.clandestinos.application.handlers;
 import foxsgr.clandestinos.application.Finder;
 import foxsgr.clandestinos.application.LanguageManager;
 import foxsgr.clandestinos.application.PlayerCommandValidator;
+import foxsgr.clandestinos.domain.model.KDR;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.domain.services.CalculateClanKDRService;
-import foxsgr.clandestinos.domain.services.CalculatePlayerKDRService;
-import foxsgr.clandestinos.domain.services.KDRDTO;
 import foxsgr.clandestinos.persistence.ClanRepository;
 import foxsgr.clandestinos.persistence.PersistenceContext;
 import foxsgr.clandestinos.persistence.PlayerRepository;
@@ -104,20 +103,18 @@ public class InfoHandler {
 
         Set<ClanPlayer> clanPlayers = Finder.playersInClan(clan);
         CalculateClanKDRService calculateClanKDRService = new CalculateClanKDRService();
-        KDRDTO kdrDTO = calculateClanKDRService.calculateClanKDR(clanPlayers);
+        KDR kdr = calculateClanKDRService.calculateClanKDR(clanPlayers);
 
         infoBuilder.append('\n').append(languageManager.get(LanguageManager.KDR)).append(' ')
-                .append(String.format("%.2f", kdrDTO.kdr)).append('\n')
-                .append(languageManager.get(LanguageManager.KILLS)).append(' ').append(kdrDTO.kills).append('\n')
-                .append(languageManager.get(LanguageManager.DEATHS)).append(' ').append(kdrDTO.deaths);
+                .append(String.format("%.2f", kdr.kdr())).append('\n')
+                .append(languageManager.get(LanguageManager.KILLS)).append(' ').append(kdr.kills()).append('\n')
+                .append(languageManager.get(LanguageManager.DEATHS)).append(' ').append(kdr.deaths());
 
         sender.sendMessage(infoBuilder.toString());
     }
 
     private void showPlayerInfo(CommandSender sender, String name, ClanPlayer clanPlayer) {
-        CalculatePlayerKDRService calculatePlayerKDRService = new CalculatePlayerKDRService();
-        KDRDTO kdrDTO = calculatePlayerKDRService.calculatePlayerKDR(clanPlayer);
-
+        KDR kdr = clanPlayer.kdr();
         String clan = "";
         if (clanPlayer.inClan()) {
             clan = clanPlayer.clan().value();
@@ -126,9 +123,9 @@ public class InfoHandler {
         String infoBuilder = languageManager.get(LanguageManager.PLAYER) + ' ' + name + '\n'
                 + languageManager.get(LanguageManager.CLAN) + ' ' + clan + '\n'
                 + languageManager.get(LanguageManager.KDR) + ' '
-                + String.format("%.2f", kdrDTO.kdr) + '\n'
-                + languageManager.get(LanguageManager.KILLS) + ' ' + kdrDTO.kills + '\n'
-                + languageManager.get(LanguageManager.DEATHS) + ' ' + kdrDTO.deaths;
+                + String.format("%.2f", kdr.kdr()) + '\n'
+                + languageManager.get(LanguageManager.KILLS) + ' ' + kdr.kills() + '\n'
+                + languageManager.get(LanguageManager.DEATHS) + ' ' + kdr.deaths();
         sender.sendMessage(infoBuilder);
     }
 }
