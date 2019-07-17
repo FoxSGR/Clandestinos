@@ -24,11 +24,13 @@ public class LanguageManager {
     public static final String LEAVE_USAGE = "leave-usage";
     public static final String DISBAND_USAGE = "disband-usage";
     public static final String INFO_USAGE = "info-usage";
+    public static final String KICK_USAGE = "kick-usage";
 
     public static final String WRONG_CREATE_USAGE = "wrong-create-usage";
     public static final String WRONG_INVITE_USAGE = "wrong-invite-usage";
     public static final String WRONG_JOIN_USAGE = "wrong-join-usage";
     public static final String WRONG_INFO_USAGE = "wrong-info-usage";
+    public static final String WRONG_KICK_USAGE = "wrong-kick-usage";
 
     public static final String NO_PERMISSION = "no-permission";
     public static final String WRONG_SIZE_TAG = "wrong-size-tag";
@@ -67,6 +69,7 @@ public class LanguageManager {
     public static final String MONEY_TAKEN = "money-taken";
     public static final String PLAYER = "player";
     public static final String CLAN = "clan";
+    public static final String NOT_IN_YOUR_CLAN = "not-in-your-clan";
 
     private JavaPlugin plugin;
     private Map<String, String> strings;
@@ -166,16 +169,18 @@ public class LanguageManager {
         fileConfiguration.addDefault(COMMANDS_HEADER, "&9Clan Commands");
 
         fileConfiguration.addDefault(CREATE_USAGE, "&b/clan create (tag) [name] - Create a clan.");
-        fileConfiguration.addDefault(INVITE_USAGE, "&b/clan invite (player) - Invite a player to your clan.");
+        fileConfiguration.addDefault(INVITE_USAGE, "&b/clan invite (name) - Invite a player to your clan.");
         fileConfiguration.addDefault(RELOAD_USAGE, "&b/clan reload - Reload configurations.");
         fileConfiguration.addDefault(LEAVE_USAGE, "&b/clan leave - Leave your clan.");
         fileConfiguration.addDefault(DISBAND_USAGE, "&b/clan disband - Disband your clan.");
         fileConfiguration.addDefault(INFO_USAGE, "&b/clan info [clan/player] (tag/player name) - Show clan/player information.");
+        fileConfiguration.addDefault(KICK_USAGE, "&b/clan kick (name) - Kick a player from your clan.");
 
         fileConfiguration.addDefault(WRONG_CREATE_USAGE, "&cTo create a clan, use: &b/clan create (tag) [name]");
         fileConfiguration.addDefault(WRONG_INVITE_USAGE, "&cTo invite a player, use: &b/clan invite (player)");
         fileConfiguration.addDefault(WRONG_JOIN_USAGE, "&cTo join a clan, use: &b/clan join (tag)");
         fileConfiguration.addDefault(WRONG_INFO_USAGE, "&cTo show clan/player information, use: &b/clan info [clan/player] (tag/player name)");
+        fileConfiguration.addDefault(WRONG_KICK_USAGE, "&cTo kick a player from your clan, use: &b/clan kick (player)");
 
         fileConfiguration.addDefault(NO_PERMISSION, "&cYou don't have permission to use that command.");
         fileConfiguration.addDefault(WRONG_SIZE_TAG, "&cThe tag must be between {0} and {1} characters long.");
@@ -214,6 +219,7 @@ public class LanguageManager {
         fileConfiguration.addDefault(CLAN, "&bClan:&f");
         fileConfiguration.addDefault(MONEY_TAKEN, "&a{0} has been removed from your account.");
         fileConfiguration.addDefault(PLAYER, "&bPlayer&f");
+        fileConfiguration.addDefault(NOT_IN_YOUR_CLAN, "&cThat player is not in your clan.");
         fileConfiguration.options().copyDefaults(true);
         return fileConfiguration;
     }

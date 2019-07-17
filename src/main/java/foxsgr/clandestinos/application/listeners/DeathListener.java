@@ -15,13 +15,13 @@ public class DeathListener implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent playerDeathEvent) {
-        ClanPlayer killed = Finder.getPlayer(playerDeathEvent.getEntity());
         Player killerPlayer = playerDeathEvent.getEntity().getKiller();
         if (killerPlayer == null) {
             return;
         }
 
-        ClanPlayer killer = Finder.getPlayer(playerDeathEvent.getEntity().getKiller());
+        ClanPlayer killed = Finder.getPlayer(playerDeathEvent.getEntity());
+        ClanPlayer killer = Finder.getPlayer(killerPlayer);
         killer.incKillCount();
         playerRepository.save(killer);
 

@@ -7,6 +7,7 @@ import foxsgr.clandestinos.persistence.PersistenceContext;
 import foxsgr.clandestinos.persistence.PlayerRepository;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -31,6 +32,7 @@ public final class Finder {
      * @param player the player to look for.
      * @return the found or created player.
      */
+    @NotNull
     public static ClanPlayer getPlayer(Player player) {
         String id = idFromPlayer(player);
 
@@ -113,6 +115,7 @@ public final class Finder {
         }
     }
 
+    @Nullable
     public static ClanPlayer fromSenderInClan(CommandSender sender) {
         Player player = PlayerCommandValidator.playerFromSender(sender);
         if (player == null) {
@@ -130,6 +133,20 @@ public final class Finder {
         }
 
         return clanPlayer;
+    }
+
+    @Nullable
+    public static Clan clanFromPlayer(CommandSender sender, ClanPlayer clanPlayer) {
+        ClanRepository clanRepository = PersistenceContext.repositories().clans();
+        LanguageManager languageManager = LanguageManager.getInstance();
+
+        Clan clan = clanRepository.findByTag(clanPlayer.clan().withoutColor().value());
+        if (clan == null) {
+            sender.sendMessage(languageManager.get(LanguageManager.MUST_BE_IN_CLAN));
+            return null;
+        }
+
+        return clan;
     }
 
     public static String nameFromId(String id) {

@@ -55,8 +55,8 @@ public class Clan {
         return new ArrayList<>(members);
     }
 
-    public boolean isOwner(String id) {
-        return owner.equals(id);
+    public boolean isOwner(ClanPlayer player) {
+        return owner.equals(player.id());
     }
 
     public boolean addMember(ClanPlayer member) {
@@ -65,6 +65,10 @@ public class Clan {
 
     public boolean isLeader(ClanPlayer player) {
         return leaders.contains(player.id());
+    }
+
+    public boolean isMember(ClanPlayer player) {
+        return members.contains(player);
     }
 
     public void remove(ClanPlayer clanPlayer) {
