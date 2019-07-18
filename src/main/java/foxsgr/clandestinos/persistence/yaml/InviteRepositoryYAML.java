@@ -20,22 +20,20 @@ public class InviteRepositoryYAML extends YAMLRepository implements InviteReposi
     @Override
     public void add(Invite invite) {
         FileConfiguration fileConfiguration = new YamlConfiguration();
-
-        fileConfiguration.set("invited-to", invite.invitedTo().withoutColor().value());
+        fileConfiguration.set("invited-to", invite.invitedTo().withoutColor().value().toLowerCase());
         fileConfiguration.set("invited-player", invite.invitedPlayer());
-
         saveFile(fileConfiguration, invite.id());
     }
 
     @Override
     public Invite find(String invitedPlayer, String clanInvitedTo) {
-        String id = clanInvitedTo + invitedPlayer;
+        String id = clanInvitedTo.toLowerCase() + invitedPlayer;
         File file = makeFile(id);
         if (!file.exists()) {
             return null;
         }
 
-        ClanTag clanTag = new ClanTag(clanInvitedTo);
+        ClanTag clanTag = new ClanTag(clanInvitedTo.toLowerCase());
         return new Invite(id, clanTag, invitedPlayer);
     }
 
@@ -54,7 +52,7 @@ public class InviteRepositoryYAML extends YAMLRepository implements InviteReposi
         }
 
         for (File inviteFile : inviteFiles) {
-            if (!inviteFile.delete()) {
+            if (inviteFile.getName().contains(clan.tag().withoutColor().value()) && !inviteFile.delete()) {
                 logger().log(Level.WARNING, "Could not delete the invite file {0}.yml", inviteFile.getName());
             }
         }

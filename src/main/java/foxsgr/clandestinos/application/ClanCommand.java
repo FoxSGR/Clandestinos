@@ -18,6 +18,7 @@ public class ClanCommand implements CommandExecutor {
     private static final String HELP_COMMAND = "help";
     private static final String CREATE_COMMAND = "create";
     private static final String INVITE_COMMAND = "invite";
+    private static final String UNINVITE_COMMAND = "uninvite";
     private static final String RELOAD_COMMAND = "reload";
     private static final String JOIN_COMMAND = "join";
     private static final String LEAVE_COMMAND = "leave";
@@ -49,6 +50,8 @@ public class ClanCommand implements CommandExecutor {
             }
         } else if (subCommand.equalsIgnoreCase(INVITE_COMMAND)) {
             new InvitePlayerHandler().invitePlayer(sender, args);
+        } else if (subCommand.equalsIgnoreCase(UNINVITE_COMMAND)) {
+            new UninvitePlayerHandler().uninvitePlayer(sender, args);
         } else if (subCommand.equalsIgnoreCase(JOIN_COMMAND)) {
             new JoinClanHandler().joinClan(sender, args);
         } else if (subCommand.equalsIgnoreCase(LEAVE_COMMAND)) {

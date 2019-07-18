@@ -1,17 +1,20 @@
 package foxsgr.clandestinos.application;
 
+import foxsgr.clandestinos.domain.model.clan.Clan;
+import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
+import foxsgr.clandestinos.util.Pair;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
  * Validates a command that should be executed by a player.
  */
-public final class PlayerCommandValidator {
+public final class CommandValidator {
 
     /**
      * Private constructor to hide the implicit public one.
      */
-    private PlayerCommandValidator() {
+    private CommandValidator() {
         // Should be empty.
     }
 
@@ -29,7 +32,9 @@ public final class PlayerCommandValidator {
             return false;
         }
 
-        playerFromSender(sender);
+        if (playerFromSender(sender) == null) {
+            return false;
+        }
 
         LanguageManager languageManager = LanguageManager.getInstance();
         if (args.length < minArgsLength) {
@@ -49,5 +54,13 @@ public final class PlayerCommandValidator {
         }
 
         return (Player) sender;
+    }
+
+    public static Pair<Clan, ClanPlayer> validateClanLeader(CommandSender sender, String[] args, int minArgsLength, String underMinArgsMessage) {
+        if (!validate(sender, args, minArgsLength, underMinArgsMessage)) {
+            return null;
+        }
+
+        return Finder.findClanLeader(sender);
     }
 }

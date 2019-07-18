@@ -20,6 +20,7 @@ public class LanguageManager {
     public static final String COMMANDS_HEADER = "commands-header";
     public static final String CREATE_USAGE = "create-usage";
     public static final String INVITE_USAGE = "invite-usage";
+    public static final String UNINVITE_USAGE = "uninvite-usage";
     public static final String RELOAD_USAGE = "reload-usage";
     public static final String LEAVE_USAGE = "leave-usage";
     public static final String DISBAND_USAGE = "disband-usage";
@@ -28,6 +29,7 @@ public class LanguageManager {
 
     public static final String WRONG_CREATE_USAGE = "wrong-create-usage";
     public static final String WRONG_INVITE_USAGE = "wrong-invite-usage";
+    public static final String WRONG_UNINVITE_USAGE = "wrong-uninvite-usage";
     public static final String WRONG_JOIN_USAGE = "wrong-join-usage";
     public static final String WRONG_INFO_USAGE = "wrong-info-usage";
     public static final String WRONG_KICK_USAGE = "wrong-kick-usage";
@@ -173,6 +175,7 @@ public class LanguageManager {
 
         fileConfiguration.addDefault(CREATE_USAGE, "&b/clan create (tag) [name] - Create a clan.");
         fileConfiguration.addDefault(INVITE_USAGE, "&b/clan invite (name) - Invite a player to your clan.");
+        fileConfiguration.addDefault(INVITE_USAGE, "&b/clan uninvite (name) - Cancel an invite.");
         fileConfiguration.addDefault(RELOAD_USAGE, "&b/clan reload - Reload configurations.");
         fileConfiguration.addDefault(LEAVE_USAGE, "&b/clan leave - Leave your clan.");
         fileConfiguration.addDefault(DISBAND_USAGE, "&b/clan disband - Disband your clan.");
@@ -181,6 +184,7 @@ public class LanguageManager {
 
         fileConfiguration.addDefault(WRONG_CREATE_USAGE, "&cTo create a clan, use: &b/clan create (tag) [name]");
         fileConfiguration.addDefault(WRONG_INVITE_USAGE, "&cTo invite a player, use: &b/clan invite (player)");
+        fileConfiguration.addDefault(WRONG_UNINVITE_USAGE, "&cTo cancel an invite, use: &b/clan uninvite (player)");
         fileConfiguration.addDefault(WRONG_JOIN_USAGE, "&cTo join a clan, use: &b/clan join (tag)");
         fileConfiguration.addDefault(WRONG_INFO_USAGE, "&cTo show clan/player information, use: &b/clan info [clan/player] (tag/player name)");
         fileConfiguration.addDefault(WRONG_KICK_USAGE, "&cTo kick a player from your clan, use: &b/clan kick (player)");

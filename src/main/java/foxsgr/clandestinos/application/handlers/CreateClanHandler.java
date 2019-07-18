@@ -101,7 +101,7 @@ public class CreateClanHandler {
     }
 
     private boolean validate(CommandSender sender, String[] args) {
-        if (!PlayerCommandValidator.validate(sender, args, 2, LanguageManager.WRONG_CREATE_USAGE)) {
+        if (!CommandValidator.validate(sender, args, 2, LanguageManager.WRONG_CREATE_USAGE)) {
             return false;
         }
 

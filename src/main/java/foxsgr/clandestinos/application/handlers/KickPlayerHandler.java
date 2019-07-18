@@ -1,13 +1,14 @@
 package foxsgr.clandestinos.application.handlers;
 
+import foxsgr.clandestinos.application.CommandValidator;
 import foxsgr.clandestinos.application.Finder;
 import foxsgr.clandestinos.application.LanguageManager;
-import foxsgr.clandestinos.application.PlayerCommandValidator;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.persistence.ClanRepository;
 import foxsgr.clandestinos.persistence.PersistenceContext;
 import foxsgr.clandestinos.persistence.PlayerRepository;
+import foxsgr.clandestinos.util.Pair;
 import foxsgr.clandestinos.util.TextUtil;
 import org.bukkit.command.CommandSender;
 
@@ -18,18 +19,9 @@ public class KickPlayerHandler {
     private final LanguageManager languageManager = LanguageManager.getInstance();
 
     public void kickPlayer(CommandSender sender, String[] args) {
-        if (!PlayerCommandValidator.validate(sender, args, 2, LanguageManager.WRONG_KICK_USAGE)) {
-            return;
-        }
-
-        ClanPlayer kicker = Finder.fromSenderInClan(sender);
-        if (kicker == null) {
-            return;
-        }
-
-        Clan clan = Finder.clanFromPlayer(sender, kicker);
-        if (!clan.isLeader(kicker)) {
-            LanguageManager.send(sender, LanguageManager.MUST_BE_LEADER);
+        Pair<Clan, ClanPlayer> clanLeader = CommandValidator.validateClanLeader(sender, args, 2,
+                LanguageManager.WRONG_KICK_USAGE);
+        if (clanLeader == null) {
             return;
         }
 
@@ -40,21 +32,13 @@ public class KickPlayerHandler {
             return;
         }
 
-        if (kicker.equals(kicked)) {
+        if (clanLeader.second.equals(kicked)) {
             LanguageManager.send(sender, LanguageManager.CANNOT_KICK_YOURSELF);
             return;
         }
 
-        if (clan.isLeader(kicked)) {
-            if (clan.isOwner(kicker)) {
-                kick(sender, kicked, clan);
-            } else {
-                LanguageManager.send(sender, LanguageManager.ONLY_OWNER_KICK_LEADER);
-            }
-        } else if (clan.isMember(kicked)) {
-            kick(sender, kicked, clan);
-        } else {
-            LanguageManager.send(sender, LanguageManager.NOT_IN_YOUR_CLAN);
+        if (canKick(sender, clanLeader.second, kicked, clanLeader.first)) {
+            kick(sender, kicked, clanLeader.first);
         }
     }
 
@@ -68,5 +52,21 @@ public class KickPlayerHandler {
                 .replace(LanguageManager.placeholder(0), Finder.nameFromId(player.id()))
                 .replace(LanguageManager.placeholder(1), clan.tag().value());
         sender.getServer().broadcastMessage(TextUtil.translateColoredText(message));
+    }
+
+    private static boolean canKick(CommandSender sender, ClanPlayer kicker, ClanPlayer kicked, Clan clan) {
+        if (clan.isLeader(kicked)) {
+            if (clan.isOwner(kicker)) {
+                return true;
+            } else {
+                LanguageManager.send(sender, LanguageManager.ONLY_OWNER_KICK_LEADER);
+                return false;
+            }
+        } else if (clan.isMember(kicked)) {
+            return true;
+        } else {
+            LanguageManager.send(sender, LanguageManager.NOT_IN_YOUR_CLAN);
+            return false;
+        }
     }
 }

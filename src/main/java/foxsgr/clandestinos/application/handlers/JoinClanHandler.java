@@ -2,7 +2,7 @@ package foxsgr.clandestinos.application.handlers;
 
 import foxsgr.clandestinos.application.Finder;
 import foxsgr.clandestinos.application.LanguageManager;
-import foxsgr.clandestinos.application.PlayerCommandValidator;
+import foxsgr.clandestinos.application.CommandValidator;
 import foxsgr.clandestinos.domain.model.Invite;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
@@ -21,7 +21,7 @@ public class JoinClanHandler {
     private final LanguageManager languageManager = LanguageManager.getInstance();
 
     public void joinClan(CommandSender sender, String[] args) {
-        if (!PlayerCommandValidator.validate(sender, args, 2, LanguageManager.WRONG_JOIN_USAGE)) {
+        if (!CommandValidator.validate(sender, args, 2, LanguageManager.WRONG_JOIN_USAGE)) {
             return;
         }
 

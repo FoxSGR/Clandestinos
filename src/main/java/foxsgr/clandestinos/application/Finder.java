@@ -5,6 +5,7 @@ import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.persistence.ClanRepository;
 import foxsgr.clandestinos.persistence.PersistenceContext;
 import foxsgr.clandestinos.persistence.PlayerRepository;
+import foxsgr.clandestinos.util.Pair;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -117,7 +118,7 @@ public final class Finder {
 
     @Nullable
     public static ClanPlayer fromSenderInClan(CommandSender sender) {
-        Player player = PlayerCommandValidator.playerFromSender(sender);
+        Player player = CommandValidator.playerFromSender(sender);
         if (player == null) {
             return null;
         }
@@ -147,6 +148,29 @@ public final class Finder {
         }
 
         return clan;
+    }
+
+    @Nullable
+    public static Pair<Clan, ClanPlayer> findClanLeader(CommandSender sender) {
+        ClanPlayer leader = fromSenderInClan(sender);
+        if (leader == null) {
+            return null;
+        }
+
+        Clan clan = clanFromPlayer(sender, leader);
+        if (!clan.isLeader(leader)) {
+            LanguageManager.send(sender, LanguageManager.MUST_BE_LEADER);
+            return null;
+        }
+
+        return new Pair<>(clan, leader);
+    }
+
+    @Nullable
+    public static ClanPlayer findPlayer(Player player) {
+        String id = idFromPlayer(player);
+        PlayerRepository playerRepository = PersistenceContext.repositories().players();
+        return playerRepository.find(id);
     }
 
     public static String nameFromId(String id) {

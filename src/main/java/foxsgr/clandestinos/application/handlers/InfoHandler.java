@@ -2,7 +2,7 @@ package foxsgr.clandestinos.application.handlers;
 
 import foxsgr.clandestinos.application.Finder;
 import foxsgr.clandestinos.application.LanguageManager;
-import foxsgr.clandestinos.application.PlayerCommandValidator;
+import foxsgr.clandestinos.application.CommandValidator;
 import foxsgr.clandestinos.domain.model.KDR;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
@@ -26,26 +26,26 @@ public class InfoHandler {
     private static final String PLAYER_TYPE = "player";
 
     public void showInfo(CommandSender sender, String[] args) {
-        Player player = PlayerCommandValidator.playerFromSender(sender);
+        Player player = CommandValidator.playerFromSender(sender);
         if (player == null) {
             return;
         }
 
         if (args.length == 1) {
             // Must be a player
-            if (PlayerCommandValidator.playerFromSender(sender) != null) {
-                specific(player, sender.getName(), PLAYER_TYPE);
+            if (CommandValidator.playerFromSender(sender) != null) {
+                specific(player, PLAYER_TYPE, sender.getName());
             }
         } else if (args.length == 2) { // info, tag/name
             trialAndError(player, args[1]);
         } else if (args.length == 3) { //info, clan/player, tag/name
-            specific(player, args[2], args[1]);
+            specific(player, args[1], args[2]);
         } else {
             LanguageManager.send(sender, LanguageManager.WRONG_INFO_USAGE);
         }
     }
 
-    private void specific(CommandSender sender, String identifier, String type) {
+    private void specific(CommandSender sender, String type, String identifier) {
         if (type.equalsIgnoreCase(CLAN_TYPE)) {
             Clan clan = Finder.clanByTag(sender, identifier);
             if (clan == null) {
@@ -92,7 +92,6 @@ public class InfoHandler {
         }
 
         infoBuilder.append(languageManager.get(LanguageManager.MEMBERS)).append('\n');
-
         List<String> allPlayers = clan.allPlayers();
         for (int i = 0; i < allPlayers.size(); i++) {
             infoBuilder.append(allPlayers.get(i));
@@ -109,7 +108,6 @@ public class InfoHandler {
                 .append(String.format("%.2f", kdr.kdr())).append('\n')
                 .append(languageManager.get(LanguageManager.KILLS)).append(' ').append(kdr.kills()).append('\n')
                 .append(languageManager.get(LanguageManager.DEATHS)).append(' ').append(kdr.deaths());
-
         sender.sendMessage(infoBuilder.toString());
     }
 
