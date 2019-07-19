@@ -13,8 +13,8 @@ public final class PermissionsManager {
         // Should be empty.
     }
 
-    public static boolean hasForSubCommandWarn(CommandSender player, String subCommand) {
-        if (!hasForSubCommand(player, subCommand)) {
+    public static boolean hasAndWarn(CommandSender player, String subCommand) {
+        if (!has(player, subCommand)) {
             player.sendMessage(LanguageManager.getInstance().get(LanguageManager.NO_PERMISSION));
             return false;
         }
@@ -22,7 +22,7 @@ public final class PermissionsManager {
         return true;
     }
 
-    public static boolean hasForSubCommand(CommandSender player, String subCommand) {
+    public static boolean has(CommandSender player, String subCommand) {
         return player.hasPermission(PERMISSIONS_ROOT + subCommand.toLowerCase());
     }
 }

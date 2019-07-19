@@ -28,7 +28,7 @@ public final class CommandValidator {
      * @return true if the command is valid, false otherwise.
      */
     public static boolean validate(CommandSender sender, String[] args, int minArgsLength, String underMinArgsMessage) {
-        if (!PermissionsManager.hasForSubCommandWarn(sender, args[0])) {
+        if (!PermissionsManager.hasAndWarn(sender, args[0])) {
             return false;
         }
 

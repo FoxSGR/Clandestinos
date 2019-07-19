@@ -16,6 +16,7 @@ public class Clandestinos extends JavaPlugin {
     private JoinQuitListener joinQuitListener;
     private DeathListener deathListener;
     private static final String CLAN_COMMAND = "clan";
+    private static final String CLAN_CHAT_COMMAND = ".";
 
     public Clandestinos() {
         super();
@@ -44,6 +45,7 @@ public class Clandestinos extends JavaPlugin {
         EconomyManager.init(this);
 
         Plugins.registerCommand(this, CLAN_COMMAND, new ClanCommand(this));
+        Plugins.registerCommand(this, CLAN_CHAT_COMMAND, new ClanChatCommand());
         Bukkit.getPluginManager().registerEvents(chatManager, this);
         Bukkit.getPluginManager().registerEvents(deathListener, this);
     }

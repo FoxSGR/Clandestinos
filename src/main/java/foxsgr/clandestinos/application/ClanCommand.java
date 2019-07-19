@@ -43,7 +43,7 @@ public class ClanCommand implements CommandExecutor {
         if (subCommand.equalsIgnoreCase(CREATE_COMMAND)) {
             new CreateClanHandler().createClan(sender, args);
         } else if (subCommand.equalsIgnoreCase(RELOAD_COMMAND)) {
-            if (PermissionsManager.hasForSubCommandWarn(sender, RELOAD_COMMAND)) {
+            if (PermissionsManager.hasAndWarn(sender, RELOAD_COMMAND)) {
                 // Not very reliable
                 plugin.onEnable();
                 plugin.onDisable();
@@ -89,7 +89,7 @@ public class ClanCommand implements CommandExecutor {
     }
 
     private static void appendSubCommand(CommandSender sender, StringBuilder builder, String command, String commandDescriptionId) {
-        if (PermissionsManager.hasForSubCommand(sender, command)) {
+        if (PermissionsManager.has(sender, command)) {
             builder.append('\n').append(LanguageManager.getInstance().get(commandDescriptionId));
         }
     }

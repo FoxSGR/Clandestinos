@@ -17,6 +17,12 @@ commands:
     permission-message: You not have have permission to use this command.
     aliases:
       - clans
+  .:
+    description: Clan chat command.
+    usage: "Use: /. [text]"
+    permission-message: You not have have permission to use this command.
+    aliases:
+      - clanchat
 
 permissions:
   clandestinos.*:
@@ -25,7 +31,10 @@ permissions:
       clandestinos.reload: false
       clandestinos.create: true
       clandestinos.invite: true
+      clandestinos.uninvite: true
       clandestinos.leave: true
       clandestinos.join: true
       clandestinos.disband: true
       clandestinos.kick: true
+      clandestinos.modtag: true
+      clandestinos.clanchat: true
