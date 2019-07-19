@@ -3,10 +3,12 @@ package foxsgr.clandestinos.application.listeners;
 import foxsgr.clandestinos.application.Clandestinos;
 import foxsgr.clandestinos.application.ConfigManager;
 import foxsgr.clandestinos.application.Finder;
+import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clan.ClanTag;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
-import foxsgr.clandestinos.persistence.PlayerRepository;
+import foxsgr.clandestinos.persistence.ClanRepository;
 import foxsgr.clandestinos.persistence.PersistenceContext;
+import foxsgr.clandestinos.persistence.PlayerRepository;
 import foxsgr.clandestinos.util.TextUtil;
 import net.milkbowl.vault.chat.Chat;
 import org.bukkit.entity.Player;
@@ -26,10 +28,10 @@ public class ChatManager implements Listener {
 
     private Chat chat;
     private String format;
-    private String clanTagFormat;
     private final Clandestinos plugin;
 
     private PlayerRepository playerRepository;
+    private ClanRepository clanRepository;
 
     public ChatManager(Clandestinos plugin) {
         this.plugin = plugin;
@@ -40,19 +42,7 @@ public class ChatManager implements Listener {
     public void onChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
 
-        ClanPlayer clanPlayer = playerRepository.find(Finder.idFromPlayer(player));
-        ClanTag clanTag;
-        if (clanPlayer == null) {
-            clanTag = null;
-        } else {
-            clanTag = clanPlayer.clan();
-        }
-
-        String formattedClanTag = "";
-        if (clanTag != null) {
-            formattedClanTag = clanTagFormat.replace(COLORED_CLAN_TAG_PLACEHOLDER, clanTag.value());
-        }
-
+        String formattedClanTag = formatClanTag(player);
         String prefix = chat.getPlayerPrefix(player);
         String messageFormat = format.replace(PREFIX_PLACEHOLDER, prefix)
                 .replace(FORMATTED_CLAN_TAG_PLACEHOLDER, formattedClanTag)
@@ -77,7 +67,6 @@ public class ChatManager implements Listener {
     public void setup() {
         ConfigManager configManager = ConfigManager.getInstance();
         format = configManager.getString(ConfigManager.CHAT_FORMAT);
-        clanTagFormat = configManager.getString(ConfigManager.CLAN_FORMAT);
 
         RegisteredServiceProvider<Chat> rsp = plugin.getServer().getServicesManager().getRegistration(Chat.class);
         if (rsp == null) {
@@ -86,5 +75,30 @@ public class ChatManager implements Listener {
 
         chat = rsp.getProvider();
         playerRepository = PersistenceContext.repositories().players();
+        clanRepository = PersistenceContext.repositories().clans();
+    }
+
+    private String formatClanTag(Player player) {
+        ClanPlayer clanPlayer = playerRepository.find(Finder.idFromPlayer(player));
+        if (clanPlayer == null) {
+            return "";
+        }
+
+        ClanTag clanTag = clanPlayer.clan();
+        if (clanTag == null) {
+            return "";
+        }
+
+        Clan clan = clanRepository.findByTag(clanTag.withoutColor().value());
+        String color;
+        if (clan.isLeader(clanPlayer)) {
+            color = plugin.getConfig().getString(ConfigManager.LEADER_DECORATION_COLOR);
+        } else {
+            color = plugin.getConfig().getString(ConfigManager.MEMBER_DECORATION_COLOR);
+        }
+
+        String left = plugin.getConfig().getString(ConfigManager.LEFT_OF_TAG);
+        String right = plugin.getConfig().getString(ConfigManager.RIGHT_OF_TAG);
+        return String.format("%s%s%s%s%s ", color, left, clanTag.value(), color, right);
     }
 }

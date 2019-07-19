@@ -18,7 +18,10 @@ public class ConfigManager {
     public static final String ONLINE_MODE = "online-mode";
     public static final String FORBIDDEN_TAGS = "forbidden-tags";
     public static final String CHAT_FORMAT = "chat-format";
-    public static final String CLAN_FORMAT = "clan-format";
+    public static final String LEFT_OF_TAG = "left-of-tag";
+    public static final String RIGHT_OF_TAG = "right-of-tag";
+    public static final String MEMBER_DECORATION_COLOR = "member-decoration-color";
+    public static final String LEADER_DECORATION_COLOR = "leader-decoration-color";
     public static final String CREATE_CLAN_COST = "create-clan-cost";
 
     private final JavaPlugin plugin;
@@ -86,8 +89,11 @@ public class ConfigManager {
         config.addDefault(CHAT_FORMAT, String.format("%s%s&f%s &f> &7%s", ChatManager.FORMATTED_CLAN_TAG_PLACEHOLDER,
                 ChatManager.PREFIX_PLACEHOLDER, ChatManager.PLAYER_PLACEHOLDER,
                 ChatManager.CONTENT_PLACEHOLDER));
-        config.addDefault(CLAN_FORMAT, "&8[" + ChatManager.COLORED_CLAN_TAG_PLACEHOLDER + "&8] ");
         config.addDefault(CREATE_CLAN_COST, 1500);
+        config.addDefault(LEFT_OF_TAG, "[");
+        config.addDefault(RIGHT_OF_TAG, "]");
+        config.addDefault(MEMBER_DECORATION_COLOR, "&7");
+        config.addDefault(LEADER_DECORATION_COLOR, "&4");
         config.options().copyDefaults(true);
     }
 }
