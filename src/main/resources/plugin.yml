@@ -38,3 +38,4 @@ permissions:
       clandestinos.kick: true
       clandestinos.modtag: true
       clandestinos.clanchat: true
+      clandestinos.spy: false

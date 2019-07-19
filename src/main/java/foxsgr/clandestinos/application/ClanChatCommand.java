@@ -8,12 +8,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClanChatCommand implements CommandExecutor {
 
     private String format;
+    private static List<String> blacklist = new ArrayList<>();
 
     @Override
     @SuppressWarnings("squid:S3516") // Must always return true
@@ -29,24 +34,50 @@ public class ClanChatCommand implements CommandExecutor {
 
         ClanTag clanTag = clanPlayer.clan();
         String message = formatMessage(sender, args, clanTag);
+        sender.getServer().getConsoleSender().sendMessage(message);
+
         for (Player player : Bukkit.getOnlinePlayers()) {
             ClanPlayer otherPlayer = Finder.findPlayer(player);
             if (otherPlayer == null) {
+                spySend(player, message);
                 continue;
             }
 
             ClanTag otherPlayerClan = otherPlayer.clan();
             if (otherPlayerClan != null && otherPlayerClan.equals(clanTag)) {
                 player.sendMessage(message);
+            } else {
+                spySend(player, message);
             }
         }
 
         return true;
     }
 
+    public static void toggleSpyBlacklist(CommandSender sender) {
+        if (sender instanceof ConsoleCommandSender) {
+            sender.sendMessage("The console will always receive the clan messages.");
+        }
+
+        String name = sender.getName();
+        if (blacklist.contains(name)) {
+            LanguageManager.send(sender, LanguageManager.SPY_ENABLED);
+            blacklist.remove(name);
+        } else {
+            LanguageManager.send(sender, LanguageManager.SPY_DISABLED);
+            blacklist.add(name);
+        }
+    }
+
     void setup() {
         ConfigManager configManager = ConfigManager.getInstance();
         format = configManager.getString(ConfigManager.CLAN_CHAT_FORMAT);
+    }
+
+    private void spySend(Player player, String message) {
+        if (!blacklist.contains(player.getName()) && PermissionsManager.has(player, "spy")) {
+            player.sendMessage("SPY " + message);
+        }
     }
 
     private String formatMessage(CommandSender sender, String[] args, ClanTag clanTag) {

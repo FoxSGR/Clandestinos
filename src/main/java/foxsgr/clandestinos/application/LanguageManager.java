@@ -83,6 +83,8 @@ public class LanguageManager {
     public static final String YOU_WERE_UNINVITED = "you-were-uninvited";
     public static final String ONLY_CHANGE_COLORS = "only-change-colors";
     public static final String NEW_TAG_INFO = "new-tag-info";
+    public static final String SPY_DISABLED = "spy-disabled";
+    public static final String SPY_ENABLED = "spy-enabled";
 
     private JavaPlugin plugin;
     private Map<String, String> strings;
@@ -252,6 +254,8 @@ public class LanguageManager {
         fileConfiguration.addDefault(YOU_WERE_UNINVITED, "&aYou are no longer invited to {0}&a.");
         fileConfiguration.addDefault(ONLY_CHANGE_COLORS, "&cYou can only change the tag's colors and letter case.");
         fileConfiguration.addDefault(NEW_TAG_INFO, "{0} &ais now known as {1}&a.");
+        fileConfiguration.addDefault(SPY_DISABLED, "&bClan chat spy disabled.");
+        fileConfiguration.addDefault(SPY_ENABLED, "&bClan chat spy enabled.");
 
         fileConfiguration.options().copyDefaults(true);
         return fileConfiguration;

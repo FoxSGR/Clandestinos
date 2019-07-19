@@ -6,10 +6,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class ClanCommand implements CommandExecutor {
+import java.util.List;
+
+public class ClanCommand implements CommandExecutor, TabCompleter {
 
     /**
      * The plugin that the command belongs to.
@@ -27,6 +31,7 @@ public class ClanCommand implements CommandExecutor {
     private static final String INFO_COMMAND = "info";
     private static final String KICK_COMMAND = "kick";
     private static final String MODTAG_COMMAND = "modtag";
+    private static final String SPY_COMMAND = "spy";
 
     ClanCommand(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -66,11 +71,20 @@ public class ClanCommand implements CommandExecutor {
             new KickPlayerHandler().kickPlayer(sender, args);
         } else if (subCommand.equalsIgnoreCase(MODTAG_COMMAND)) {
             new ModifyTagHandler().modifyTag(sender, args);
+        } else if (subCommand.equalsIgnoreCase(SPY_COMMAND)) {
+            if (PermissionsManager.hasAndWarn(sender, "clandestinos.spy")) {
+                ClanChatCommand.toggleSpyBlacklist(sender);
+            }
         } else {
             LanguageManager.send(sender, LanguageManager.UNKNOWN_COMMAND);
         }
 
         return true;
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull @NotNull String[] strings) {
+        return null;
     }
 
     private static void sendSubCommandList(CommandSender sender) {
