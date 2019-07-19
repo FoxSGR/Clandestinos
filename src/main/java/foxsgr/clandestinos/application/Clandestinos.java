@@ -12,9 +12,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Clandestinos extends JavaPlugin {
 
     private boolean usingPAPI;
-    private ChatManager chatManager;
-    private JoinQuitListener joinQuitListener;
-    private DeathListener deathListener;
+
+    private final ChatManager chatManager;
+    private final JoinQuitListener joinQuitListener;
+    private final DeathListener deathListener;
+
+    private final ClanCommand clanCommand;
+    private final ClanChatCommand clanChatCommand;
+
     private static final String CLAN_COMMAND = "clan";
     private static final String CLAN_CHAT_COMMAND = ".";
 
@@ -23,6 +28,8 @@ public class Clandestinos extends JavaPlugin {
         chatManager = new ChatManager(this);
         joinQuitListener = new JoinQuitListener();
         deathListener = new DeathListener();
+        clanCommand = new ClanCommand(this);
+        clanChatCommand = new ClanChatCommand();
     }
 
     @Override
@@ -42,10 +49,12 @@ public class Clandestinos extends JavaPlugin {
         joinQuitListener.setup();
         deathListener.setup();
 
+        clanChatCommand.setup();
+
         EconomyManager.init(this);
 
-        Plugins.registerCommand(this, CLAN_COMMAND, new ClanCommand(this));
-        Plugins.registerCommand(this, CLAN_CHAT_COMMAND, new ClanChatCommand());
+        Plugins.registerCommand(this, CLAN_COMMAND, clanCommand);
+        Plugins.registerCommand(this, CLAN_CHAT_COMMAND, clanChatCommand);
         Bukkit.getPluginManager().registerEvents(chatManager, this);
         Bukkit.getPluginManager().registerEvents(deathListener, this);
     }

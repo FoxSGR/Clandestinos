@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("WeakerAccess")
 public class ConfigManager {
 
     public static final String MIN_TAG_LENGTH = "min-tag-length";
@@ -22,6 +23,7 @@ public class ConfigManager {
     public static final String RIGHT_OF_TAG = "right-of-tag";
     public static final String MEMBER_DECORATION_COLOR = "member-decoration-color";
     public static final String LEADER_DECORATION_COLOR = "leader-decoration-color";
+    public static final String CLAN_CHAT_FORMAT = "clan-chat-format";
     public static final String CREATE_CLAN_COST = "create-clan-cost";
 
     private final JavaPlugin plugin;
@@ -94,6 +96,9 @@ public class ConfigManager {
         config.addDefault(RIGHT_OF_TAG, "]");
         config.addDefault(MEMBER_DECORATION_COLOR, "&7");
         config.addDefault(LEADER_DECORATION_COLOR, "&4");
+        config.addDefault(CLAN_CHAT_FORMAT,
+                String.format("&7[&6Chat %s&7] &f%s &6> &e%s", ChatManager.COLORED_CLAN_TAG_PLACEHOLDER,
+                        ChatManager.PLAYER_PLACEHOLDER, ChatManager.CONTENT_PLACEHOLDER));
         config.options().copyDefaults(true);
     }
 }
