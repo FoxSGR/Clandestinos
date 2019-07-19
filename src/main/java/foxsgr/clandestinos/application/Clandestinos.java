@@ -54,7 +54,10 @@ public class Clandestinos extends JavaPlugin {
         EconomyManager.init(this);
 
         Plugins.registerCommand(this, CLAN_COMMAND, clanCommand);
+        Plugins.registerTabCompleter(this, CLAN_COMMAND, clanCommand);
+
         Plugins.registerCommand(this, CLAN_CHAT_COMMAND, clanChatCommand);
+
         Bukkit.getPluginManager().registerEvents(chatManager, this);
         Bukkit.getPluginManager().registerEvents(deathListener, this);
     }

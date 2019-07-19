@@ -2,6 +2,7 @@ package foxsgr.clandestinos.util;
 
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -31,5 +32,14 @@ public final class Plugins {
         }
 
         command.setExecutor(commandExecutor);
+    }
+
+    public static void registerTabCompleter(JavaPlugin plugin, String name, TabCompleter tabCompleter) {
+        PluginCommand command = plugin.getCommand(name);
+        if (command == null) {
+            throw new IllegalStateException("Could not register the tab completer for \"" + name + "\".")
+        }
+
+        command.setTabCompleter(tabCompleter);
     }
 }
