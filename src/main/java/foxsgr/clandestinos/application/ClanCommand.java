@@ -1,6 +1,7 @@
 package foxsgr.clandestinos.application;
 
 import foxsgr.clandestinos.application.handlers.*;
+import foxsgr.clandestinos.util.TextUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -25,8 +26,9 @@ public class ClanCommand implements CommandExecutor {
     private static final String DISBAND_COMMAND = "disband";
     private static final String INFO_COMMAND = "info";
     private static final String KICK_COMMAND = "kick";
+    private static final String MODTAG_COMMAND = "modtag";
 
-    public ClanCommand(JavaPlugin plugin) {
+    ClanCommand(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -62,6 +64,8 @@ public class ClanCommand implements CommandExecutor {
             new InfoHandler().showInfo(sender, args);
         } else if (subCommand.equalsIgnoreCase(KICK_COMMAND)) {
             new KickPlayerHandler().kickPlayer(sender, args);
+        } else if (subCommand.equalsIgnoreCase(MODTAG_COMMAND)) {
+            new ModifyTagHandler().modifyTag(sender, args);
         } else {
             LanguageManager.send(sender, LanguageManager.UNKNOWN_COMMAND);
         }
@@ -73,13 +77,15 @@ public class ClanCommand implements CommandExecutor {
         StringBuilder builder = new StringBuilder();
         builder.append(LanguageManager.getInstance().get(LanguageManager.COMMANDS_HEADER));
         appendSubCommand(sender, builder, CREATE_COMMAND, LanguageManager.CREATE_USAGE);
+        appendSubCommand(sender, builder, INFO_COMMAND, LanguageManager.INFO_USAGE);
         appendSubCommand(sender, builder, INVITE_COMMAND, LanguageManager.INVITE_USAGE);
+        appendSubCommand(sender, builder, UNINVITE_COMMAND, LanguageManager.UNINVITE_USAGE);
         appendSubCommand(sender, builder, LEAVE_COMMAND, LanguageManager.LEAVE_USAGE);
         appendSubCommand(sender, builder, RELOAD_COMMAND, LanguageManager.RELOAD_USAGE);
         appendSubCommand(sender, builder, DISBAND_COMMAND, LanguageManager.DISBAND_USAGE);
         appendSubCommand(sender, builder, KICK_COMMAND, LanguageManager.KICK_USAGE);
-        appendSubCommand(sender, builder, INFO_COMMAND, LanguageManager.INFO_USAGE);
-        sender.sendMessage(builder.toString());
+        appendSubCommand(sender, builder, MODTAG_COMMAND, LanguageManager.MODTAG_USAGE);
+        sender.sendMessage(TextUtil.translateColoredText(builder.toString()));
     }
 
     private static void appendSubCommand(CommandSender sender, StringBuilder builder, String command, String commandDescriptionId) {

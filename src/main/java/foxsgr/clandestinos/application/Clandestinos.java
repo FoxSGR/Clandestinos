@@ -3,8 +3,8 @@ package foxsgr.clandestinos.application;
 import foxsgr.clandestinos.application.listeners.ChatManager;
 import foxsgr.clandestinos.application.listeners.DeathListener;
 import foxsgr.clandestinos.application.listeners.JoinQuitListener;
-import foxsgr.clandestinos.util.Plugins;
 import foxsgr.clandestinos.persistence.PersistenceContext;
+import foxsgr.clandestinos.util.Plugins;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 

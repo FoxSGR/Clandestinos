@@ -8,7 +8,9 @@ import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.persistence.InviteRepository;
 import foxsgr.clandestinos.persistence.PersistenceContext;
 import foxsgr.clandestinos.util.Pair;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class UninvitePlayerHandler {
 
@@ -23,10 +25,16 @@ public class UninvitePlayerHandler {
 
         Invite invite = inviteRepository.find(args[1], clanLeader.second.clan().withoutColor().value());
         if (invite == null) {
-            // send no invite pending
+            LanguageManager.send(sender, LanguageManager.NO_INVITE_PENDING);
             return;
         }
 
         inviteRepository.remove(invite);
+        LanguageManager.send(sender, LanguageManager.PLAYER_UNINVITED, args[1]);
+
+        Player uninvited = Bukkit.getPlayerExact(args[1]);
+        if (uninvited != null) {
+            LanguageManager.send(uninvited, LanguageManager.YOU_WERE_UNINVITED, clanLeader.first.tag().value());
+        }
     }
 }

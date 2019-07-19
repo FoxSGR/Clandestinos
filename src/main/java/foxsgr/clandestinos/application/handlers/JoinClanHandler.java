@@ -1,15 +1,15 @@
 package foxsgr.clandestinos.application.handlers;
 
+import foxsgr.clandestinos.application.CommandValidator;
 import foxsgr.clandestinos.application.Finder;
 import foxsgr.clandestinos.application.LanguageManager;
-import foxsgr.clandestinos.application.CommandValidator;
 import foxsgr.clandestinos.domain.model.Invite;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
-import foxsgr.clandestinos.persistence.PlayerRepository;
 import foxsgr.clandestinos.persistence.ClanRepository;
 import foxsgr.clandestinos.persistence.InviteRepository;
 import foxsgr.clandestinos.persistence.PersistenceContext;
+import foxsgr.clandestinos.persistence.PlayerRepository;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -18,7 +18,6 @@ public class JoinClanHandler {
     private final ClanRepository clanRepository = PersistenceContext.repositories().clans();
     private final PlayerRepository playerRepository = PersistenceContext.repositories().players();
     private final InviteRepository inviteRepository = PersistenceContext.repositories().invites();
-    private final LanguageManager languageManager = LanguageManager.getInstance();
 
     public void joinClan(CommandSender sender, String[] args) {
         if (!CommandValidator.validate(sender, args, 2, LanguageManager.WRONG_JOIN_USAGE)) {
@@ -34,20 +33,21 @@ public class JoinClanHandler {
         String id = Finder.idFromPlayer(player);
         ClanPlayer clanPlayer = playerRepository.find(id);
         if (clanPlayer != null && clanPlayer.inClan()) {
-            sender.sendMessage(languageManager.get(LanguageManager.CANNOT_IN_CLAN));
+            LanguageManager.send(sender, LanguageManager.CANNOT_IN_CLAN);
             return;
         }
 
         Invite invite = inviteRepository.find(id, args[1]);
         if (invite == null) {
-            sender.sendMessage(languageManager.get(LanguageManager.NOT_INVITED));
+            LanguageManager.send(sender, LanguageManager.NOT_INVITED);
             return;
         }
 
         joinClan(player, clan);
         inviteRepository.remove(invite);
 
-        inform(player, clan);
+        LanguageManager.broadcast(sender.getServer(), LanguageManager.JOINED_MESSAGE, player.getDisplayName(),
+                clan.tag().value());
     }
 
     private void joinClan(Player player, Clan clan) {
@@ -57,12 +57,5 @@ public class JoinClanHandler {
 
         clanPlayer.joinClan(clan);
         playerRepository.save(clanPlayer);
-    }
-
-    private void inform(Player player, Clan clan) {
-        String message = languageManager.get(LanguageManager.JOINED_MESSAGE)
-                .replace(LanguageManager.placeholder(0), player.getDisplayName())
-                .replace(LanguageManager.placeholder(1), clan.tag().value());
-        player.getServer().broadcastMessage(message);
     }
 }

@@ -9,14 +9,12 @@ import foxsgr.clandestinos.persistence.ClanRepository;
 import foxsgr.clandestinos.persistence.PersistenceContext;
 import foxsgr.clandestinos.persistence.PlayerRepository;
 import foxsgr.clandestinos.util.Pair;
-import foxsgr.clandestinos.util.TextUtil;
 import org.bukkit.command.CommandSender;
 
 public class KickPlayerHandler {
 
     private final ClanRepository clanRepository = PersistenceContext.repositories().clans();
     private final PlayerRepository playerRepository = PersistenceContext.repositories().players();
-    private final LanguageManager languageManager = LanguageManager.getInstance();
 
     public void kickPlayer(CommandSender sender, String[] args) {
         Pair<Clan, ClanPlayer> clanLeader = CommandValidator.validateClanLeader(sender, args, 2,
@@ -48,10 +46,8 @@ public class KickPlayerHandler {
         clanRepository.update(clan);
         playerRepository.save(player);
 
-        String message = languageManager.get(LanguageManager.PLAYER_KICKED)
-                .replace(LanguageManager.placeholder(0), Finder.nameFromId(player.id()))
-                .replace(LanguageManager.placeholder(1), clan.tag().value());
-        sender.getServer().broadcastMessage(TextUtil.translateColoredText(message));
+        LanguageManager.broadcast(sender.getServer(), LanguageManager.PLAYER_KICKED, Finder.nameFromId(player.id()),
+                clan.tag().value());
     }
 
     private static boolean canKick(CommandSender sender, ClanPlayer kicker, ClanPlayer kicked, Clan clan) {

@@ -1,7 +1,9 @@
 package foxsgr.clandestinos.domain.model.clan;
 
+import foxsgr.clandestinos.domain.exceptions.ChangeMoreThanColorsException;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.util.Preconditions;
+import foxsgr.clandestinos.util.TextUtil;
 
 import java.util.*;
 
@@ -27,6 +29,25 @@ public class Clan {
         this.members = new LinkedHashSet<>(members);
 
         this.leaders.add(owner); // IF this.leaders WAS A LIST THERE HAD TO BE A CONTAINS CHECK
+    }
+
+    @Override
+    public boolean equals(Object otherObject) {
+        if (this == otherObject) {
+            return true;
+        }
+
+        if (!(otherObject instanceof Clan)) {
+            return false;
+        }
+
+        Clan otherClan = (Clan) otherObject;
+        return tag.withoutColor().value().equalsIgnoreCase(otherClan.tag.withoutColor().value());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tag.withoutColor().value().toLowerCase());
     }
 
     public ClanTag tag() {
@@ -74,5 +95,11 @@ public class Clan {
     public void remove(ClanPlayer player) {
         leaders.remove(player.id());
         members.remove(player.id());
+    }
+
+    public void changeTag(String newTag) {
+        String rawTag = TextUtil.stripColorAndFormatting(newTag);
+        Preconditions.ensure(rawTag.equalsIgnoreCase(tag.withoutColor().value()), ChangeMoreThanColorsException.class);
+        tag = new ClanTag(newTag);
     }
 }

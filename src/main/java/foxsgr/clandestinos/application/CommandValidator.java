@@ -36,9 +36,8 @@ public final class CommandValidator {
             return false;
         }
 
-        LanguageManager languageManager = LanguageManager.getInstance();
         if (args.length < minArgsLength) {
-            sender.sendMessage(languageManager.get(underMinArgsMessage));
+            LanguageManager.send(sender, underMinArgsMessage);
             return false;
         }
 
@@ -46,10 +45,8 @@ public final class CommandValidator {
     }
 
     public static Player playerFromSender(CommandSender sender) {
-        LanguageManager languageManager = LanguageManager.getInstance();
-
         if (!(sender instanceof Player)) {
-            sender.sendMessage(languageManager.get(LanguageManager.MUST_BE_PLAYER));
+            LanguageManager.send(sender, LanguageManager.MUST_BE_PLAYER);
             return null;
         }
 
@@ -62,5 +59,13 @@ public final class CommandValidator {
         }
 
         return Finder.findClanLeader(sender);
+    }
+
+    public static Pair<Clan, ClanPlayer> validateClanOwner(CommandSender sender, String[] args, int minArgsLength, String underMinArgsMessage) {
+        if (!validate(sender, args, minArgsLength, underMinArgsMessage)) {
+            return null;
+        }
+
+        return Finder.findClanOwner(sender);
     }
 }

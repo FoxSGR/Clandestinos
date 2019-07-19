@@ -8,6 +8,12 @@ public final class TextUtil {
 
     }
 
+    public static String stripColorAndFormatting(String text) {
+        text = translateColoredText(text);
+        text = ChatColor.stripColor(text);
+        return text.replaceAll("([&§])(r|[k-o])", "");
+    }
+
     public static String translateColoredText(String text) {
         text = text.replace('§', '&');
         return ChatColor.translateAlternateColorCodes('&', text);

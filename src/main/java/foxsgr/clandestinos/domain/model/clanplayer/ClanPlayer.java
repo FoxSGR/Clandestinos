@@ -97,4 +97,10 @@ public class ClanPlayer {
     public KDR kdr() {
         return new KDR(killCount, deathCount);
     }
+
+    public void updateClanTag(ClanTag newTag) {
+        Preconditions.ensure(newTag.withoutColor().value().equalsIgnoreCase(clan.withoutColor().value()),
+                String.format("Cannot update %s's clan tag because it's not from the same clan.", id));
+        clan = newTag;
+    }
 }

@@ -1,8 +1,8 @@
 package foxsgr.clandestinos.application.handlers;
 
+import foxsgr.clandestinos.application.CommandValidator;
 import foxsgr.clandestinos.application.Finder;
 import foxsgr.clandestinos.application.LanguageManager;
-import foxsgr.clandestinos.application.CommandValidator;
 import foxsgr.clandestinos.domain.model.KDR;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
@@ -10,6 +10,7 @@ import foxsgr.clandestinos.domain.services.CalculateClanKDRService;
 import foxsgr.clandestinos.persistence.ClanRepository;
 import foxsgr.clandestinos.persistence.PersistenceContext;
 import foxsgr.clandestinos.persistence.PlayerRepository;
+import foxsgr.clandestinos.util.TextUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -108,7 +109,7 @@ public class InfoHandler {
                 .append(String.format("%.2f", kdr.kdr())).append('\n')
                 .append(languageManager.get(LanguageManager.KILLS)).append(' ').append(kdr.kills()).append('\n')
                 .append(languageManager.get(LanguageManager.DEATHS)).append(' ').append(kdr.deaths());
-        sender.sendMessage(infoBuilder.toString());
+        sender.sendMessage(TextUtil.translateColoredText(infoBuilder.toString()));
     }
 
     private void showPlayerInfo(CommandSender sender, String name, ClanPlayer clanPlayer) {
@@ -118,12 +119,12 @@ public class InfoHandler {
             clan = clanPlayer.clan().value();
         }
 
-        String infoBuilder = languageManager.get(LanguageManager.PLAYER) + ' ' + name + '\n'
+        String info = languageManager.get(LanguageManager.PLAYER) + ' ' + name + '\n'
                 + languageManager.get(LanguageManager.CLAN) + ' ' + clan + '\n'
                 + languageManager.get(LanguageManager.KDR) + ' '
                 + String.format("%.2f", kdr.kdr()) + '\n'
                 + languageManager.get(LanguageManager.KILLS) + ' ' + kdr.kills() + '\n'
                 + languageManager.get(LanguageManager.DEATHS) + ' ' + kdr.deaths();
-        sender.sendMessage(infoBuilder);
+        sender.sendMessage(TextUtil.translateColoredText(info));
     }
 }

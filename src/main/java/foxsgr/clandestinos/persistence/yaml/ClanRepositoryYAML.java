@@ -7,9 +7,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
@@ -18,7 +18,7 @@ class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
 
     ClanRepositoryYAML(JavaPlugin plugin) {
         super(plugin, "clans");
-        cache = new HashMap<>();
+        cache = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -66,7 +66,7 @@ class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
     }
 
     @Override
-    public void remove(Clan clan) {
+    public synchronized void remove(Clan clan) {
         String properTag = properTag(clan);
         if (!makeFile(properTag).delete()) {
             logger().log(Level.WARNING, "Could not delete the clan file {0}", properTag);
@@ -75,7 +75,7 @@ class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
         }
     }
 
-    private void fillConfiguration(FileConfiguration fileConfiguration, Clan clan) {
+    private synchronized void fillConfiguration(FileConfiguration fileConfiguration, Clan clan) {
         cache.put(properTag(clan), clan);
         fileConfiguration.set("tag", clan.tag().value());
         fileConfiguration.set("name", clan.name().value());

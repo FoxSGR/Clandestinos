@@ -14,7 +14,7 @@ public class Invite {
     public Invite(Clan invitedTo, ClanPlayer invitedPlayer) {
         Preconditions.ensureNotNull(invitedTo, "The clan that the player was invited to cannot be null.");
         Preconditions.ensureNotNull(invitedTo, "The invited player cannot be null.");
-        this.id = invitedTo.tag().withoutColor().value().toLowerCase() + invitedPlayer.id();
+        this.id = invitedTo.tag().withoutColor().value().toLowerCase() + invitedPlayer.id().toLowerCase();
         this.invitedTo = invitedTo.tag();
         this.invitedPlayer = invitedPlayer.id();
     }

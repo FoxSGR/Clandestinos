@@ -25,12 +25,12 @@ class PlayerRepositoryYAML extends YAMLRepository implements PlayerRepository {
 
     @Override
     public ClanPlayer find(String id) {
-        ClanPlayer clanPlayer = cache.get(id);
+        ClanPlayer clanPlayer = cache.get(id.toLowerCase());
         if (clanPlayer != null) {
             return clanPlayer;
         }
 
-        ConfigurationSection playerSection = file(id);
+        ConfigurationSection playerSection = file(id.toLowerCase());
         if (playerSection == null) {
             return null;
         }
@@ -41,9 +41,9 @@ class PlayerRepositoryYAML extends YAMLRepository implements PlayerRepository {
     @Override
     public void save(ClanPlayer clanPlayer) {
         String id = clanPlayer.id();
-        cache.put(id, clanPlayer);
+        cache.put(id.toLowerCase(), clanPlayer);
 
-        FileConfiguration fileConfiguration = loadFile(id);
+        FileConfiguration fileConfiguration = loadFile(id.toLowerCase());
         fileConfiguration.set("kill-count", clanPlayer.killCount().value());
         fileConfiguration.set("death-count", clanPlayer.deathCount().value());
 
@@ -54,34 +54,34 @@ class PlayerRepositoryYAML extends YAMLRepository implements PlayerRepository {
             fileConfiguration.set(CLAN_TAG, null);
         }
 
-        saveFile(fileConfiguration, id);
+        saveFile(fileConfiguration, id.toLowerCase());
     }
 
     @Override
     public void load(String id) {
         ClanPlayer clanPlayer = find(id);
         if (clanPlayer != null) {
-            cache.put(clanPlayer.id(), clanPlayer);
+            cache.put(clanPlayer.id().toLowerCase(), clanPlayer);
         }
     }
 
     @Override
     public void unload(String id) {
-        cache.remove(id);
+        cache.remove(id.toLowerCase());
     }
 
     @Override
     public void leaveFromClan(Clan clan) {
         List<String> ids = clan.allPlayers();
         for (String id : ids) {
-            FileConfiguration fileConfiguration = loadFile(id);
+            FileConfiguration fileConfiguration = loadFile(id.toLowerCase());
             fileConfiguration.set(CLAN_TAG, null);
 
             if (cache.containsKey(id)) {
-                cache.put(id, constructPlayer(fileConfiguration, id));
+                cache.put(id.toLowerCase(), constructPlayer(fileConfiguration, id));
             }
 
-            saveFile(fileConfiguration, id);
+            saveFile(fileConfiguration, id.toLowerCase());
         }
     }
 

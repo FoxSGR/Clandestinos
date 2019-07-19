@@ -17,7 +17,6 @@ import org.bukkit.entity.Player;
 public class InvitePlayerHandler {
 
     private final InviteRepository inviteRepository = PersistenceContext.repositories().invites();
-    private final LanguageManager languageManager = LanguageManager.getInstance();
 
     public void invitePlayer(CommandSender sender, String[] args) {
         Pair<Clan, ClanPlayer> clanLeader = CommandValidator.validateClanLeader(sender, args, 2,
@@ -28,7 +27,7 @@ public class InvitePlayerHandler {
 
         Player invited = Bukkit.getPlayerExact(args[1]);
         if (invited == null) {
-            sender.sendMessage(languageManager.get(LanguageManager.PLAYER_NOT_ONLINE));
+            LanguageManager.send(sender, LanguageManager.PLAYER_NOT_ONLINE);
             return;
         }
 
@@ -44,15 +43,10 @@ public class InvitePlayerHandler {
         Invite invite = new Invite(clan, invitedClanPlayer);
         inviteRepository.add(invite);
 
-        String inviterMessage = languageManager.get(LanguageManager.PLAYER_INVITED)
-                .replace(LanguageManager.placeholder(0), invited.getName());
-        sender.sendMessage(inviterMessage);
+        LanguageManager.send(sender, LanguageManager.PLAYER_INVITED, invited.getName());
 
         ClanTag clanTag = clan.tag();
-        String invitedMessage = languageManager.get(LanguageManager.RECEIVED_INVITE)
-                .replace(LanguageManager.placeholder(0), clanTag.value())
-                .replace(LanguageManager.placeholder(1), clanTag.withoutColor().value());
-        invited.sendMessage(invitedMessage);
+        LanguageManager.send(invited, LanguageManager.RECEIVED_INVITE, clanTag.value(), clanTag.withoutColor().value());
     }
 
     private ClanPlayer canBeInvited(CommandSender sender, Player invited, Clan clan) {
@@ -66,12 +60,12 @@ public class InvitePlayerHandler {
         }
 
         if (invitedClanPlayer.clan().equalsIgnoreColor(clan.tag())) {
-            sender.sendMessage(languageManager.get(LanguageManager.ALREADY_IN_YOUR_CLAN));
+            LanguageManager.send(sender, LanguageManager.ALREADY_IN_YOUR_CLAN);
             return null;
         }
 
         if (inviteRepository.find(invitedClanPlayer.id(), clan.tag().withoutColor().value()) != null) {
-            sender.sendMessage(languageManager.get(LanguageManager.ALREADY_INVITED));
+            LanguageManager.send(sender, LanguageManager.ALREADY_INVITED);
             return null;
         }
 

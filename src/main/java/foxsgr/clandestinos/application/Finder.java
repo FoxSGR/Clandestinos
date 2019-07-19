@@ -54,8 +54,7 @@ public final class Finder {
         PlayerRepository playerRepository = PersistenceContext.repositories().players();
         ClanPlayer found = playerRepository.find(id);
         if (found == null) {
-            LanguageManager languageManager = LanguageManager.getInstance();
-            sender.sendMessage(languageManager.get(LanguageManager.UNKNOWN_PLAYER_CLAN));
+            LanguageManager.send(sender, LanguageManager.UNKNOWN_PLAYER_CLAN);
         }
 
         return found;
@@ -66,8 +65,7 @@ public final class Finder {
         ClanRepository clanRepository = PersistenceContext.repositories().clans();
         Clan found = clanRepository.findByTag(tag);
         if (found == null) {
-            LanguageManager languageManager = LanguageManager.getInstance();
-            sender.sendMessage(languageManager.get(LanguageManager.CLAN_DOESNT_EXIST));
+            LanguageManager.send(sender, LanguageManager.CLAN_DOESNT_EXIST);
         }
 
         return found;
@@ -124,12 +122,10 @@ public final class Finder {
         }
 
         PlayerRepository playerRepository = PersistenceContext.repositories().players();
-        LanguageManager languageManager = LanguageManager.getInstance();
-
         String id = Finder.idFromPlayer(player);
         ClanPlayer clanPlayer = playerRepository.find(id);
         if (clanPlayer == null || !clanPlayer.inClan()) {
-            sender.sendMessage(languageManager.get(LanguageManager.MUST_BE_IN_CLAN));
+            LanguageManager.send(sender, LanguageManager.MUST_BE_IN_CLAN);
             return null;
         }
 
@@ -139,11 +135,10 @@ public final class Finder {
     @Nullable
     public static Clan clanFromPlayer(CommandSender sender, ClanPlayer clanPlayer) {
         ClanRepository clanRepository = PersistenceContext.repositories().clans();
-        LanguageManager languageManager = LanguageManager.getInstance();
 
         Clan clan = clanRepository.findByTag(clanPlayer.clan().withoutColor().value());
         if (clan == null) {
-            sender.sendMessage(languageManager.get(LanguageManager.MUST_BE_IN_CLAN));
+            LanguageManager.send(sender, LanguageManager.MUST_BE_IN_CLAN);
             return null;
         }
 
@@ -164,6 +159,22 @@ public final class Finder {
         }
 
         return new Pair<>(clan, leader);
+    }
+
+    @Nullable
+    public static Pair<Clan, ClanPlayer> findClanOwner(CommandSender sender) {
+        ClanPlayer owner = fromSenderInClan(sender);
+        if (owner == null) {
+            return null;
+        }
+
+        Clan clan = clanFromPlayer(sender, owner);
+        if (!clan.isOwner(owner)) {
+            LanguageManager.send(sender, LanguageManager.MUST_BE_OWNER);
+            return null;
+        }
+
+        return new Pair<>(clan, owner);
     }
 
     @Nullable

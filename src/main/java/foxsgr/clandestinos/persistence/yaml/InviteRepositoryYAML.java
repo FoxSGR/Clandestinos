@@ -22,24 +22,24 @@ public class InviteRepositoryYAML extends YAMLRepository implements InviteReposi
         FileConfiguration fileConfiguration = new YamlConfiguration();
         fileConfiguration.set("invited-to", invite.invitedTo().withoutColor().value().toLowerCase());
         fileConfiguration.set("invited-player", invite.invitedPlayer());
-        saveFile(fileConfiguration, invite.id());
+        saveFile(fileConfiguration, invite.id().toLowerCase());
     }
 
     @Override
     public Invite find(String invitedPlayer, String clanInvitedTo) {
-        String id = clanInvitedTo.toLowerCase() + invitedPlayer;
-        File file = makeFile(id);
+        String id = clanInvitedTo + invitedPlayer;
+        File file = makeFile(id.toLowerCase());
         if (!file.exists()) {
             return null;
         }
 
-        ClanTag clanTag = new ClanTag(clanInvitedTo.toLowerCase());
+        ClanTag clanTag = new ClanTag(clanInvitedTo);
         return new Invite(id, clanTag, invitedPlayer);
     }
 
     @Override
     public void remove(Invite invite) {
-        if (!makeFile(invite.id()).delete()) {
+        if (!makeFile(invite.id().toLowerCase()).delete()) {
             logger().log(Level.WARNING, "Could not delete the invite file {0}.yml", invite.id());
         }
     }
@@ -52,7 +52,7 @@ public class InviteRepositoryYAML extends YAMLRepository implements InviteReposi
         }
 
         for (File inviteFile : inviteFiles) {
-            if (inviteFile.getName().contains(clan.tag().withoutColor().value()) && !inviteFile.delete()) {
+            if (inviteFile.getName().contains(clan.tag().withoutColor().value().toLowerCase()) && !inviteFile.delete()) {
                 logger().log(Level.WARNING, "Could not delete the invite file {0}.yml", inviteFile.getName());
             }
         }
