@@ -37,7 +37,7 @@ public final class Plugins {
     public static void registerTabCompleter(JavaPlugin plugin, String name, TabCompleter tabCompleter) {
         PluginCommand command = plugin.getCommand(name);
         if (command == null) {
-            throw new IllegalStateException("Could not register the tab completer for \"" + name + "\".")
+            throw new IllegalStateException("Could not register the tab completer for \"" + name + "\".");
         }
 
         command.setTabCompleter(tabCompleter);

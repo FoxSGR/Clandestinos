@@ -49,7 +49,7 @@ class PlayerRepositoryYAML extends YAMLRepository implements PlayerRepository {
 
         ClanTag clanTag = clanPlayer.clan();
         if (clanTag != null) {
-            fileConfiguration.set(CLAN_TAG, clanTag.value());
+            fileConfiguration.set(CLAN_TAG, clanTag.withoutColor().value().toLowerCase());
         } else {
             fileConfiguration.set(CLAN_TAG, null);
         }
@@ -76,12 +76,11 @@ class PlayerRepositoryYAML extends YAMLRepository implements PlayerRepository {
         for (String id : ids) {
             FileConfiguration fileConfiguration = loadFile(id.toLowerCase());
             fileConfiguration.set(CLAN_TAG, null);
+            saveFile(fileConfiguration, id.toLowerCase());
 
-            if (cache.containsKey(id)) {
+            if (cache.containsKey(id.toLowerCase())) {
                 cache.put(id.toLowerCase(), constructPlayer(fileConfiguration, id));
             }
-
-            saveFile(fileConfiguration, id.toLowerCase());
         }
     }
 

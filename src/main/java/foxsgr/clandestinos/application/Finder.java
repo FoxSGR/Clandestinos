@@ -71,6 +71,16 @@ public final class Finder {
         return found;
     }
 
+    public static Clan findClanEnsureExists(ClanPlayer player) {
+        ClanRepository clanRepository = PersistenceContext.repositories().clans();
+        Clan clan = clanRepository.findByTag(player.clan().withoutColor().value());
+        if (clan == null) {
+            throw new IllegalStateException("The clan with tag " + player.clan().withoutColor().value() + " couldn't be found.");
+        }
+
+        return clan;
+    }
+
     public static Set<ClanPlayer> playersInClan(Clan clan) {
         Set<ClanPlayer> result = new HashSet<>();
 
@@ -80,7 +90,7 @@ public final class Finder {
             if (player == null) {
                 ClanLogger.getLogger().log(Level.WARNING,
                         "The player {0} was not found but the clan {1} has it as its member.",
-                        new String[] {id, clan.tag().withoutColor().value()});
+                        new String[] {id, clan.simpleTag()});
                 continue;
             }
 

@@ -23,8 +23,10 @@ public class EconomyManager {
 
     public boolean take(Player player, double amount) {
         if (economy.withdrawPlayer(player, amount).transactionSuccess()) {
-            player.sendMessage(LanguageManager.getInstance().get(LanguageManager.MONEY_TAKEN)
-                    .replace(LanguageManager.placeholder(0), format(amount)));
+            if (amount != 0) {
+                LanguageManager.send(player, LanguageManager.MONEY_TAKEN, format(amount));
+            }
+
             return true;
         }
 

@@ -27,6 +27,6 @@ public class DisbandClanHandler {
         clanRepository.remove(clanOwner.first);
         inviteRepository.removeAllFrom(clanOwner.first);
 
-        LanguageManager.broadcast(sender.getServer(), LanguageManager.CLAN_DISBANDED, clanOwner.first.tag().value());
+        LanguageManager.broadcast(sender.getServer(), LanguageManager.CLAN_DISBANDED, clanOwner.first.tag());
     }
 }

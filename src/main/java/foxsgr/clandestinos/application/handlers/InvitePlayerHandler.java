@@ -64,7 +64,7 @@ public class InvitePlayerHandler {
             return null;
         }
 
-        if (inviteRepository.find(invitedClanPlayer.id(), clan.tag().withoutColor().value()) != null) {
+        if (inviteRepository.find(invitedClanPlayer.id(), clan.simpleTag()) != null) {
             LanguageManager.send(sender, LanguageManager.ALREADY_INVITED);
             return null;
         }

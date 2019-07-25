@@ -78,4 +78,14 @@ class YAMLRepository {
 
         return new File(repositoryFolder, name);
     }
+
+    @NotNull
+    File[] listFiles() {
+        File[] list = repositoryFolder.listFiles();
+        if (list == null) {
+            list = new File[0];
+        }
+
+        return list;
+    }
 }

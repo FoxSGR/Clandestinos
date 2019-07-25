@@ -4,9 +4,7 @@ import foxsgr.clandestinos.application.Clandestinos;
 import foxsgr.clandestinos.application.ConfigManager;
 import foxsgr.clandestinos.application.Finder;
 import foxsgr.clandestinos.domain.model.clan.Clan;
-import foxsgr.clandestinos.domain.model.clan.ClanTag;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
-import foxsgr.clandestinos.persistence.ClanRepository;
 import foxsgr.clandestinos.persistence.PersistenceContext;
 import foxsgr.clandestinos.persistence.PlayerRepository;
 import foxsgr.clandestinos.util.TextUtil;
@@ -31,7 +29,6 @@ public class ChatManager implements Listener {
     private final Clandestinos plugin;
 
     private PlayerRepository playerRepository;
-    private ClanRepository clanRepository;
 
     public ChatManager(Clandestinos plugin) {
         this.plugin = plugin;
@@ -75,21 +72,15 @@ public class ChatManager implements Listener {
 
         chat = rsp.getProvider();
         playerRepository = PersistenceContext.repositories().players();
-        clanRepository = PersistenceContext.repositories().clans();
     }
 
     private String formatClanTag(Player player) {
         ClanPlayer clanPlayer = playerRepository.find(Finder.idFromPlayer(player));
-        if (clanPlayer == null) {
+        if (clanPlayer == null || !clanPlayer.inClan()) {
             return "";
         }
 
-        ClanTag clanTag = clanPlayer.clan();
-        if (clanTag == null) {
-            return "";
-        }
-
-        Clan clan = clanRepository.findByTag(clanTag.withoutColor().value());
+        Clan clan = Finder.findClanEnsureExists(clanPlayer);
         String color;
         if (clan.isLeader(clanPlayer)) {
             color = plugin.getConfig().getString(ConfigManager.LEADER_DECORATION_COLOR);
@@ -99,6 +90,6 @@ public class ChatManager implements Listener {
 
         String left = plugin.getConfig().getString(ConfigManager.LEFT_OF_TAG);
         String right = plugin.getConfig().getString(ConfigManager.RIGHT_OF_TAG);
-        return String.format("%s%s%s%s%s ", color, left, clanTag.value(), color, right);
+        return String.format("%s%s%s%s%s ", color, left, clan.tag(), color, right);
     }
 }

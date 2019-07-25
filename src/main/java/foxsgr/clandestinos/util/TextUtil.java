@@ -24,6 +24,7 @@ public final class TextUtil {
     }
 
     public static boolean containsColorCodes(String text) {
+        text = translateColoredText(text);
         return !text.equals(ChatColor.stripColor(text));
     }
 

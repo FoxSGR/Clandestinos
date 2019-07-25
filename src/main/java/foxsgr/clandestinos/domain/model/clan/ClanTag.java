@@ -46,7 +46,7 @@ public class ClanTag {
     }
 
     public boolean equalsIgnoreColor(ClanTag otherClanTag) {
-        return withoutColor().equals(otherClanTag.withoutColor());
+        return withoutColor().value().equalsIgnoreCase(otherClanTag.withoutColor().value());
     }
 
     public String value() {

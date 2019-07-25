@@ -39,3 +39,4 @@ permissions:
       clandestinos.modtag: true
       clandestinos.clanchat: true
       clandestinos.spy: false
+      clandestinos.enemy: true

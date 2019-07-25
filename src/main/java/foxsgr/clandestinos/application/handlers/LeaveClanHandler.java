@@ -21,7 +21,7 @@ public class LeaveClanHandler {
             return;
         }
 
-        Clan clan = clanRepository.findByTag(clanPlayer.clan().withoutColor().value());
+        Clan clan = Finder.findClanEnsureExists(clanPlayer);
         if (clan.isOwner(clanPlayer)) {
             LanguageManager.send(sender, LanguageManager.OWNER_CANT_LEAVE);
             return;

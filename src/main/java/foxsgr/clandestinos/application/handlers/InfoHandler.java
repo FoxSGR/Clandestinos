@@ -116,7 +116,7 @@ public class InfoHandler {
         KDR kdr = clanPlayer.kdr();
         String clan = "";
         if (clanPlayer.inClan()) {
-            clan = clanPlayer.clan().value();
+            clan = Finder.findClanEnsureExists(clanPlayer).tag().value();
         }
 
         String info = languageManager.get(LanguageManager.PLAYER) + ' ' + name + '\n'

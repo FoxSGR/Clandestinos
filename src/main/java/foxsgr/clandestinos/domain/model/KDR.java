@@ -22,6 +22,10 @@ public class KDR {
     }
 
     private double calculateKDR() {
+        if (kills == 0 && deaths == 1) {
+            return 0;
+        }
+
         double kdrKills = kills == 0 ? 1 : kills;
         int kdrDeaths = deaths == 0 ? 1 : deaths;
         return kdrKills / kdrDeaths;

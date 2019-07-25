@@ -1,17 +1,15 @@
 package foxsgr.clandestinos.application.handlers;
 
 import foxsgr.clandestinos.application.*;
-import foxsgr.clandestinos.application.ConfigManager;
 import foxsgr.clandestinos.domain.exceptions.NonLetterInTagException;
 import foxsgr.clandestinos.domain.exceptions.WrongNameSizeException;
 import foxsgr.clandestinos.domain.exceptions.WrongTagSizeException;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
-import foxsgr.clandestinos.persistence.PlayerRepository;
 import foxsgr.clandestinos.persistence.ClanRepository;
 import foxsgr.clandestinos.persistence.PersistenceContext;
+import foxsgr.clandestinos.persistence.PlayerRepository;
 import foxsgr.clandestinos.util.TextUtil;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -21,8 +19,6 @@ public class CreateClanHandler {
     private final PlayerRepository playerRepository = PersistenceContext.repositories().players();
     private final ConfigManager configManager = ConfigManager.getInstance();
     private final EconomyManager economyManager = EconomyManager.getInstance();
-
-    private static final ChatColor DEFAULT_COLOR = ChatColor.GRAY;
 
     public void createClan(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
@@ -50,7 +46,7 @@ public class CreateClanHandler {
         String clanName = clanNameFromArgs(args);
         String clanTag = args[1];
         if (!TextUtil.containsColorCodes(clanTag)) {
-            clanTag = DEFAULT_COLOR + clanTag;
+            clanTag = configManager.getString(ConfigManager.DEFAULT_TAG_COLOR) + clanTag;
         }
 
         Clan clan = new Clan(clanTag, clanName, clanPlayer);
@@ -101,7 +97,8 @@ public class CreateClanHandler {
             return false;
         }
 
-        if (configManager.getStringList(ConfigManager.FORBIDDEN_TAGS).contains(args[1])) {
+        String rawTag = TextUtil.stripColorAndFormatting(args[1]).toLowerCase();
+        if (configManager.getStringList(ConfigManager.FORBIDDEN_TAGS).contains(rawTag)) {
             LanguageManager.send(sender, LanguageManager.FORBIDDEN_TAG);
             return false;
         }

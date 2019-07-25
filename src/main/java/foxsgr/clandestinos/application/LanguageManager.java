@@ -28,6 +28,7 @@ public class LanguageManager {
     public static final String INFO_USAGE = "info-usage";
     public static final String KICK_USAGE = "kick-usage";
     public static final String MODTAG_USAGE = "modtag-usage";
+    public static final String ENEMY_USAGE = "enemy-usage";
 
     public static final String WRONG_CREATE_USAGE = "wrong-create-usage";
     public static final String WRONG_INVITE_USAGE = "wrong-invite-usage";
@@ -36,6 +37,7 @@ public class LanguageManager {
     public static final String WRONG_INFO_USAGE = "wrong-info-usage";
     public static final String WRONG_KICK_USAGE = "wrong-kick-usage";
     public static final String WRONG_MODTAG_USAGE = "wrong-modtag-usage";
+    public static final String WRONG_ENEMY_USAGE = "wrong-enemy-usage";
 
     public static final String NO_PERMISSION = "no-permission";
     public static final String WRONG_SIZE_TAG = "wrong-size-tag";
@@ -85,6 +87,9 @@ public class LanguageManager {
     public static final String NEW_TAG_INFO = "new-tag-info";
     public static final String SPY_DISABLED = "spy-disabled";
     public static final String SPY_ENABLED = "spy-enabled";
+    public static final String CHANGE_SAME_TAG = "change-same-tag";
+    public static final String ALREADY_YOUR_ENEMY = "already-your-enemy";
+    public static final String ENEMY_DECLARATION = "enemy-declaration";
 
     private JavaPlugin plugin;
     private Map<String, String> strings;
@@ -105,12 +110,12 @@ public class LanguageManager {
         return instance;
     }
 
-    public static void send(CommandSender sender, String key, String... placeholderValues) {
+    public static void send(CommandSender sender, String key, Object... placeholderValues) {
         String message = createMessage(key, placeholderValues);
         sender.sendMessage(message);
     }
 
-    public static void broadcast(Server server, String key, String... placeholderValues) {
+    public static void broadcast(Server server, String key, Object... placeholderValues) {
         String message = createMessage(key, placeholderValues);
         server.broadcastMessage(message);
     }
@@ -199,6 +204,7 @@ public class LanguageManager {
         fileConfiguration.addDefault(INFO_USAGE, "&b/clan info [clan/player] (tag/player name) - Show clan/player information.");
         fileConfiguration.addDefault(KICK_USAGE, "&b/clan kick (name) - Kick a player from your clan.");
         fileConfiguration.addDefault(MODTAG_USAGE, "&b/clan modtag (newtag) - Change the colors of your clan tag.");
+        fileConfiguration.addDefault(ENEMY_USAGE, "&b/clan enemy (tag) - Declare that a clan is your enemy.");
 
         fileConfiguration.addDefault(WRONG_CREATE_USAGE, "&cTo create a clan, use: &b/clan create (tag) [name]");
         fileConfiguration.addDefault(WRONG_INVITE_USAGE, "&cTo invite a player, use: &b/clan invite (player)");
@@ -207,6 +213,7 @@ public class LanguageManager {
         fileConfiguration.addDefault(WRONG_INFO_USAGE, "&cTo show clan/player information, use: &b/clan info [clan/player] (tag/player name)");
         fileConfiguration.addDefault(WRONG_KICK_USAGE, "&cTo kick a player from your clan, use: &b/clan kick (player)");
         fileConfiguration.addDefault(WRONG_MODTAG_USAGE, "&cTo change the colors of your tag, use: &b/clan modtag (newtag)");
+        fileConfiguration.addDefault(WRONG_ENEMY_USAGE, "&cTo declare a clan as your enemy, use: &b/clan enemy (tag)");
 
         fileConfiguration.addDefault(NO_PERMISSION, "&cYou don't have permission to use that command.");
         fileConfiguration.addDefault(WRONG_SIZE_TAG, "&cThe tag must be between {0} and {1} characters long.");
@@ -256,16 +263,19 @@ public class LanguageManager {
         fileConfiguration.addDefault(NEW_TAG_INFO, "{0} &ais now known as {1}&a.");
         fileConfiguration.addDefault(SPY_DISABLED, "&bClan chat spy disabled.");
         fileConfiguration.addDefault(SPY_ENABLED, "&bClan chat spy enabled.");
+        fileConfiguration.addDefault(CHANGE_SAME_TAG, "{0} &calready is your clan tag.");
+        fileConfiguration.addDefault(ALREADY_YOUR_ENEMY, "{0} &cis already your enemy.");
+        fileConfiguration.addDefault(ENEMY_DECLARATION, "{0} &adeclared {1} &aas their enemy.");
 
         fileConfiguration.options().copyDefaults(true);
         return fileConfiguration;
     }
 
-    private static String createMessage(String key, String... placeholderValues) {
+    private static String createMessage(String key, Object... placeholderValues) {
         String message = instance.get(key);
 
         for (int i = 0; i < placeholderValues.length; i++) {
-            String value = placeholderValues[i];
+            String value = String.valueOf(placeholderValues[i]);
             message = message.replace(placeholder(i), value);
         }
 
