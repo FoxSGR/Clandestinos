@@ -7,6 +7,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +16,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * The language/strings manager. Manages the language configuration file.
+ */
 @SuppressWarnings("WeakerAccess")
 public class LanguageManager {
 
@@ -71,7 +75,7 @@ public class LanguageManager {
     public static final String LEFT_CLAN = "left-clan";
     public static final String UNKNOWN_PLAYER = "unknown-player";
     public static final String UNKNOWN_PLAYER_CLAN = "unknown-player-clan";
-    public static final String OWNER = "Owner";
+    public static final String OWNER = "owner";
     public static final String LEADERS = "leaders";
     public static final String MEMBERS = "members";
     public static final String INFO = "info";
@@ -107,50 +111,104 @@ public class LanguageManager {
     public static final String SUCCESSFUL_DEMOTE = "successful-demote";
     public static final String DEMOTED = "demoted";
 
+    /**
+     * The plugin.
+     */
     private JavaPlugin plugin;
+
+    /**
+     * The loaded strings.
+     */
     private Map<String, String> strings;
 
+    /**
+     * The class single instance.
+     */
     private static LanguageManager instance;
+
+    /**
+     * The name of the file with the configuration.
+     */
     private static final String FILE_NAME = "language.yml";
 
+    /**
+     * Creates the language manager.
+     *
+     * @param plugin the plugin.
+     */
     private LanguageManager(JavaPlugin plugin) {
         this.plugin = plugin;
         strings = new HashMap<>();
     }
 
+    /**
+     * Finds a string given its key in the configuration file. (one of the constants)
+     *
+     * @param key the key of the string to find in the configuration file. (one of the constants)
+     * @return the found string or null if it doesn't exist.
+     */
     public String get(String key) {
         return strings.get(key);
     }
 
+    /**
+     * Returns the (single) language manager class instance.
+     *
+     * @return the (single) language manager class instance.
+     */
     public static LanguageManager getInstance() {
         return instance;
     }
 
+    /**
+     * Sends a string to a command sender, finding it by its key. Also replaces placeholders in the string, if
+     * provided.
+     *
+     * @param sender            the command sender to send the message to.
+     * @param key               the key of the string. (one of the constants)
+     * @param placeholderValues the placeholder values to replace (optional). The first will replace {0} and so on.
+     */
     public static void send(CommandSender sender, String key, Object... placeholderValues) {
         String message = createMessage(key, placeholderValues);
         sender.sendMessage(message);
     }
 
+    /**
+     * Broadcasts a string, finding it by its key. Also replaces placeholders in the string, if provided.
+     *
+     * @param server            the server to broadcast the message in.
+     * @param key               the key of the string. (one of the constants)
+     * @param placeholderValues the placeholder values to replace (optional). The first will replace {0} and so on.
+     */
     public static void broadcast(Server server, String key, Object... placeholderValues) {
         String message = createMessage(key, placeholderValues);
         server.broadcastMessage(message);
     }
 
-    public static String placeholder(int index) {
-        return String.format("{%d}", index);
-    }
-
+    /**
+     * Loads the language manager instance.
+     *
+     * @param plugin the plugin.
+     */
     static void init(JavaPlugin plugin) {
         instance = new LanguageManager(plugin);
         instance.init();
     }
 
+    /**
+     * Loads the strings.
+     */
     private void init() {
         FileConfiguration configuration = createFileConfiguration();
         save(configuration);
         load(configuration);
     }
 
+    /**
+     * Saves the file configuration if it doesn't exist.
+     *
+     * @param configuration the configuration to save.
+     */
     private void save(FileConfiguration configuration) {
         File languageFile = new File(plugin.getDataFolder(), FILE_NAME);
         if (languageFile.exists()) {
@@ -167,6 +225,11 @@ public class LanguageManager {
         }
     }
 
+    /**
+     * Loads the file configuration containing the strings.
+     *
+     * @param configuration the configuration to load to.
+     */
     @SuppressWarnings("squid:CommentedOutCodeLine")
     private void load(FileConfiguration configuration) {
         File languageFile = new File(plugin.getDataFolder(), FILE_NAME);
@@ -187,6 +250,9 @@ public class LanguageManager {
         }
     }
 
+    /**
+     * Replaces some placeholders acording to the plugin config.
+     */
     private void setupStrings() {
         ConfigManager configManager = ConfigManager.getInstance();
 
@@ -197,6 +263,13 @@ public class LanguageManager {
         replaceString(WRONG_SIZE_NAME, placeholder(1), configManager.getInt(ConfigManager.MAX_NAME_LENGTH));
     }
 
+    /**
+     * Replaces a placeholder with a value in a loaded string.
+     *
+     * @param key         the key of the string to replace.
+     * @param toReplace   the placeholder to replace.
+     * @param replaceInto the value of the placeholder.
+     */
     private void replaceString(String key, String toReplace, Object replaceInto) {
         String value = strings.get(key);
         if (value == null) {
@@ -206,6 +279,11 @@ public class LanguageManager {
         strings.put(key, value.replace(toReplace, replaceInto.toString()));
     }
 
+    /**
+     * Creates a file configuration including the default values.
+     *
+     * @return the created file configuration.
+     */
     private static FileConfiguration createFileConfiguration() {
         FileConfiguration fileConfiguration = new YamlConfiguration();
 
@@ -217,7 +295,8 @@ public class LanguageManager {
         fileConfiguration.addDefault(RELOAD_USAGE, "&b/clan reload - Reload configurations.");
         fileConfiguration.addDefault(LEAVE_USAGE, "&b/clan leave - Leave your clan.");
         fileConfiguration.addDefault(DISBAND_USAGE, "&b/clan disband - Disband your clan.");
-        fileConfiguration.addDefault(INFO_USAGE, "&b/clan info [clan/player] (tag/player name) - Show clan/player information.");
+        fileConfiguration.addDefault(INFO_USAGE,
+                "&b/clan info [clan/player] (tag/player name) - Show clan/player information.");
         fileConfiguration.addDefault(KICK_USAGE, "&b/clan kick (name) - Kick a player from your clan.");
         fileConfiguration.addDefault(MODTAG_USAGE, "&b/clan modtag (newtag) - Change the colors of your clan tag.");
         fileConfiguration.addDefault(ENEMY_USAGE, "&b/clan enemy (tag) - Declare that a clan is your enemy.");
@@ -228,9 +307,11 @@ public class LanguageManager {
         fileConfiguration.addDefault(WRONG_INVITE_USAGE, "&cTo invite a player, use: &b/clan invite (player)");
         fileConfiguration.addDefault(WRONG_UNINVITE_USAGE, "&cTo cancel an invite, use: &b/clan uninvite (player)");
         fileConfiguration.addDefault(WRONG_JOIN_USAGE, "&cTo join a clan, use: &b/clan join (tag)");
-        fileConfiguration.addDefault(WRONG_INFO_USAGE, "&cTo show clan/player information, use: &b/clan info [clan/player] (tag/player name)");
+        fileConfiguration.addDefault(WRONG_INFO_USAGE,
+                "&cTo show clan/player information, use: &b/clan info [clan/player] (tag/player name)");
         fileConfiguration.addDefault(WRONG_KICK_USAGE, "&cTo kick a player from your clan, use: &b/clan kick (player)");
-        fileConfiguration.addDefault(WRONG_MODTAG_USAGE, "&cTo change the colors of your tag, use: &b/clan modtag (newtag)");
+        fileConfiguration.addDefault(WRONG_MODTAG_USAGE,
+                "&cTo change the colors of your tag, use: &b/clan modtag (newtag)");
         fileConfiguration.addDefault(WRONG_ENEMY_USAGE, "&cTo declare a clan as your enemy, use: &b/clan enemy (tag)");
         fileConfiguration.addDefault(WRONG_UNENEMY_USAGE, "&cTo request neutrality, use: &b/clan unenemy (tag)");
         fileConfiguration.addDefault(WRONG_MAKE_LEADER_USAGE, "&cTo promote a player from your clan, use:  &b/clan makeleader (player)");
@@ -250,20 +331,24 @@ public class LanguageManager {
         fileConfiguration.addDefault(MUST_BE_IN_CLAN, "&cYou must be in a clan to use that command.");
         fileConfiguration.addDefault(PLAYER_NOT_ONLINE, "&cThat player was not found.");
         fileConfiguration.addDefault(PLAYER_INVITED, "&aThe player {0} &ahas been invited to join your clan.");
-        fileConfiguration.addDefault(RECEIVED_INVITE, "&aYou were invited to join the {0} &aclan. Use /clan join {1} &ato accept.");
+        fileConfiguration.addDefault(RECEIVED_INVITE,
+                "&aYou were invited to join the {0} &aclan. Use /clan join {1} &ato accept.");
         fileConfiguration.addDefault(ALREADY_INVITED, "&cThat player has already been invited to your clan.");
         fileConfiguration.addDefault(ALREADY_IN_YOUR_CLAN, "&cThat player is already in your clan.");
         fileConfiguration.addDefault(CLAN_DOESNT_EXIST, "&cThat clan does not exist.");
         fileConfiguration.addDefault(NOT_INVITED, "&cYou haven't been invited to that clan.");
         fileConfiguration.addDefault(JOINED_MESSAGE, "&a{0} &ajoined the {1} &aclan.");
         fileConfiguration.addDefault(UNKNOWN_COMMAND, "&cUnkown command. Type &b/clan &cfor a list of commands.");
-        fileConfiguration.addDefault(NO_MONEY_CREATE, "&cYou don't have enough money to create a clan. You need at least {0}.");
-        fileConfiguration.addDefault(OWNER_CANT_LEAVE, "&cYou are the owner of your clan. To leave your clan, you must use &b/clan makeowner (player) &cor &b/clan disband");
+        fileConfiguration.addDefault(NO_MONEY_CREATE,
+                "&cYou don't have enough money to create a clan. You need at least {0}.");
+        fileConfiguration.addDefault(OWNER_CANT_LEAVE,
+                "&cYou are the owner of your clan. To leave your clan, you must use &b/clan makeowner (player) &cor &b/clan disband");
         fileConfiguration.addDefault(CLAN_DISBANDED, "&aThe clan {0} &awas disbanded.");
         fileConfiguration.addDefault(LEFT_CLAN, "&a{0} &aleft {1}&a.");
         fileConfiguration.addDefault(UNKNOWN_PLAYER, "&cThat player is not in the clan database.");
         fileConfiguration.addDefault(UNKNOWN_PLAYER_CLAN, "&cThat player or clan is not in the clan database.");
         fileConfiguration.addDefault(INFO, "&bInfo");
+        fileConfiguration.addDefault(OWNER, "&bOwner:&f");
         fileConfiguration.addDefault(LEADERS, "&bLeaders:&f");
         fileConfiguration.addDefault(MEMBERS, "&bMembers:&f");
         fileConfiguration.addDefault(KDR, "&bKDR:&f");
@@ -276,7 +361,8 @@ public class LanguageManager {
         fileConfiguration.addDefault(NOT_IN_YOUR_CLAN, "&cThat player is not in your clan.");
         fileConfiguration.addDefault(ONLY_OWNER_KICK_LEADER, "&cOnly the owner of the clan can kick a leader.");
         fileConfiguration.addDefault(PLAYER_KICKED, "&a{0} &awas kicked out of {1}&a.");
-        fileConfiguration.addDefault(CANNOT_KICK_YOURSELF, "&cYou can't kick yourself. Use &b/clan leave &cto leave your clan or &b/clan disband &cif you're the owner.");
+        fileConfiguration.addDefault(CANNOT_KICK_YOURSELF,
+                "&cYou can't kick yourself. Use &b/clan leave &cto leave your clan or &b/clan disband &cif you're the owner.");
         fileConfiguration.addDefault(NO_INVITE_PENDING, "&cThat player doesn't have a pending invite from your clan.");
         fileConfiguration.addDefault(PLAYER_UNINVITED, "&a{0} &ais no longer invited to your clan.");
         fileConfiguration.addDefault(YOU_WERE_UNINVITED, "&aYou are no longer invited to {0}&a.");
@@ -302,8 +388,29 @@ public class LanguageManager {
         return fileConfiguration;
     }
 
+    /**
+     * Creates the string that matches a placeholder with a given index.
+     *
+     * @param index the index of the placeholder.
+     * @return the string that matches the placeholder.
+     */
+    private static String placeholder(int index) {
+        return String.format("{%d}", index);
+    }
+
+    /**
+     * Creates a message, given a string key and, optionally, the placeholders to replace.
+     *
+     * @param key               the key of the string to find.
+     * @param placeholderValues the placeholder values to replace (optional). The first will replace {0} and so on.
+     * @return the created message.
+     */
+    @NotNull
     private static String createMessage(String key, Object... placeholderValues) {
         String message = instance.get(key);
+        if (message == null) {
+            return "null";
+        }
 
         for (int i = 0; i < placeholderValues.length; i++) {
             String value = String.valueOf(placeholderValues[i]);

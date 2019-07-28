@@ -9,21 +9,55 @@ import foxsgr.clandestinos.util.Plugins;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+/**
+ * Clandestinos clan plugin.
+ */
 @SuppressWarnings("unused")
 public class Clandestinos extends JavaPlugin {
 
+    /**
+     * Whether PlacerholderAPI should be used.
+     */
     private boolean usingPAPI;
 
+    /**
+     * The chat manager/listener.
+     */
     private final ChatManager chatManager;
+
+    /**
+     * The join/quit listener.
+     */
     private final JoinQuitListener joinQuitListener;
+
+    /**
+     * The player death listener.
+     */
     private final DeathListener deathListener;
 
+    /**
+     * The plugin's main command.
+     */
     private final ClanCommand clanCommand;
+
+    /**
+     * The clan chat command.
+     */
     private final ClanChatCommand clanChatCommand;
 
+    /**
+     * The text usage of the plugin's main command.
+     */
     private static final String CLAN_COMMAND = "clan";
+
+    /**
+     * The text usage of the clan chat command.
+     */
     private static final String CLAN_CHAT_COMMAND = ".";
 
+    /**
+     * Creates the plugin. Creates the listeners, command executors and managers.
+     */
     public Clandestinos() {
         super();
         chatManager = new ChatManager(this);
@@ -33,6 +67,9 @@ public class Clandestinos extends JavaPlugin {
         clanChatCommand = new ClanChatCommand();
     }
 
+    /**
+     * Called when the plugin is enabled. Loads the listeners, command executors and managers.
+     */
     @Override
     public void onEnable() {
         ClanLogger.init(this);
@@ -63,10 +100,20 @@ public class Clandestinos extends JavaPlugin {
         }
     }
 
+    /**
+     * Determines whether PlaceholderAPI should be used.
+     *
+     * @return true if PlaceholderAPI should be used, false otherwise.
+     */
     public boolean isUsingPAPI() {
         return usingPAPI;
     }
 
+    /**
+     * Returns the plugin's chat manager.
+     *
+     * @return the chat manager.
+     */
     public ChatManager chatManager() {
         return chatManager;
     }

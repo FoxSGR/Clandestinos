@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Configuration manager. Manages the plugin's configuration file and its options.
+ */
 @SuppressWarnings("WeakerAccess")
 public class ConfigManager {
 
@@ -27,45 +30,103 @@ public class ConfigManager {
     public static final String CLAN_CHAT_FORMAT = "clan-chat-format";
     public static final String CREATE_CLAN_COST = "create-clan-cost";
 
+    /**
+     * The plugin.
+     */
     private final JavaPlugin plugin;
 
+    /**
+     * The single class instance.
+     */
     private static ConfigManager instance;
+
+    /**
+     * The name of the configuration file.
+     */
     private static final String FILE_NAME = "config.yml";
 
+    /**
+     * Creates the config manager.
+     *
+     * @param plugin the plugin.
+     */
     private ConfigManager(JavaPlugin plugin) {
         this.plugin = plugin;
         createDefaultConfig();
     }
 
+    /**
+     * Finds an integer in the configuration.
+     *
+     * @param key the key of the integer. (one of the constants)
+     * @return the found integer.
+     */
     public Integer getInt(String key) {
         return plugin.getConfig().getInt(key);
     }
 
+    /**
+     * Finds a string in the configuration.
+     *
+     * @param key the key of the string. (one of the constants)
+     * @return the found string.
+     */
     public String getString(String key) {
         return plugin.getConfig().getString(key);
     }
 
+    /**
+     * Finds a boolean in the configuration.
+     *
+     * @param key the key of the boolean. (one of the constants)
+     * @return the found boolean.
+     */
     public boolean getBoolean(String key) {
         return plugin.getConfig().getBoolean(key);
     }
 
+    /**
+     * Finds a string list in the configuration.
+     *
+     * @param key the key of the string list. (one of the constants)
+     * @return the found string list.
+     */
     public List<String> getStringList(String key) {
         return plugin.getConfig().getStringList(key);
     }
 
+    /**
+     * Finds a double in the configuration.
+     *
+     * @param key the key of the double. (one of the constants)
+     * @return the found double.
+     */
     public double getDouble(String key) {
         return plugin.getConfig().getDouble(key);
     }
 
+    /**
+     * Returns the (single) config manager instance.
+     *
+     * @return the config manager instance.
+     */
     public static ConfigManager getInstance() {
         return instance;
     }
 
+    /**
+     * Loads the configuration.
+     *
+     * @param plugin the plugin.
+     */
     static void init(JavaPlugin plugin) {
         instance = new ConfigManager(plugin);
         instance.save();
     }
 
+    /**
+     * Saves the configuration if it doesn't exist (from the default values).
+     */
     private void save() {
         File configurationFile = new File(plugin.getDataFolder(), FILE_NAME);
         if (configurationFile.exists()) {
@@ -79,6 +140,9 @@ public class ConfigManager {
         }
     }
 
+    /**
+     * Loads the default configuration values.
+     */
     private void createDefaultConfig() {
         Configuration config = plugin.getConfig();
         config.addDefault(MIN_TAG_LENGTH, 3);

@@ -7,6 +7,7 @@ import foxsgr.clandestinos.persistence.ClanRepository;
 import foxsgr.clandestinos.persistence.PersistenceContext;
 import foxsgr.clandestinos.persistence.PlayerRepository;
 import foxsgr.clandestinos.util.Pair;
+import foxsgr.clandestinos.util.TextUtil;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -51,6 +52,13 @@ public final class Finder {
         return found;
     }
 
+    /**
+     * Finds the ClanPlayer that corresponds to a player name. If it's not found, a warning message is sent to him.
+     *
+     * @param sender the command sender to inform if the player was not found.
+     * @param name   the name of the player to find.
+     * @return the found ClanPlayer or null if it wasn't found.
+     */
     @Nullable
     public static ClanPlayer playerByName(CommandSender sender, String name) {
         String id = idFromName(name);
@@ -64,8 +72,17 @@ public final class Finder {
         return found;
     }
 
+    /**
+     * Finds a clan by its tag (ignoring letter case and colors) and sends a message a command sender if it's not
+     * found.
+     *
+     * @param sender the command sender to inform if the clan doesn't exist.
+     * @param tag    the tag of the clan to find.
+     * @return the found clan or null if it wasn't found.
+     */
     @Nullable
     public static Clan clanByTag(CommandSender sender, String tag) {
+        tag = TextUtil.stripColorAndFormatting(tag);
         ClanRepository clanRepository = PersistenceContext.repositories().clans();
         Clan found = clanRepository.findByTag(tag);
         if (found == null) {
@@ -75,12 +92,22 @@ public final class Finder {
         return found;
     }
 
+    /**
+     * Finds a player's clan, ensuring that it exists. If it doesn't, throws an unchecked exception. Only call if you're
+     * sure that the clan exists.
+     *
+     * @param player the player whose clan should be found.
+     * @return the found clan.
+     * @throws IllegalStateException thrown if the player's clan is not found.
+     */
+    @NotNull
     public static Clan findClanEnsureExists(ClanPlayer player) {
         ClanRepository clanRepository = PersistenceContext.repositories().clans();
         Clan clan = player.clan().map(tag -> {
             Clan foundClan = clanRepository.findByTag(tag.withoutColor().value());
             if (foundClan == null) {
-                throw new IllegalStateException("The clan with tag " + tag.withoutColor().value() + " couldn't be found.");
+                throw new IllegalStateException(
+                        "The clan with tag " + tag.withoutColor().value() + " couldn't be found.");
             }
 
             return foundClan;
@@ -93,6 +120,12 @@ public final class Finder {
         return clan;
     }
 
+    /**
+     * Finds all of the players in a clan.
+     *
+     * @param clan the clan to find the players that belong to it.
+     * @return the players in the clan.
+     */
     public static Set<ClanPlayer> playersInClan(Clan clan) {
         Set<ClanPlayer> result = new HashSet<>();
 
@@ -127,17 +160,14 @@ public final class Finder {
         }
     }
 
-    public static String idFromName(String name) {
-        if (ConfigManager.getInstance().getBoolean(ConfigManager.USE_UUIDS)) {
-            // TODO: return UUID to player name
-            throw new UnsupportedOperationException("UUID to player name not implemented yet");
-        } else {
-            return name;
-        }
-    }
-
+    /**
+     * Finds a ClanPlayer and his clan from a command sender and warns him if he is not in a clan.
+     *
+     * @param sender the command sender to find the corresponding clan and ClanPlayer.
+     * @return the found clan and ClanPlayer or null if they are not found or applicable.
+     */
     @Nullable
-    public static ClanPlayer fromSenderInClan(CommandSender sender) {
+    public static Pair<Clan, ClanPlayer> fromSenderInClan(CommandSender sender) {
         Player player = CommandValidator.playerFromSender(sender);
         if (player == null) {
             return null;
@@ -146,12 +176,20 @@ public final class Finder {
         PlayerRepository playerRepository = PersistenceContext.repositories().players();
         String id = Finder.idFromPlayer(player);
         ClanPlayer clanPlayer = playerRepository.find(id);
-        if (clanPlayer == null || !clanPlayer.inClan()) {
+        if (clanPlayer == null) {
             LanguageManager.send(sender, LanguageManager.MUST_BE_IN_CLAN);
             return null;
         }
 
-        return clanPlayer;
+        ClanRepository clanRepository = PersistenceContext.repositories().clans();
+        Clan clan = clanPlayer.clan().map(tag -> clanRepository.findByTag(tag.withoutColor().value().toLowerCase()))
+                .orElse(null);
+        if (clan == null) {
+            LanguageManager.send(sender, LanguageManager.MUST_BE_IN_CLAN);
+            return null;
+        }
+
+        return new Pair<>(clan, clanPlayer);
     }
 
     @Nullable
@@ -173,38 +211,56 @@ public final class Finder {
         return clan;
     }
 
+    /**
+     * Finds the clan and ClanPlayer that correspond to a command sender who is the leader of a clan. If he is not, he
+     * is warned that he must be one.
+     *
+     * @param sender the command sender to find the corresponding clan and ClanPlayer.
+     * @return the found clan and ClanPlayer or null if they are not found or applicable.
+     */
     @Nullable
     public static Pair<Clan, ClanPlayer> findClanLeader(CommandSender sender) {
-        ClanPlayer leader = fromSenderInClan(sender);
-        if (leader == null) {
+        Pair<Clan, ClanPlayer> clanLeader = fromSenderInClan(sender);
+        if (clanLeader == null) {
             return null;
         }
 
-        Clan clan = findClanEnsureExists(leader);
-        if (!clan.isLeader(leader)) {
+        if (!clanLeader.first.isLeader(clanLeader.second)) {
             LanguageManager.send(sender, LanguageManager.MUST_BE_LEADER);
             return null;
         }
 
-        return new Pair<>(clan, leader);
+        return clanLeader;
     }
 
+    /**
+     * Finds the clan and ClanPlayer that correspond to a command sender who is the owner of a clan. If he is not, he is
+     * warned that he must be one.
+     *
+     * @param sender the command sender to find the corresponding clan and ClanPlayer.
+     * @return the found clan and ClanPlayer or null if they are not found or applicable.
+     */
     @Nullable
     public static Pair<Clan, ClanPlayer> findClanOwner(CommandSender sender) {
-        ClanPlayer owner = fromSenderInClan(sender);
-        if (owner == null) {
+        Pair<Clan, ClanPlayer> clanOwner = fromSenderInClan(sender);
+        if (clanOwner == null) {
             return null;
         }
 
-        Clan clan = findClanEnsureExists(owner);
-        if (!clan.isOwner(owner)) {
+        if (!clanOwner.first.isOwner(clanOwner.second)) {
             LanguageManager.send(sender, LanguageManager.MUST_BE_OWNER);
             return null;
         }
 
-        return new Pair<>(clan, owner);
+        return clanOwner;
     }
 
+    /**
+     * Finds the ClanPlayer that corresponds to an OfflinePlayer.
+     *
+     * @param player the player to find the corresponding ClanPlayer.
+     * @return the found ClanPlayer or null if it doesn't exist.
+     */
     @Nullable
     public static ClanPlayer findPlayer(OfflinePlayer player) {
         String id = idFromPlayer(player);
@@ -212,6 +268,29 @@ public final class Finder {
         return playerRepository.find(id);
     }
 
+    /**
+     * Finds the ID of a player by its name. If the config states that UUIDs should be used, the name is translated to
+     * the corresponding UUID. Otherwise, the name is returned.
+     *
+     * @param name the name to extract the ID from.
+     * @return the corresponding UUID if the config states that UUIDs should be used, otherwise the name.
+     */
+    public static String idFromName(String name) {
+        if (ConfigManager.getInstance().getBoolean(ConfigManager.USE_UUIDS)) {
+            // TODO: return UUID to player name
+            throw new UnsupportedOperationException("UUID to player name not implemented yet");
+        } else {
+            return name;
+        }
+    }
+
+    /**
+     * Finds the name of a player from his ID. If the config states that UUIDs should be used, the ID is translated to
+     * the corresponding player name. Otherwise, the ID is returned, because it is the name.
+     *
+     * @param id the ID to extract the player name from.
+     * @return the extracted player name.
+     */
     public static String nameFromId(String id) {
         if (ConfigManager.getInstance().getBoolean(ConfigManager.USE_UUIDS)) {
             // TODO: return UUID to player name
