@@ -71,6 +71,7 @@ public class LanguageManager {
     public static final String LEFT_CLAN = "left-clan";
     public static final String UNKNOWN_PLAYER = "unknown-player";
     public static final String UNKNOWN_PLAYER_CLAN = "unknown-player-clan";
+    public static final String OWNER = "Owner";
     public static final String LEADERS = "leaders";
     public static final String MEMBERS = "members";
     public static final String INFO = "info";

@@ -84,6 +84,8 @@ public class InfoHandler {
         StringBuilder infoBuilder = new StringBuilder();
         infoBuilder.append(languageManager.get(LanguageManager.INFO)).append(' ').append(clan.tag()).append('\n')
                 .append(languageManager.get(LanguageManager.NAME)).append(clan.name()).append('\n')
+                .append(LanguageManager.OWNER)
+                .append(clan.owner()).append('\n')
                 .append(languageManager.get(LanguageManager.LEADERS)).append('\n');
 
         for (String id : clan.leaders()) {
