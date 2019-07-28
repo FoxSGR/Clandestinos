@@ -5,10 +5,11 @@ import foxsgr.clandestinos.application.ConfigManager;
 import foxsgr.clandestinos.application.Finder;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
-import foxsgr.clandestinos.persistence.PersistenceContext;
-import foxsgr.clandestinos.persistence.PlayerRepository;
 import foxsgr.clandestinos.util.TextUtil;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.milkbowl.vault.chat.Chat;
+import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -18,17 +19,19 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class ChatManager implements Listener {
 
-    public static final String FORMATTED_CLAN_TAG_PLACEHOLDER = "%formatted_clan_tag%";
-    public static final String COLORED_CLAN_TAG_PLACEHOLDER = "%colored_clan_tag%";
+    public static final String FORMATTED_CLAN_TAG_PLACEHOLDER = "%clandestinos_formatted_tag%";
+    public static final String COLORED_CLAN_TAG_PLACEHOLDER = "%clandestinos_colored_tag%";
     public static final String PREFIX_PLACEHOLDER = "{prefix}";
     public static final String PLAYER_PLACEHOLDER = "{player}";
     public static final String CONTENT_PLACEHOLDER = "{content}";
 
     private Chat chat;
     private String format;
+    private String leaderDecoColor;
+    private String memberDecoColor;
+    private String leftOfTag;
+    private String rightOfTag;
     private final Clandestinos plugin;
-
-    private PlayerRepository playerRepository;
 
     public ChatManager(Clandestinos plugin) {
         this.plugin = plugin;
@@ -46,13 +49,11 @@ public class ChatManager implements Listener {
                 .replace(PLAYER_PLACEHOLDER, "%s")
                 .replace(CONTENT_PLACEHOLDER, "%s");
 
-        /*
-        if (plugin.isUsingPAPI()) {
-            // TODO: do some replacing
-        }
-        */
-
         messageFormat = TextUtil.translateColoredText(messageFormat);
+        if (plugin.isUsingPAPI()) {
+            messageFormat = PlaceholderAPI.setPlaceholders(player, messageFormat);
+        }
+
         event.setFormat(messageFormat);
 
         if (player.hasPermission("essentials.chat.color")) {
@@ -64,6 +65,10 @@ public class ChatManager implements Listener {
     public void setup() {
         ConfigManager configManager = ConfigManager.getInstance();
         format = configManager.getString(ConfigManager.CHAT_FORMAT);
+        leaderDecoColor = configManager.getString(ConfigManager.LEADER_DECORATION_COLOR);
+        memberDecoColor = configManager.getString(ConfigManager.MEMBER_DECORATION_COLOR);
+        rightOfTag = configManager.getString(ConfigManager.RIGHT_OF_TAG);
+        leftOfTag = configManager.getString(ConfigManager.LEFT_OF_TAG);
 
         RegisteredServiceProvider<Chat> rsp = plugin.getServer().getServicesManager().getRegistration(Chat.class);
         if (rsp == null) {
@@ -71,11 +76,10 @@ public class ChatManager implements Listener {
         }
 
         chat = rsp.getProvider();
-        playerRepository = PersistenceContext.repositories().players();
     }
 
-    private String formatClanTag(Player player) {
-        ClanPlayer clanPlayer = playerRepository.find(Finder.idFromPlayer(player));
+    public String formatClanTag(OfflinePlayer player) {
+        ClanPlayer clanPlayer = Finder.findPlayer(player);
         if (clanPlayer == null || !clanPlayer.inClan()) {
             return "";
         }
@@ -83,13 +87,11 @@ public class ChatManager implements Listener {
         Clan clan = Finder.findClanEnsureExists(clanPlayer);
         String color;
         if (clan.isLeader(clanPlayer)) {
-            color = plugin.getConfig().getString(ConfigManager.LEADER_DECORATION_COLOR);
+            color = leaderDecoColor;
         } else {
-            color = plugin.getConfig().getString(ConfigManager.MEMBER_DECORATION_COLOR);
+            color = memberDecoColor;
         }
 
-        String left = plugin.getConfig().getString(ConfigManager.LEFT_OF_TAG);
-        String right = plugin.getConfig().getString(ConfigManager.RIGHT_OF_TAG);
-        return String.format("%s%s%s%s%s ", color, left, clan.tag(), color, right);
+        return String.format("%s%s%s%s%s %s", color, leftOfTag, clan.tag(), color, rightOfTag, ChatColor.RESET);
     }
 }

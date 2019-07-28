@@ -6,20 +6,25 @@ public class DeathCount {
 
     private final Integer value;
 
-    public DeathCount(int value) {
+    DeathCount(int value) {
         Preconditions.ensure(value >= 0, "The death count cannot be negative.");
         this.value = value;
     }
 
-    public DeathCount() {
+    DeathCount() {
         value = 0;
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(value);
     }
 
     public int value() {
         return value;
     }
 
-    public DeathCount increment() {
+    DeathCount increment() {
         return new DeathCount(value + 1);
     }
 }

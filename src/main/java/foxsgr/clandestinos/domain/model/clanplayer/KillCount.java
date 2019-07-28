@@ -6,13 +6,18 @@ public class KillCount {
 
     private Integer value;
 
-    public KillCount(int value) {
+    KillCount(int value) {
         Preconditions.ensure(value >= 0, "The kill count cannot be negative.");
         this.value = value;
     }
 
-    public KillCount() {
+    KillCount() {
         value = 0;
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(value);
     }
 
     public int value() {

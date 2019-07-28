@@ -1,5 +1,6 @@
 package foxsgr.clandestinos.application;
 
+import foxsgr.clandestinos.application.hooks.ClandestinosPAPIExpansion;
 import foxsgr.clandestinos.application.listeners.ChatManager;
 import foxsgr.clandestinos.application.listeners.DeathListener;
 import foxsgr.clandestinos.application.listeners.JoinQuitListener;
@@ -36,11 +37,6 @@ public class Clandestinos extends JavaPlugin {
     public void onEnable() {
         ClanLogger.init(this);
         ConfigManager.init(this);
-
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            usingPAPI = true;
-        }
-
         LanguageManager.init(this);
         PersistenceContext.init(this);
 
@@ -60,9 +56,18 @@ public class Clandestinos extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(chatManager, this);
         Bukkit.getPluginManager().registerEvents(deathListener, this);
+
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            usingPAPI = true;
+            new ClandestinosPAPIExpansion(this).register();
+        }
     }
 
-    boolean isUsingPAPI() {
+    public boolean isUsingPAPI() {
         return usingPAPI;
+    }
+
+    public ChatManager chatManager() {
+        return chatManager;
     }
 }
