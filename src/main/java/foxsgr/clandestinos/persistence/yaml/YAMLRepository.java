@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 class YAMLRepository {
@@ -87,5 +88,18 @@ class YAMLRepository {
         }
 
         return list;
+    }
+
+    public void removeFilesStartingWith(String content) {
+        File[] files = repositoryFolder.listFiles();
+        if (files == null) {
+            return;
+        }
+
+        for (File file : files) {
+            if (file.getName().startsWith(content) && !file.delete()) {
+                logger().log(Level.WARNING, "Could not delete the invite file {0}.yml", file.getName());
+            }
+        }
     }
 }

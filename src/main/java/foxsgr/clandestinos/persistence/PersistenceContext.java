@@ -18,7 +18,6 @@ public final class PersistenceContext {
         return repositoryFactory;
     }
 
-    @SuppressWarnings({"unused", "squid:CommentedOutCodeLine"})
     public static void init(JavaPlugin plugin) {
         repositoryFactory = new YAMLRepositoryFactory(plugin);
     }

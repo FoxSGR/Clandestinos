@@ -1,9 +1,6 @@
 package foxsgr.clandestinos.persistence.yaml;
 
-import foxsgr.clandestinos.persistence.PlayerRepository;
-import foxsgr.clandestinos.persistence.ClanRepository;
-import foxsgr.clandestinos.persistence.InviteRepository;
-import foxsgr.clandestinos.persistence.RepositoryFactory;
+import foxsgr.clandestinos.persistence.*;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,11 +9,13 @@ public class YAMLRepositoryFactory implements RepositoryFactory {
     private PlayerRepository playerRepository;
     private ClanRepository clanRepository;
     private InviteRepository inviteRepository;
+    private NeutralityRequestRepository neutralityRequestRepository;
 
     public YAMLRepositoryFactory(@NotNull JavaPlugin plugin) {
         playerRepository = new PlayerRepositoryYAML(plugin);
         clanRepository = new ClanRepositoryYAML(plugin);
         inviteRepository = new InviteRepositoryYAML(plugin);
+        neutralityRequestRepository = new NeutralityRequestRepositoryYAML(plugin);
     }
 
     @Override
@@ -35,5 +34,10 @@ public class YAMLRepositoryFactory implements RepositoryFactory {
     @NotNull
     public InviteRepository invites() {
         return inviteRepository;
+    }
+
+    @Override
+    public @NotNull NeutralityRequestRepository neutralityRequests() {
+        return neutralityRequestRepository;
     }
 }

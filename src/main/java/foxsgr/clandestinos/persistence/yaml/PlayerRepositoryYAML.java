@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 class PlayerRepositoryYAML extends YAMLRepository implements PlayerRepository {
 
@@ -47,9 +48,9 @@ class PlayerRepositoryYAML extends YAMLRepository implements PlayerRepository {
         fileConfiguration.set("kill-count", clanPlayer.killCount().value());
         fileConfiguration.set("death-count", clanPlayer.deathCount().value());
 
-        ClanTag clanTag = clanPlayer.clan();
-        if (clanTag != null) {
-            fileConfiguration.set(CLAN_TAG, clanTag.withoutColor().value().toLowerCase());
+        Optional<ClanTag> clanTag = clanPlayer.clan();
+        if (clanTag.isPresent()) {
+            fileConfiguration.set(CLAN_TAG, clanTag.get().withoutColor().value().toLowerCase());
         } else {
             fileConfiguration.set(CLAN_TAG, null);
         }

@@ -12,4 +12,7 @@ public interface RepositoryFactory {
 
     @NotNull
     InviteRepository invites();
+
+    @NotNull
+    NeutralityRequestRepository neutralityRequests();
 }

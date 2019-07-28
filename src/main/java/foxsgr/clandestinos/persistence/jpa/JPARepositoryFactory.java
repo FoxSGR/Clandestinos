@@ -1,9 +1,6 @@
 package foxsgr.clandestinos.persistence.jpa;
 
-import foxsgr.clandestinos.persistence.PlayerRepository;
-import foxsgr.clandestinos.persistence.ClanRepository;
-import foxsgr.clandestinos.persistence.InviteRepository;
-import foxsgr.clandestinos.persistence.RepositoryFactory;
+import foxsgr.clandestinos.persistence.*;
 import org.jetbrains.annotations.NotNull;
 
 public class JPARepositoryFactory implements RepositoryFactory {
@@ -31,5 +28,10 @@ public class JPARepositoryFactory implements RepositoryFactory {
     @Override
     public @NotNull InviteRepository invites() {
         return inviteRepository;
+    }
+
+    @Override
+    public @NotNull NeutralityRequestRepository neutralityRequests() {
+        throw new UnsupportedOperationException();
     }
 }

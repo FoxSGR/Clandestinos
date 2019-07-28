@@ -8,7 +8,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
 import java.util.logging.Level;
 
 public class InviteRepositoryYAML extends YAMLRepository implements InviteRepository {
@@ -30,7 +29,7 @@ public class InviteRepositoryYAML extends YAMLRepository implements InviteReposi
 
     @Override
     public Invite find(String invitedPlayer, String clanInvitedTo) {
-        String id = clanInvitedTo + invitedPlayer;
+        String id = clanInvitedTo + Invite.ID_SEPARATOR + invitedPlayer;
         FileConfiguration fileConfiguration = file(id.toLowerCase());
         if (fileConfiguration == null) {
             return null;
@@ -49,15 +48,6 @@ public class InviteRepositoryYAML extends YAMLRepository implements InviteReposi
 
     @Override
     public void removeAllFrom(Clan clan) {
-        File[] inviteFiles = repositoryFolder.listFiles();
-        if (inviteFiles == null) {
-            return;
-        }
-
-        for (File inviteFile : inviteFiles) {
-            if (inviteFile.getName().contains(clan.simpleTag()) && !inviteFile.delete()) {
-                logger().log(Level.WARNING, "Could not delete the invite file {0}.yml", inviteFile.getName());
-            }
-        }
+        removeFilesStartingWith(clan.simpleTag());
     }
 }

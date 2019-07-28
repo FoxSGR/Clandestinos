@@ -38,6 +38,7 @@ public class LanguageManager {
     public static final String WRONG_KICK_USAGE = "wrong-kick-usage";
     public static final String WRONG_MODTAG_USAGE = "wrong-modtag-usage";
     public static final String WRONG_ENEMY_USAGE = "wrong-enemy-usage";
+    public static final String WRONG_UNENEMY_USAGE = "wrong-unenemy-usage";
 
     public static final String NO_PERMISSION = "no-permission";
     public static final String WRONG_SIZE_TAG = "wrong-size-tag";
@@ -90,6 +91,8 @@ public class LanguageManager {
     public static final String CHANGE_SAME_TAG = "change-same-tag";
     public static final String ALREADY_YOUR_ENEMY = "already-your-enemy";
     public static final String ENEMY_DECLARATION = "enemy-declaration";
+    public static final String NOT_YOUR_ENEMY = "not-your-enemy";
+    public static final String ALREADY_REQUESTED_NEUTRALITY = "already-requested-neutrality";
 
     private JavaPlugin plugin;
     private Map<String, String> strings;
@@ -214,6 +217,7 @@ public class LanguageManager {
         fileConfiguration.addDefault(WRONG_KICK_USAGE, "&cTo kick a player from your clan, use: &b/clan kick (player)");
         fileConfiguration.addDefault(WRONG_MODTAG_USAGE, "&cTo change the colors of your tag, use: &b/clan modtag (newtag)");
         fileConfiguration.addDefault(WRONG_ENEMY_USAGE, "&cTo declare a clan as your enemy, use: &b/clan enemy (tag)");
+        fileConfiguration.addDefault(WRONG_UNENEMY_USAGE, "&cTo request neutrality, use: &b/clan unenemy (tag)");
 
         fileConfiguration.addDefault(NO_PERMISSION, "&cYou don't have permission to use that command.");
         fileConfiguration.addDefault(WRONG_SIZE_TAG, "&cThe tag must be between {0} and {1} characters long.");
@@ -266,6 +270,8 @@ public class LanguageManager {
         fileConfiguration.addDefault(CHANGE_SAME_TAG, "{0} &calready is your clan tag.");
         fileConfiguration.addDefault(ALREADY_YOUR_ENEMY, "{0} &cis already your enemy.");
         fileConfiguration.addDefault(ENEMY_DECLARATION, "{0} &adeclared {1} &aas their enemy.");
+        fileConfiguration.addDefault(NOT_YOUR_ENEMY, "&cThat clan is not your enemy.");
+        fileConfiguration.addDefault(ALREADY_REQUESTED_NEUTRALITY, "&cYou have already requested neutrality to clan.");
 
         fileConfiguration.options().copyDefaults(true);
         return fileConfiguration;
