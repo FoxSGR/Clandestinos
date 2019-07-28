@@ -29,6 +29,8 @@ public class LanguageManager {
     public static final String KICK_USAGE = "kick-usage";
     public static final String MODTAG_USAGE = "modtag-usage";
     public static final String ENEMY_USAGE = "enemy-usage";
+    public static final String MAKE_LEADER_USAGE = "make-leader-usage";
+    public static final String REMOVE_LEADER_USAGE = "remove-leader-usage";
 
     public static final String WRONG_CREATE_USAGE = "wrong-create-usage";
     public static final String WRONG_INVITE_USAGE = "wrong-invite-usage";
@@ -39,6 +41,8 @@ public class LanguageManager {
     public static final String WRONG_MODTAG_USAGE = "wrong-modtag-usage";
     public static final String WRONG_ENEMY_USAGE = "wrong-enemy-usage";
     public static final String WRONG_UNENEMY_USAGE = "wrong-unenemy-usage";
+    public static final String WRONG_MAKE_LEADER_USAGE = "wrong-make-leader-usage";
+    public static final String WRONG_DEMOTE_LEADER_USAGE = "wrong-demote-leader-usage";
 
     public static final String NO_PERMISSION = "no-permission";
     public static final String WRONG_SIZE_TAG = "wrong-size-tag";
@@ -81,6 +85,8 @@ public class LanguageManager {
     public static final String ONLY_OWNER_KICK_LEADER = "only-owner-kick-leader";
     public static final String PLAYER_KICKED = "player-kicked";
     public static final String CANNOT_KICK_YOURSELF = "cannot-kick-yourself";
+    public static final String CANNOT_PROMOTE_YOURSELF = "cannot-promote-yourself";
+    public static final String CANNOT_PROMOTE_LEADER = "cannot-promote-leader";
     public static final String NO_INVITE_PENDING = "no-invite-pending";
     public static final String PLAYER_UNINVITED = "player-uninvited";
     public static final String YOU_WERE_UNINVITED = "you-were-uninvited";
@@ -93,6 +99,12 @@ public class LanguageManager {
     public static final String ENEMY_DECLARATION = "enemy-declaration";
     public static final String NOT_YOUR_ENEMY = "not-your-enemy";
     public static final String ALREADY_REQUESTED_NEUTRALITY = "already-requested-neutrality";
+    public static final String SUCCESSFUL_PROMOTE = "successful-promote";
+    public static final String PROMOTED = "promoted";
+    public static final String CANNOT_DEMOTE_MEMBER = "cannot-demote-member";
+    public static final String CANNOT_DEMOTE_YOURSELF = "cannot-demote-yourself";
+    public static final String SUCCESSFUL_DEMOTE = "successful-demote";
+    public static final String DEMOTED = "demoted";
 
     private JavaPlugin plugin;
     private Map<String, String> strings;
@@ -208,6 +220,8 @@ public class LanguageManager {
         fileConfiguration.addDefault(KICK_USAGE, "&b/clan kick (name) - Kick a player from your clan.");
         fileConfiguration.addDefault(MODTAG_USAGE, "&b/clan modtag (newtag) - Change the colors of your clan tag.");
         fileConfiguration.addDefault(ENEMY_USAGE, "&b/clan enemy (tag) - Declare that a clan is your enemy.");
+        fileConfiguration.addDefault(MAKE_LEADER_USAGE, "&b/clan makeleader (player) - Promote a player to leader.");
+        fileConfiguration.addDefault(REMOVE_LEADER_USAGE, "&b/clan removeleader (player) - Demote a player from leader.");
 
         fileConfiguration.addDefault(WRONG_CREATE_USAGE, "&cTo create a clan, use: &b/clan create (tag) [name]");
         fileConfiguration.addDefault(WRONG_INVITE_USAGE, "&cTo invite a player, use: &b/clan invite (player)");
@@ -218,6 +232,8 @@ public class LanguageManager {
         fileConfiguration.addDefault(WRONG_MODTAG_USAGE, "&cTo change the colors of your tag, use: &b/clan modtag (newtag)");
         fileConfiguration.addDefault(WRONG_ENEMY_USAGE, "&cTo declare a clan as your enemy, use: &b/clan enemy (tag)");
         fileConfiguration.addDefault(WRONG_UNENEMY_USAGE, "&cTo request neutrality, use: &b/clan unenemy (tag)");
+        fileConfiguration.addDefault(WRONG_MAKE_LEADER_USAGE, "&cTo promote a player from your clan, use:  &b/clan makeleader (player)");
+        fileConfiguration.addDefault(WRONG_DEMOTE_LEADER_USAGE, "&cTo depromote a player from your clan, use:  &b/clan removeleader (player)");
 
         fileConfiguration.addDefault(NO_PERMISSION, "&cYou don't have permission to use that command.");
         fileConfiguration.addDefault(WRONG_SIZE_TAG, "&cThe tag must be between {0} and {1} characters long.");
@@ -272,6 +288,14 @@ public class LanguageManager {
         fileConfiguration.addDefault(ENEMY_DECLARATION, "{0} &adeclared {1} &aas their enemy.");
         fileConfiguration.addDefault(NOT_YOUR_ENEMY, "&cThat clan is not your enemy.");
         fileConfiguration.addDefault(ALREADY_REQUESTED_NEUTRALITY, "&cYou have already requested neutrality to clan.");
+        fileConfiguration.addDefault(CANNOT_PROMOTE_LEADER, "&cThat player is already a leader.");
+        fileConfiguration.addDefault(CANNOT_PROMOTE_YOURSELF, "&cYou cannot promote yourself.");
+        fileConfiguration.addDefault(SUCCESSFUL_PROMOTE, "&b{0} is now a leader.");
+        fileConfiguration.addDefault(PROMOTED, "&bYou are now a leader of your clan.");
+        fileConfiguration.addDefault(CANNOT_DEMOTE_MEMBER, "&c{0} isn't a leader.");
+        fileConfiguration.addDefault(CANNOT_DEMOTE_YOURSELF, "&cYou cannot demote yourself.");
+        fileConfiguration.addDefault(SUCCESSFUL_DEMOTE, "&b{0} is no longer a leader.");
+        fileConfiguration.addDefault(DEMOTED, "&bYou are no longer a leader of your clan.");
 
         fileConfiguration.options().copyDefaults(true);
         return fileConfiguration;

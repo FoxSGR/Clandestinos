@@ -1,5 +1,6 @@
 package foxsgr.clandestinos.domain.model.clan;
 
+import foxsgr.clandestinos.application.Finder;
 import foxsgr.clandestinos.domain.exceptions.ChangeMoreThanColorsException;
 import foxsgr.clandestinos.domain.exceptions.ChangeToSameTagException;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
@@ -122,6 +123,16 @@ public class Clan {
         members.remove(player.id());
     }
 
+    public void makeLeader(ClanPlayer player){
+        leaders.add(player.id());
+        members.remove(player.id());
+    }
+
+    public void demoteLeader(ClanPlayer player){
+        leaders.remove(player.id());
+        members.add(player.id());
+    }
+
     public void changeTag(String newTag) {
         String rawTag = TextUtil.stripColorAndFormatting(newTag);
         Preconditions.ensure(rawTag.equalsIgnoreCase(tag.withoutColor().value()), ChangeMoreThanColorsException.class);
@@ -147,4 +158,5 @@ public class Clan {
             Preconditions.ensureNotNull(enemyClan, "An enemy clan cannot be null.");
         }
     }
+
 }

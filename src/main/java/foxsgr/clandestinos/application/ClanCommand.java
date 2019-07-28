@@ -36,6 +36,8 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
     private static final String MODTAG_COMMAND = "modtag";
     private static final String ENEMY_COMMAND = "enemy";
     private static final String SPY_COMMAND = "spy";
+    private static final String MAKE_LEADER_COMMAND = "makeleader";
+    private static final String REMOVE_LEADER_COMMAND = "removeleader";
 
     ClanCommand(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -81,6 +83,10 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
             }
         } else if (subCommand.equalsIgnoreCase(ENEMY_COMMAND)) {
             new DeclareEnemyHandler().declareEnemy(sender, args);
+        } else if (subCommand.equalsIgnoreCase(MAKE_LEADER_COMMAND)) {
+            new PromoteToLeaderHandler().promoteToLeader(sender, args);
+        } else if (subCommand.equalsIgnoreCase(REMOVE_LEADER_COMMAND)) {
+            new DemoteToMemberHandler().demoteToMember(sender, args);
         } else {
             LanguageManager.send(sender, LanguageManager.UNKNOWN_COMMAND);
         }
@@ -93,7 +99,7 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
         if (args.length == 1) {
             return PermissionsManager.commandsWithPermission(sender, CREATE_COMMAND, INFO_COMMAND, INVITE_COMMAND,
                     UNINVITE_COMMAND, LEAVE_COMMAND, RELOAD_COMMAND, DISBAND_COMMAND, KICK_COMMAND, DISBAND_COMMAND,
-                    ENEMY_COMMAND, JOIN_COMMAND, SPY_COMMAND)
+                    ENEMY_COMMAND, JOIN_COMMAND, SPY_COMMAND, MAKE_LEADER_COMMAND, REMOVE_LEADER_COMMAND)
                     .stream().filter(c -> c.toLowerCase().startsWith(args[0].toLowerCase()))
                     .collect(Collectors.toList());
         }
@@ -119,6 +125,8 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
         appendSubCommand(sender, builder, DISBAND_COMMAND, LanguageManager.DISBAND_USAGE);
         appendSubCommand(sender, builder, KICK_COMMAND, LanguageManager.KICK_USAGE);
         appendSubCommand(sender, builder, MODTAG_COMMAND, LanguageManager.MODTAG_USAGE);
+        appendSubCommand(sender, builder, MAKE_LEADER_COMMAND, LanguageManager.MAKE_LEADER_USAGE);
+        appendSubCommand(sender, builder, REMOVE_LEADER_COMMAND, LanguageManager.REMOVE_LEADER_USAGE);
 
         appendSubCommand(sender, builder, RELOAD_COMMAND, LanguageManager.RELOAD_USAGE);
         sender.sendMessage(TextUtil.translateColoredText(builder.toString()));

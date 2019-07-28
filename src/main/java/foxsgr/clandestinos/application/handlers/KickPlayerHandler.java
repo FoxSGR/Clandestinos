@@ -23,12 +23,7 @@ public class KickPlayerHandler {
             return;
         }
 
-        String id = Finder.idFromName(args[1]);
-        ClanPlayer kicked = playerRepository.find(id);
-        if (kicked == null) {
-            LanguageManager.send(sender, LanguageManager.NOT_IN_YOUR_CLAN);
-            return;
-        }
+        ClanPlayer kicked = Finder.playerByName(sender, args[1]);
 
         if (clanLeader.second.equals(kicked)) {
             LanguageManager.send(sender, LanguageManager.CANNOT_KICK_YOURSELF);
@@ -60,6 +55,9 @@ public class KickPlayerHandler {
             }
         } else if (clan.isMember(kicked)) {
             return true;
+        } else if (kicker == kicked) {
+            LanguageManager.send(sender, LanguageManager.CANNOT_KICK_YOURSELF);
+            return false;
         } else {
             LanguageManager.send(sender, LanguageManager.NOT_IN_YOUR_CLAN);
             return false;
