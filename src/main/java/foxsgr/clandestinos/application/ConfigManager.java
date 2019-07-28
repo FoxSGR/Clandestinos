@@ -6,7 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("WeakerAccess")
@@ -16,7 +16,7 @@ public class ConfigManager {
     public static final String MAX_TAG_LENGTH = "max-tag-length";
     public static final String MIN_NAME_LENGTH = "min-name-length";
     public static final String MAX_NAME_LENGTH = "max-name-length";
-    public static final String ONLINE_MODE = "online-mode";
+    public static final String USE_UUIDS = "use-uuids";
     public static final String FORBIDDEN_TAGS = "forbidden-tags";
     public static final String CHAT_FORMAT = "chat-format";
     public static final String LEFT_OF_TAG = "left-of-tag";
@@ -85,8 +85,9 @@ public class ConfigManager {
         config.addDefault(MAX_TAG_LENGTH, 5);
         config.addDefault(MIN_NAME_LENGTH, 0);
         config.addDefault(MAX_NAME_LENGTH, 20);
-        config.addDefault(ONLINE_MODE, false); // TODO: Change if plugin gets published
-        config.addDefault(FORBIDDEN_TAGS, new ArrayList<>());
+        config.addDefault(USE_UUIDS, false);
+        config.addDefault(FORBIDDEN_TAGS, Arrays.asList("mod", "admin", "owner", "vip", "mvp", "vip+", "dono", "staff",
+                "helper", "mvp+"));
 
         // Must have at least "{player}" and "{content}"
         config.addDefault(CHAT_FORMAT, String.format("%s%s&f%s &f> &7%s", ChatManager.FORMATTED_CLAN_TAG_PLACEHOLDER,
