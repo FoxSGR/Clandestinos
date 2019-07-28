@@ -12,7 +12,6 @@ import foxsgr.clandestinos.persistence.PersistenceContext;
 import foxsgr.clandestinos.persistence.PlayerRepository;
 import foxsgr.clandestinos.util.TextUtil;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Set;
@@ -27,22 +26,22 @@ public class InfoHandler {
     private static final String PLAYER_TYPE = "player";
 
     public void showInfo(CommandSender sender, String[] args) {
-        Player player = CommandValidator.playerFromSender(sender);
-        if (player == null) {
-            return;
-        }
-
-        if (args.length == 1) {
-            // Must be a player
-            if (CommandValidator.playerFromSender(sender) != null) {
-                specific(player, PLAYER_TYPE, sender.getName());
-            }
-        } else if (args.length == 2) { // info, tag/name
-            trialAndError(player, args[1]);
-        } else if (args.length == 3) { //info, clan/player, tag/name
-            specific(player, args[1], args[2]);
-        } else {
-            LanguageManager.send(sender, LanguageManager.WRONG_INFO_USAGE);
+        switch (args.length) {
+            case 1:
+                // Must be a player
+                if (CommandValidator.playerFromSender(sender) != null) {
+                    specific(sender, PLAYER_TYPE, sender.getName());
+                }
+                break;
+            case 2:  // info, tag/name
+                trialAndError(sender, args[1]);
+                break;
+            case 3:  //info, clan/player, tag/name
+                specific(sender, args[1], args[2]);
+                break;
+            default:
+                LanguageManager.send(sender, LanguageManager.WRONG_INFO_USAGE);
+                break;
         }
     }
 

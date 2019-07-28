@@ -23,7 +23,8 @@ public class UninvitePlayerHandler {
             return;
         }
 
-        Invite invite = inviteRepository.find(args[1], clanLeader.second.clan().withoutColor().value());
+        Invite invite = clanLeader.second.clan()
+                .map(tag -> inviteRepository.find(args[1], tag.withoutColor().value())).orElse(null);
         if (invite == null) {
             LanguageManager.send(sender, LanguageManager.NO_INVITE_PENDING);
             return;

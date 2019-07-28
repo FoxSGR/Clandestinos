@@ -1,23 +1,27 @@
 package foxsgr.clandestinos.application;
 
 import foxsgr.clandestinos.domain.model.clan.Clan;
+import foxsgr.clandestinos.domain.model.clan.ClanTag;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.persistence.ClanRepository;
 import foxsgr.clandestinos.persistence.PersistenceContext;
 import foxsgr.clandestinos.persistence.PlayerRepository;
 import foxsgr.clandestinos.util.Pair;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 
 /**
  * Application class with methods related to finding entities.
  */
+@SuppressWarnings("WeakerAccess")
 public final class Finder {
 
     /**
@@ -73,9 +77,17 @@ public final class Finder {
 
     public static Clan findClanEnsureExists(ClanPlayer player) {
         ClanRepository clanRepository = PersistenceContext.repositories().clans();
-        Clan clan = clanRepository.findByTag(player.clan().withoutColor().value());
+        Clan clan = player.clan().map(tag -> {
+            Clan foundClan = clanRepository.findByTag(tag.withoutColor().value());
+            if (foundClan == null) {
+                throw new IllegalStateException("The clan with tag " + tag.withoutColor().value() + " couldn't be found.");
+            }
+
+            return foundClan;
+        }).orElse(null);
+
         if (clan == null) {
-            throw new IllegalStateException("The clan with tag " + player.clan().withoutColor().value() + " couldn't be found.");
+            throw new IllegalStateException(player.id() + " is not in a clan.");
         }
 
         return clan;
@@ -107,8 +119,8 @@ public final class Finder {
      * @param player the player to extract the ID from.
      * @return the extracted ID.
      */
-    public static String idFromPlayer(Player player) {
-        if (ConfigManager.getInstance().getBoolean(ConfigManager.ONLINE_MODE)) {
+    public static String idFromPlayer(OfflinePlayer player) {
+        if (ConfigManager.getInstance().getBoolean(ConfigManager.USE_UUIDS)) {
             return player.getUniqueId().toString();
         } else {
             return player.getName();
@@ -116,7 +128,7 @@ public final class Finder {
     }
 
     public static String idFromName(String name) {
-        if (ConfigManager.getInstance().getBoolean(ConfigManager.ONLINE_MODE)) {
+        if (ConfigManager.getInstance().getBoolean(ConfigManager.USE_UUIDS)) {
             // TODO: return UUID to player name
             throw new UnsupportedOperationException("UUID to player name not implemented yet");
         } else {
@@ -146,7 +158,13 @@ public final class Finder {
     public static Clan clanFromPlayer(CommandSender sender, ClanPlayer clanPlayer) {
         ClanRepository clanRepository = PersistenceContext.repositories().clans();
 
-        Clan clan = clanRepository.findByTag(clanPlayer.clan().withoutColor().value());
+        Optional<ClanTag> clanTag = clanPlayer.clan();
+        if (!clanTag.isPresent()) {
+            LanguageManager.send(sender, LanguageManager.MUST_BE_IN_CLAN);
+            return null;
+        }
+
+        Clan clan = clanRepository.findByTag(clanTag.get().withoutColor().value());
         if (clan == null) {
             LanguageManager.send(sender, LanguageManager.MUST_BE_IN_CLAN);
             return null;
@@ -162,7 +180,7 @@ public final class Finder {
             return null;
         }
 
-        Clan clan = clanFromPlayer(sender, leader);
+        Clan clan = findClanEnsureExists(leader);
         if (!clan.isLeader(leader)) {
             LanguageManager.send(sender, LanguageManager.MUST_BE_LEADER);
             return null;
@@ -178,7 +196,7 @@ public final class Finder {
             return null;
         }
 
-        Clan clan = clanFromPlayer(sender, owner);
+        Clan clan = findClanEnsureExists(owner);
         if (!clan.isOwner(owner)) {
             LanguageManager.send(sender, LanguageManager.MUST_BE_OWNER);
             return null;
@@ -188,14 +206,14 @@ public final class Finder {
     }
 
     @Nullable
-    public static ClanPlayer findPlayer(Player player) {
+    public static ClanPlayer findPlayer(OfflinePlayer player) {
         String id = idFromPlayer(player);
         PlayerRepository playerRepository = PersistenceContext.repositories().players();
         return playerRepository.find(id);
     }
 
     public static String nameFromId(String id) {
-        if (ConfigManager.getInstance().getBoolean(ConfigManager.ONLINE_MODE)) {
+        if (ConfigManager.getInstance().getBoolean(ConfigManager.USE_UUIDS)) {
             // TODO: return UUID to player name
             throw new UnsupportedOperationException("UUID to player name not implemented yet");
         } else {

@@ -7,6 +7,7 @@ import foxsgr.clandestinos.domain.model.clan.ClanTag;
 import foxsgr.clandestinos.util.Preconditions;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class ClanPlayer {
 
@@ -14,6 +15,7 @@ public class ClanPlayer {
     private KillCount killCount;
     private DeathCount deathCount;
     private ClanTag clan;
+    private transient KDR kdr; // Shouldn't be persisted
 
     public ClanPlayer(String id) {
         Preconditions.ensureNotEmpty(id, "The id of a player cannot be null or empty.");
@@ -21,6 +23,7 @@ public class ClanPlayer {
         killCount = new KillCount();
         deathCount = new DeathCount();
         clan = null;
+        kdr = new KDR(killCount, deathCount);
     }
 
     public ClanPlayer(String id, int killCount, int deathCount, String clanTag) {
@@ -32,6 +35,8 @@ public class ClanPlayer {
         if (clanTag != null) {
             this.clan = new ClanTag(clanTag);
         }
+
+        kdr = new KDR(this.killCount, this.deathCount);
     }
 
     @Override
@@ -57,8 +62,8 @@ public class ClanPlayer {
         return id;
     }
 
-    public ClanTag clan() {
-        return clan;
+    public Optional<ClanTag> clan() {
+        return Optional.ofNullable(clan);
     }
 
     public KillCount killCount() {
@@ -88,19 +93,15 @@ public class ClanPlayer {
 
     public void incKillCount() {
         killCount = killCount.increment();
+        kdr = new KDR(killCount, deathCount);
     }
 
     public void incDeathCount() {
         deathCount = deathCount.increment();
+        kdr = new KDR(killCount, deathCount);
     }
 
     public KDR kdr() {
-        return new KDR(killCount, deathCount);
-    }
-
-    public void updateClanTag(ClanTag newTag) {
-        Preconditions.ensure(newTag.withoutColor().value().equalsIgnoreCase(clan.withoutColor().value()),
-                String.format("Cannot update %s's clan tag because it's not from the same clan.", id));
-        clan = newTag;
+        return kdr;
     }
 }

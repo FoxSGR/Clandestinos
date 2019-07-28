@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ClanChatCommand implements CommandExecutor {
 
@@ -44,8 +45,8 @@ public class ClanChatCommand implements CommandExecutor {
                 continue;
             }
 
-            ClanTag otherPlayerClan = otherPlayer.clan();
-            if (otherPlayerClan != null && otherPlayerClan.equalsIgnoreColor(clan.tag())) {
+            Optional<ClanTag> otherPlayerClan = otherPlayer.clan();
+            if (otherPlayerClan.isPresent() && otherPlayerClan.get().equalsIgnoreColor(clan.tag())) {
                 player.sendMessage(message);
             } else {
                 spySend(player, message);
@@ -55,7 +56,7 @@ public class ClanChatCommand implements CommandExecutor {
         return true;
     }
 
-    public static void toggleSpyBlacklist(CommandSender sender) {
+    static void toggleSpyBlacklist(CommandSender sender) {
         if (sender instanceof ConsoleCommandSender) {
             sender.sendMessage("The console will always receive the clan messages.");
         }

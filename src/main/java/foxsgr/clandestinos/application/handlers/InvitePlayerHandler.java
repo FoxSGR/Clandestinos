@@ -14,6 +14,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Optional;
+
 public class InvitePlayerHandler {
 
     private final InviteRepository inviteRepository = PersistenceContext.repositories().invites();
@@ -55,11 +57,12 @@ public class InvitePlayerHandler {
             return new ClanPlayer(Finder.idFromPlayer(invited));
         }
 
-        if (!invitedClanPlayer.inClan()) {
+        Optional<ClanTag> clanTag = invitedClanPlayer.clan();
+        if (!clanTag.isPresent()) {
             return invitedClanPlayer;
         }
 
-        if (invitedClanPlayer.clan().equalsIgnoreColor(clan.tag())) {
+        if (clanTag.get().equalsIgnoreColor(clan.tag())) {
             LanguageManager.send(sender, LanguageManager.ALREADY_IN_YOUR_CLAN);
             return null;
         }
