@@ -33,6 +33,7 @@ public class LanguageManager {
     public static final String KICK_USAGE = "kick-usage";
     public static final String MODTAG_USAGE = "modtag-usage";
     public static final String ENEMY_USAGE = "enemy-usage";
+    public static final String UNENEMY_USAGE = "unenemy-usage";
     public static final String MAKE_LEADER_USAGE = "make-leader-usage";
     public static final String REMOVE_LEADER_USAGE = "remove-leader-usage";
 
@@ -110,6 +111,11 @@ public class LanguageManager {
     public static final String CANNOT_DEMOTE_YOURSELF = "cannot-demote-yourself";
     public static final String SUCCESSFUL_DEMOTE = "successful-demote";
     public static final String DEMOTED = "demoted";
+    public static final String CLANS_NOW_NEUTRAL = "clans-now-neutral";
+    public static final String CLAN_WANTS_NEUTRAL = "clans-wants-neutral";
+    public static final String NEUTRAL_CANCELED = "neutral-canceled";
+    public static final String OTHERS_NEUTRAL_CANCELED = "others-neutral-canceled";
+    public static final String THATS_YOUR_CLAN = "thats-your-clan";
 
     /**
      * The plugin.
@@ -300,6 +306,7 @@ public class LanguageManager {
         fileConfiguration.addDefault(KICK_USAGE, "&b/clan kick (name) - Kick a player from your clan.");
         fileConfiguration.addDefault(MODTAG_USAGE, "&b/clan modtag (newtag) - Change the colors of your clan tag.");
         fileConfiguration.addDefault(ENEMY_USAGE, "&b/clan enemy (tag) - Declare that a clan is your enemy.");
+        fileConfiguration.addDefault(UNENEMY_USAGE, "&b/clan unenemy (tag) - Request neutrality to an enemy clan.");
         fileConfiguration.addDefault(MAKE_LEADER_USAGE, "&b/clan makeleader (player) - Promote a player to leader.");
         fileConfiguration.addDefault(REMOVE_LEADER_USAGE, "&b/clan removeleader (player) - Demote a player from leader.");
 
@@ -383,6 +390,11 @@ public class LanguageManager {
         fileConfiguration.addDefault(CANNOT_DEMOTE_YOURSELF, "&cYou cannot demote yourself.");
         fileConfiguration.addDefault(SUCCESSFUL_DEMOTE, "&b{0} is no longer a leader.");
         fileConfiguration.addDefault(DEMOTED, "&bYou are no longer a leader of your clan.");
+        fileConfiguration.addDefault(CLANS_NOW_NEUTRAL, "{0} &aand {1} &aare now neutral.");
+        fileConfiguration.addDefault(CLAN_WANTS_NEUTRAL, "{0} &awants to be neutral with {1}&a.");
+        fileConfiguration.addDefault(NEUTRAL_CANCELED, "&bThe neutrality request to {0} &bhas been canceled.");
+        fileConfiguration.addDefault(OTHERS_NEUTRAL_CANCELED, "&a{0} &acanceled {1}&a's neutrality request.");
+        fileConfiguration.addDefault(THATS_YOUR_CLAN, "{0} &cis your clan.");
 
         fileConfiguration.options().copyDefaults(true);
         return fileConfiguration;
