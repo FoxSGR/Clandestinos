@@ -40,3 +40,6 @@ permissions:
       clandestinos.clanchat: true
       clandestinos.spy: false
       clandestinos.enemy: true
+      clandestinos.unenemy: true
+      clandestinos.makeleader: true
+      clandestinos.makemember: true
