@@ -35,6 +35,7 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
     private static final String KICK_COMMAND = "kick";
     private static final String MODTAG_COMMAND = "modtag";
     private static final String ENEMY_COMMAND = "enemy";
+    private static final String UNENEMY_COMMAND = "unenemy";
     private static final String SPY_COMMAND = "spy";
     private static final String MAKE_LEADER_COMMAND = "makeleader";
     private static final String REMOVE_LEADER_COMMAND = "removeleader";
@@ -50,45 +51,64 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        String subCommand = args[0];
-        if (subCommand.equalsIgnoreCase(CREATE_COMMAND)) {
-            new CreateClanHandler().createClan(sender, args);
-        } else if (subCommand.equalsIgnoreCase(RELOAD_COMMAND)) {
-            if (PermissionsManager.hasAndWarn(sender, RELOAD_COMMAND)) {
-                // Not very reliable
-                plugin.onEnable();
-                plugin.onDisable();
-                plugin.reloadConfig();
-                sender.sendMessage(ChatColor.AQUA + "Reloaded.");
-            }
-        } else if (subCommand.equalsIgnoreCase(INVITE_COMMAND)) {
-            new InvitePlayerHandler().invitePlayer(sender, args);
-        } else if (subCommand.equalsIgnoreCase(UNINVITE_COMMAND)) {
-            new UninvitePlayerHandler().uninvitePlayer(sender, args);
-        } else if (subCommand.equalsIgnoreCase(JOIN_COMMAND)) {
-            new JoinClanHandler().joinClan(sender, args);
-        } else if (subCommand.equalsIgnoreCase(LEAVE_COMMAND)) {
-            new LeaveClanHandler().leaveClan(sender);
-        } else if (subCommand.equalsIgnoreCase(DISBAND_COMMAND)) {
-            new DisbandClanHandler().disbandClan(sender);
-        } else if (subCommand.equalsIgnoreCase(INFO_COMMAND)) {
-            new InfoHandler().showInfo(sender, args);
-        } else if (subCommand.equalsIgnoreCase(KICK_COMMAND)) {
-            new KickPlayerHandler().kickPlayer(sender, args);
-        } else if (subCommand.equalsIgnoreCase(MODTAG_COMMAND)) {
-            new ModifyTagHandler().modifyTag(sender, args);
-        } else if (subCommand.equalsIgnoreCase(SPY_COMMAND)) {
-            if (PermissionsManager.hasAndWarn(sender, "clandestinos.spy")) {
-                ClanChatCommand.toggleSpyBlacklist(sender);
-            }
-        } else if (subCommand.equalsIgnoreCase(ENEMY_COMMAND)) {
-            new DeclareEnemyHandler().declareEnemy(sender, args);
-        } else if (subCommand.equalsIgnoreCase(MAKE_LEADER_COMMAND)) {
-            new PromoteToLeaderHandler().promoteToLeader(sender, args);
-        } else if (subCommand.equalsIgnoreCase(REMOVE_LEADER_COMMAND)) {
-            new DemoteToMemberHandler().demoteToMember(sender, args);
-        } else {
-            LanguageManager.send(sender, LanguageManager.UNKNOWN_COMMAND);
+        String subCommand = args[0].toLowerCase();
+        switch (subCommand) {
+            case CREATE_COMMAND:
+                new CreateHandler().createClan(sender, args);
+                break;
+            case RELOAD_COMMAND:
+                if (PermissionsManager.hasAndWarn(sender, RELOAD_COMMAND)) {
+                    // Not very reliable
+                    plugin.onEnable();
+                    plugin.onDisable();
+                    plugin.reloadConfig();
+                    sender.sendMessage(ChatColor.AQUA + "Reloaded.");
+                }
+                break;
+            case INVITE_COMMAND:
+                new InviteHandler().invitePlayer(sender, args);
+                break;
+            case UNINVITE_COMMAND:
+                new UninvitePlayerHandler().uninvitePlayer(sender, args);
+                break;
+            case JOIN_COMMAND:
+                new JoinHandler().joinClan(sender, args);
+                break;
+            case LEAVE_COMMAND:
+                new LeaveHandler().leaveClan(sender, args);
+                break;
+            case DISBAND_COMMAND:
+                new DisbandHandler().disbandClan(sender, args);
+                break;
+            case INFO_COMMAND:
+                new InfoHandler().showInfo(sender, args);
+                break;
+            case KICK_COMMAND:
+                new KickHandler().kickPlayer(sender, args);
+                break;
+            case MODTAG_COMMAND:
+                new ModTagHandler().modifyTag(sender, args);
+                break;
+            case SPY_COMMAND:
+                if (PermissionsManager.hasAndWarn(sender, "clandestinos.spy")) {
+                    ClanChatCommand.toggleSpyBlacklist(sender);
+                }
+                break;
+            case ENEMY_COMMAND:
+                new EnemyHandler().declareEnemy(sender, args);
+                break;
+            case UNENEMY_COMMAND:
+                new UnenemyHandler().requestNeutrality(sender, args);
+                break;
+            case MAKE_LEADER_COMMAND:
+                new MakeLeaderHandler().promoteToLeader(sender, args);
+                break;
+            case REMOVE_LEADER_COMMAND:
+                new RemoveLeaderHandler().demoteToMember(sender, args);
+                break;
+            default:
+                LanguageManager.send(sender, LanguageManager.UNKNOWN_COMMAND);
+                break;
         }
 
         return true;
@@ -99,7 +119,8 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
         if (args.length == 1) {
             return PermissionsManager.commandsWithPermission(sender, CREATE_COMMAND, INFO_COMMAND, INVITE_COMMAND,
                     UNINVITE_COMMAND, LEAVE_COMMAND, RELOAD_COMMAND, DISBAND_COMMAND, KICK_COMMAND, DISBAND_COMMAND,
-                    ENEMY_COMMAND, JOIN_COMMAND, SPY_COMMAND, MAKE_LEADER_COMMAND, REMOVE_LEADER_COMMAND)
+                    ENEMY_COMMAND, JOIN_COMMAND, SPY_COMMAND, MAKE_LEADER_COMMAND, REMOVE_LEADER_COMMAND,
+                    MODTAG_COMMAND, UNENEMY_COMMAND)
                     .stream().filter(c -> c.toLowerCase().startsWith(args[0].toLowerCase()))
                     .collect(Collectors.toList());
         }
@@ -122,6 +143,7 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
         appendSubCommand(sender, builder, UNINVITE_COMMAND, LanguageManager.UNINVITE_USAGE);
         appendSubCommand(sender, builder, LEAVE_COMMAND, LanguageManager.LEAVE_USAGE);
         appendSubCommand(sender, builder, ENEMY_COMMAND, LanguageManager.ENEMY_USAGE);
+        appendSubCommand(sender, builder, UNENEMY_COMMAND, LanguageManager.UNENEMY_USAGE);
         appendSubCommand(sender, builder, DISBAND_COMMAND, LanguageManager.DISBAND_USAGE);
         appendSubCommand(sender, builder, KICK_COMMAND, LanguageManager.KICK_USAGE);
         appendSubCommand(sender, builder, MODTAG_COMMAND, LanguageManager.MODTAG_USAGE);

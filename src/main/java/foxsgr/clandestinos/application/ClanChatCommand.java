@@ -4,6 +4,7 @@ import foxsgr.clandestinos.application.listeners.ChatManager;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clan.ClanTag;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
+import foxsgr.clandestinos.util.Pair;
 import foxsgr.clandestinos.util.TextUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -29,13 +30,12 @@ public class ClanChatCommand implements CommandExecutor {
             return true;
         }
 
-        ClanPlayer clanPlayer = Finder.fromSenderInClan(sender);
+        Pair<Clan, ClanPlayer> clanPlayer = Finder.fromSenderInClan(sender);
         if (clanPlayer == null) {
             return true;
         }
 
-        Clan clan = Finder.findClanEnsureExists(clanPlayer);
-        String message = formatMessage(sender, args, clan.tag());
+        String message = formatMessage(sender, args, clanPlayer.first.tag());
         sender.getServer().getConsoleSender().sendMessage(message);
 
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -46,7 +46,7 @@ public class ClanChatCommand implements CommandExecutor {
             }
 
             Optional<ClanTag> otherPlayerClan = otherPlayer.clan();
-            if (otherPlayerClan.isPresent() && otherPlayerClan.get().equalsIgnoreColor(clan.tag())) {
+            if (otherPlayerClan.isPresent() && otherPlayerClan.get().equalsIgnoreColor(clanPlayer.first.tag())) {
                 player.sendMessage(message);
             } else {
                 spySend(player, message);
