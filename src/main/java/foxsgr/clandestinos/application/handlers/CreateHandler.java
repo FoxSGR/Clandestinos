@@ -13,7 +13,7 @@ import foxsgr.clandestinos.util.TextUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class CreateClanHandler {
+public class CreateHandler {
 
     private final ClanRepository clanRepository = PersistenceContext.repositories().clans();
     private final PlayerRepository playerRepository = PersistenceContext.repositories().players();

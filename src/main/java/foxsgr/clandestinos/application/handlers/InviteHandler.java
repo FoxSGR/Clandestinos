@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
-public class InvitePlayerHandler {
+public class InviteHandler {
 
     private final InviteRepository inviteRepository = PersistenceContext.repositories().invites();
 

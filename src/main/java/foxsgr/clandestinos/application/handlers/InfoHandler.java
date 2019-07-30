@@ -3,6 +3,7 @@ package foxsgr.clandestinos.application.handlers;
 import foxsgr.clandestinos.application.CommandValidator;
 import foxsgr.clandestinos.application.Finder;
 import foxsgr.clandestinos.application.LanguageManager;
+import foxsgr.clandestinos.application.PermissionsManager;
 import foxsgr.clandestinos.domain.model.KDR;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
@@ -26,6 +27,10 @@ public class InfoHandler {
     private static final String PLAYER_TYPE = "player";
 
     public void showInfo(CommandSender sender, String[] args) {
+        if (!PermissionsManager.hasAndWarn(sender, args[0])) {
+            return;
+        }
+
         switch (args.length) {
             case 1:
                 // Must be a player
@@ -84,8 +89,7 @@ public class InfoHandler {
         StringBuilder infoBuilder = new StringBuilder();
         infoBuilder.append(languageManager.get(LanguageManager.INFO)).append(' ').append(clan.tag()).append('\n')
                 .append(languageManager.get(LanguageManager.NAME)).append(clan.name()).append('\n')
-                .append(LanguageManager.OWNER)
-                .append(clan.owner()).append('\n')
+                .append(LanguageManager.OWNER).append(' ').append(clan.owner()).append('\n')
                 .append(languageManager.get(LanguageManager.LEADERS)).append('\n');
 
         for (String id : clan.leaders()) {

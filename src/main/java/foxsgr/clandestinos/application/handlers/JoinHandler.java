@@ -13,7 +13,7 @@ import foxsgr.clandestinos.persistence.PlayerRepository;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class JoinClanHandler {
+public class JoinHandler {
 
     private final ClanRepository clanRepository = PersistenceContext.repositories().clans();
     private final PlayerRepository playerRepository = PersistenceContext.repositories().players();

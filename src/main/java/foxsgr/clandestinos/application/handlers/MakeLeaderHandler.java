@@ -12,7 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class PromoteToLeaderHandler {
+public class MakeLeaderHandler {
 
     private final ClanRepository clanRepository = PersistenceContext.repositories().clans();
 

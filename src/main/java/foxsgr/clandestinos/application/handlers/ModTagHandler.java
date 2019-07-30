@@ -14,7 +14,7 @@ import foxsgr.clandestinos.util.Pair;
 import foxsgr.clandestinos.util.TextUtil;
 import org.bukkit.command.CommandSender;
 
-public class ModifyTagHandler {
+public class ModTagHandler {
 
     private final ClanRepository clanRepository = PersistenceContext.repositories().clans();
     private final ConfigManager configManager = ConfigManager.getInstance();

@@ -11,7 +11,7 @@ import foxsgr.clandestinos.persistence.PlayerRepository;
 import foxsgr.clandestinos.util.Pair;
 import org.bukkit.command.CommandSender;
 
-public class KickPlayerHandler {
+public class KickHandler {
 
     private final ClanRepository clanRepository = PersistenceContext.repositories().clans();
     private final PlayerRepository playerRepository = PersistenceContext.repositories().players();
