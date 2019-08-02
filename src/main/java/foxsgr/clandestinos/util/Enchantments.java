@@ -2,10 +2,13 @@ package foxsgr.clandestinos.util;
 
 import org.bukkit.enchantments.Enchantment;
 
+import static foxsgr.clandestinos.util.Comparisons.equalsOne;
+import static foxsgr.clandestinos.util.Comparisons.startsAndEnds;
+
 /**
  * Enchantment related useful methods.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "WeakerAccess"})
 public final class Enchantments {
 
     /**
@@ -21,26 +24,37 @@ public final class Enchantments {
      * @param name the name of the enchantment.
      * @return the Enchantment or null if it doesn't exist.
      */
+    @SuppressWarnings("squid:S3776") // High complexity
     public static Enchantment byName(String name) {
         name = name.toLowerCase();
-        if (Comparisons.equalsOne(name, "sharpness", "damage", "damage_all")) {
+        if (equalsOne(name, "sharpness", "damage", "damage_all")) {
             return Enchantment.DAMAGE_ALL;
-        } else if (Comparisons.equalsOne(name, "unbreaking", "durability")) {
+        } else if (equalsOne(name, "unbreaking", "durability")) {
             return Enchantment.DURABILITY;
-        } else if (Comparisons.startsAndEnds(name, "fire", "aspect")) {
+        } else if (startsAndEnds(name, "fire", "aspect")) {
             return Enchantment.FIRE_ASPECT;
-        } else if (Comparisons.equalsOne(name, "smite", "damage_undead")) {
+        } else if (equalsOne(name, "smite", "damage_undead")) {
             return Enchantment.DAMAGE_UNDEAD;
         } else if (name.equalsIgnoreCase("knockback")) {
             return Enchantment.KNOCKBACK;
-        } else if (name.equalsIgnoreCase("efficiency") || Comparisons.startsAndEnds(name, "dig", "speed")) {
+        } else if (name.equalsIgnoreCase("efficiency") || startsAndEnds(name, "dig", "speed")) {
             return Enchantment.DIG_SPEED;
-        } else if (Comparisons.equalsOne(name, "fortune", "loot_bonus_blocks")) {
+        } else if (equalsOne(name, "fortune", "loot_bonus_blocks")) {
             return Enchantment.LOOT_BONUS_BLOCKS;
-        } else if (Comparisons.equalsOne(name, "loot", "loot_bonus_mobs", "looting")) {
+        } else if (equalsOne(name, "loot", "loot_bonus_mobs", "looting")) {
             return Enchantment.LOOT_BONUS_MOBS;
-        } else if (Comparisons.equalsOne(name, "protection", "protection_environmental")) {
+        } else if (equalsOne(name, "protection", "protection_environmental")) {
             return Enchantment.PROTECTION_ENVIRONMENTAL;
+        } else if (name.equalsIgnoreCase("thorns")) {
+            return Enchantment.THORNS;
+        } else if (equalsOne(name, "respiration", "oxygen")) {
+            return Enchantment.OXYGEN;
+        } else if (startsAndEnds(name, "aqua", "affinity") || startsAndEnds(name, "water", "worker")) {
+            return Enchantment.WATER_WORKER;
+        } else if (startsAndEnds(name, "depth", "strider")) {
+            return Enchantment.DEPTH_STRIDER;
+        } else if (startsAndEnds(name, "feather", "falling") || startsAndEnds(name, "protection", "fall")) {
+            return Enchantment.PROTECTION_FALL;
         }
 
         return null;

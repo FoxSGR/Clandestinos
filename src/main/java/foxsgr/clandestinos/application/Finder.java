@@ -1,5 +1,7 @@
 package foxsgr.clandestinos.application;
 
+import foxsgr.clandestinos.application.config.ConfigManager;
+import foxsgr.clandestinos.application.config.LanguageManager;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clan.ClanTag;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
@@ -84,7 +86,7 @@ public final class Finder {
     public static Clan clanByTag(CommandSender sender, String tag) {
         tag = TextUtil.stripColorAndFormatting(tag);
         ClanRepository clanRepository = PersistenceContext.repositories().clans();
-        Clan found = clanRepository.findByTag(tag);
+        Clan found = clanRepository.find(tag);
         if (found == null) {
             LanguageManager.send(sender, LanguageManager.CLAN_DOESNT_EXIST);
         }
@@ -104,7 +106,7 @@ public final class Finder {
     public static Clan findClanEnsureExists(ClanPlayer player) {
         ClanRepository clanRepository = PersistenceContext.repositories().clans();
         Clan clan = player.clan().map(tag -> {
-            Clan foundClan = clanRepository.findByTag(tag.withoutColor().value());
+            Clan foundClan = clanRepository.find(tag.withoutColor().value());
             if (foundClan == null) {
                 throw new IllegalStateException(
                         "The clan with tag " + tag.withoutColor().value() + " couldn't be found.");
@@ -133,7 +135,7 @@ public final class Finder {
         for (String id : clan.allPlayers()) {
             ClanPlayer player = playerRepository.find(id);
             if (player == null) {
-                ClanLogger.getLogger().log(Level.WARNING,
+                Clandestinos.getInstance().getLogger().log(Level.WARNING,
                         "The player {0} was not found but the clan {1} has it as its member.",
                         new String[] {id, clan.simpleTag()});
                 continue;
@@ -182,7 +184,7 @@ public final class Finder {
         }
 
         ClanRepository clanRepository = PersistenceContext.repositories().clans();
-        Clan clan = clanPlayer.clan().map(tag -> clanRepository.findByTag(tag.withoutColor().value().toLowerCase()))
+        Clan clan = clanPlayer.clan().map(tag -> clanRepository.find(tag.withoutColor().value().toLowerCase()))
                 .orElse(null);
         if (clan == null) {
             LanguageManager.send(sender, LanguageManager.MUST_BE_IN_CLAN);
@@ -192,23 +194,34 @@ public final class Finder {
         return new Pair<>(clan, clanPlayer);
     }
 
+    /**
+     * Finds a player's clan, warning him if he is not in a clan.
+     *
+     * @param sender the sender to warn if necessary.
+     * @param clanPlayer the clan player whose clan should be found.
+     * @return the found clan or null if none was found.
+     */
     @Nullable
     public static Clan clanFromPlayer(CommandSender sender, ClanPlayer clanPlayer) {
-        ClanRepository clanRepository = PersistenceContext.repositories().clans();
-
-        Optional<ClanTag> clanTag = clanPlayer.clan();
-        if (!clanTag.isPresent()) {
-            LanguageManager.send(sender, LanguageManager.MUST_BE_IN_CLAN);
-            return null;
-        }
-
-        Clan clan = clanRepository.findByTag(clanTag.get().withoutColor().value());
+        Clan clan = clanFromPlayer(clanPlayer);
         if (clan == null) {
             LanguageManager.send(sender, LanguageManager.MUST_BE_IN_CLAN);
-            return null;
         }
 
         return clan;
+    }
+
+    /**
+     * Finds a player's clan.
+     *
+     * @param clanPlayer the clan player whose clan should be found.
+     * @return the found clan or null if none was found.
+     */
+    @Nullable
+    public static Clan clanFromPlayer(ClanPlayer clanPlayer) {
+        ClanRepository clanRepository = PersistenceContext.repositories().clans();
+        Optional<ClanTag> clanTag = clanPlayer.clan();
+        return clanTag.map(tag -> clanRepository.find(tag.withoutColor().value())).orElse(null);
     }
 
     /**

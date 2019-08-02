@@ -97,7 +97,7 @@ public class ClandestinosPAPIExpansion extends PlaceholderExpansion {
     }
 
     private String coloredClanTag(@NotNull ClanPlayer clanPlayer) {
-        Clan clan = clanPlayer.clan().map(tag -> clanRepository.findByTag(tag.withoutColor().value())).orElse(null);
+        Clan clan = clanPlayer.clan().map(tag -> clanRepository.find(tag.withoutColor().value())).orElse(null);
         if (clan == null) {
             return "";
         } else {

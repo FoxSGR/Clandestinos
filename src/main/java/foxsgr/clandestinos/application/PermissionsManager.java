@@ -1,5 +1,6 @@
 package foxsgr.clandestinos.application;
 
+import foxsgr.clandestinos.application.config.LanguageManager;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;

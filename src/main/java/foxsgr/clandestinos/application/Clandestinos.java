@@ -1,5 +1,9 @@
 package foxsgr.clandestinos.application;
 
+import foxsgr.clandestinos.application.clanchatcommand.ClanChatCommand;
+import foxsgr.clandestinos.application.clancommand.ClanCommand;
+import foxsgr.clandestinos.application.config.ConfigManager;
+import foxsgr.clandestinos.application.config.LanguageManager;
 import foxsgr.clandestinos.application.hooks.ClandestinosPAPIExpansion;
 import foxsgr.clandestinos.application.listeners.ChatManager;
 import foxsgr.clandestinos.application.listeners.DeathListener;
@@ -46,6 +50,11 @@ public class Clandestinos extends JavaPlugin {
     private final ClanChatCommand clanChatCommand;
 
     /**
+     * The single plugin instance.
+     */
+    private static Clandestinos instance;
+
+    /**
      * The text usage of the plugin's main command.
      */
     private static final String CLAN_COMMAND = "clan";
@@ -65,6 +74,8 @@ public class Clandestinos extends JavaPlugin {
         deathListener = new DeathListener();
         clanCommand = new ClanCommand(this);
         clanChatCommand = new ClanChatCommand();
+
+        instance = this;
     }
 
     /**
@@ -72,26 +83,31 @@ public class Clandestinos extends JavaPlugin {
      */
     @Override
     public void onEnable() {
-        ClanLogger.init(this);
         ConfigManager.init(this);
         LanguageManager.init(this);
         PersistenceContext.init(this);
 
         // Must be after PersistenceContext.init(this)
-        chatManager.setup();
         joinQuitListener.setup();
         deathListener.setup();
 
-        clanChatCommand.setup();
+        ConfigManager configManager = ConfigManager.getInstance();
+        if (configManager.getBoolean(ConfigManager.CHAT_FORMATTING_ENABLED)) {
+            chatManager.setup();
+            Bukkit.getPluginManager().registerEvents(chatManager, this);
+        }
+
+        if (configManager.getBoolean(ConfigManager.CLAN_CHAT_ENABLED)) {
+            clanChatCommand.setup();
+            Plugins.registerCommand(this, CLAN_CHAT_COMMAND, clanChatCommand);
+        }
 
         EconomyManager.init(this);
 
         Plugins.registerCommand(this, CLAN_COMMAND, clanCommand);
         Plugins.registerTabCompleter(this, CLAN_COMMAND, clanCommand);
 
-        Plugins.registerCommand(this, CLAN_CHAT_COMMAND, clanChatCommand);
 
-        Bukkit.getPluginManager().registerEvents(chatManager, this);
         Bukkit.getPluginManager().registerEvents(deathListener, this);
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -116,5 +132,14 @@ public class Clandestinos extends JavaPlugin {
      */
     public ChatManager chatManager() {
         return chatManager;
+    }
+
+    /**
+     * Returns the (single) plugin instance.
+     *
+     * @return the plugin.
+     */
+    public static Clandestinos getInstance() {
+        return instance;
     }
 }

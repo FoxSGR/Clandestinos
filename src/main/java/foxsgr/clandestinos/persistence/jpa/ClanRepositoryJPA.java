@@ -13,7 +13,7 @@ class ClanRepositoryJPA extends JPARepository<Clan, Integer> implements ClanRepo
     }
 
     @Override
-    public Clan findByTag(String tag) {
+    public Clan find(String tag) {
         /*Query query = entityManager().createQuery("SELECT c FROM Clan c WHERE c.tag.tagValue = :t");
         query.setParameter("t", tag);
         return (Clan) singleResult(query);*/

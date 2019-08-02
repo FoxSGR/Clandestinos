@@ -1,5 +1,6 @@
 package foxsgr.clandestinos.application;
 
+import foxsgr.clandestinos.application.config.LanguageManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;

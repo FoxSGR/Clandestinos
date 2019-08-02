@@ -1,6 +1,6 @@
 package foxsgr.clandestinos.domain.model.clan;
 
-import foxsgr.clandestinos.application.ConfigManager;
+import foxsgr.clandestinos.application.config.ConfigManager;
 import foxsgr.clandestinos.domain.exceptions.NonLetterInTagException;
 import foxsgr.clandestinos.domain.exceptions.WrongTagSizeException;
 import foxsgr.clandestinos.util.Preconditions;

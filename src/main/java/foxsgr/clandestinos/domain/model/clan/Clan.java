@@ -1,14 +1,17 @@
 package foxsgr.clandestinos.domain.model.clan;
 
-import foxsgr.clandestinos.application.Finder;
 import foxsgr.clandestinos.domain.exceptions.ChangeMoreThanColorsException;
 import foxsgr.clandestinos.domain.exceptions.ChangeToSameTagException;
+import foxsgr.clandestinos.domain.model.KDR;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.util.Preconditions;
 import foxsgr.clandestinos.util.TextUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+@SuppressWarnings({"BooleanMethodIsAlwaysInverted", "UnusedReturnValue"})
 public class Clan {
 
     private ClanTag tag;
@@ -17,6 +20,8 @@ public class Clan {
     private final Set<String> leaders;
     private final Set<String> members;
     private final Set<String> enemyClans;
+
+    private transient KDR kdr; // Should not be persisted
 
     public Clan(String tag, String name, ClanPlayer owner) {
         this(tag, name, owner.id(), new LinkedHashSet<>(), new LinkedHashSet<>(), new LinkedHashSet<>());
@@ -56,38 +61,55 @@ public class Clan {
         return Objects.hash(tag.withoutColor().value().toLowerCase());
     }
 
+    @NotNull
     public ClanTag tag() {
         return tag;
     }
 
+    @NotNull
     public String simpleTag() {
         return tag.withoutColor().value().toLowerCase();
     }
 
+    @NotNull
     public ClanName name() {
         return name;
     }
 
+    @NotNull
     public String owner() {
         return owner;
     }
 
+    @NotNull
     public List<String> allPlayers() {
         List<String> all = new ArrayList<>(leaders);
         all.addAll(members);
         return all;
     }
 
+    @NotNull
     public List<String> leaders() {
         return new ArrayList<>(leaders);
     }
 
+    @NotNull
     public List<String> members() {
         return new ArrayList<>(members);
     }
 
+    @NotNull
     public List<String> enemyClans() {
         return new ArrayList<>(enemyClans);
+    }
+
+    @Nullable
+    public KDR kdr() {
+        return kdr;
+    }
+
+    public void updateKDR(KDR kdr) {
+        this.kdr = kdr;
     }
 
     public boolean isOwner(ClanPlayer player) {
@@ -95,7 +117,16 @@ public class Clan {
     }
 
     public boolean addMember(ClanPlayer member) {
-        return members.add(member.id());
+        boolean result = members.add(member.id());
+        if (result) {
+            if (kdr != null) {
+                kdr = new KDR(kdr.kills() + member.killCount().value(), kdr.kills() + member.deathCount().value());
+            }
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public boolean addEnemy(Clan clan) {
@@ -118,17 +149,18 @@ public class Clan {
         return enemyClans.contains(clan.simpleTag());
     }
 
-    public void remove(ClanPlayer player) {
-        leaders.remove(player.id());
-        members.remove(player.id());
+    public void kick(ClanPlayer player) {
+        if ((leaders.remove(player.id()) || members.remove(player.id())) && kdr != null) {
+            kdr = kdr.subtract(player.killCount(), player.deathCount());
+        }
     }
 
-    public void makeLeader(ClanPlayer player){
+    public void makeLeader(ClanPlayer player) {
         leaders.add(player.id());
         members.remove(player.id());
     }
 
-    public void demoteLeader(ClanPlayer player){
+    public void demoteLeader(ClanPlayer player) {
         leaders.remove(player.id());
         members.add(player.id());
     }

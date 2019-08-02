@@ -1,5 +1,6 @@
 package foxsgr.clandestinos.application;
 
+import foxsgr.clandestinos.application.config.LanguageManager;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.util.Pair;
@@ -9,6 +10,7 @@ import org.bukkit.entity.Player;
 /**
  * Validates a command that should be executed by a player.
  */
+@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public final class CommandValidator {
 
     /**
@@ -28,11 +30,11 @@ public final class CommandValidator {
      * @return true if the command is valid, false otherwise.
      */
     public static boolean validate(CommandSender sender, String[] args, int minArgsLength, String underMinArgsMessage) {
-        if (!PermissionsManager.hasAndWarn(sender, args[0])) {
-            return false;
-        }
+        return validateAnySender(sender, args, minArgsLength, underMinArgsMessage) && playerFromSender(sender) != null;
+    }
 
-        if (playerFromSender(sender) == null) {
+    public static boolean validateAnySender(CommandSender sender, String[] args, int minArgsLength, String underMinArgsMessage) {
+        if (!PermissionsManager.hasAndWarn(sender, args[0])) {
             return false;
         }
 

@@ -1,8 +1,8 @@
-package foxsgr.clandestinos.application.handlers;
+package foxsgr.clandestinos.application.clancommand.subcommands;
 
 import foxsgr.clandestinos.application.CommandValidator;
-import foxsgr.clandestinos.application.ConfigManager;
-import foxsgr.clandestinos.application.LanguageManager;
+import foxsgr.clandestinos.application.config.ConfigManager;
+import foxsgr.clandestinos.application.config.LanguageManager;
 import foxsgr.clandestinos.domain.exceptions.ChangeMoreThanColorsException;
 import foxsgr.clandestinos.domain.exceptions.ChangeToSameTagException;
 import foxsgr.clandestinos.domain.exceptions.NonLetterInTagException;
@@ -14,12 +14,13 @@ import foxsgr.clandestinos.util.Pair;
 import foxsgr.clandestinos.util.TextUtil;
 import org.bukkit.command.CommandSender;
 
-public class ModTagHandler {
+public class ModTagCommand implements SubCommand {
 
     private final ClanRepository clanRepository = PersistenceContext.repositories().clans();
     private final ConfigManager configManager = ConfigManager.getInstance();
 
-    public void modifyTag(CommandSender sender, String[] args) {
+    @Override
+    public void run(CommandSender sender, String[] args) {
         Pair<Clan, ClanPlayer> clanOwner = CommandValidator.validateClanOwner(sender, args, 2,
                 LanguageManager.WRONG_MODTAG_USAGE);
         if (clanOwner == null) {
@@ -31,19 +32,20 @@ public class ModTagHandler {
             newTagValue = configManager.getString(ConfigManager.DEFAULT_TAG_COLOR) + newTagValue;
         }
 
+        Clan clan = clanOwner.first;
         String oldTag = clanOwner.first.tag().value();
         try {
-            clanOwner.first.changeTag(newTagValue);
-            clanRepository.update(clanOwner.first);
+            clan.changeTag(newTagValue);
+            clanRepository.update(clan);
 
-            String newTag = clanOwner.first.tag().value();
+            String newTag = clan.tag().value();
             LanguageManager.broadcast(sender.getServer(), LanguageManager.NEW_TAG_INFO, oldTag, newTag);
         } catch (ChangeMoreThanColorsException e) {
             LanguageManager.send(sender, LanguageManager.ONLY_CHANGE_COLORS);
         } catch (NonLetterInTagException e) {
             LanguageManager.send(sender, LanguageManager.ONLY_LETTERS_TAG);
         } catch (ChangeToSameTagException e) {
-            LanguageManager.send(sender, LanguageManager.CHANGE_SAME_TAG, clanOwner.first.tag().value());
+            LanguageManager.send(sender, LanguageManager.CHANGE_SAME_TAG, clan.tag().value());
         }
     }
 }

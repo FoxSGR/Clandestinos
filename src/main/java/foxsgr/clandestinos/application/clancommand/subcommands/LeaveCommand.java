@@ -1,7 +1,7 @@
-package foxsgr.clandestinos.application.handlers;
+package foxsgr.clandestinos.application.clancommand.subcommands;
 
 import foxsgr.clandestinos.application.Finder;
-import foxsgr.clandestinos.application.LanguageManager;
+import foxsgr.clandestinos.application.config.LanguageManager;
 import foxsgr.clandestinos.application.PermissionsManager;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
@@ -12,12 +12,13 @@ import foxsgr.clandestinos.util.Pair;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class LeaveHandler {
+public class LeaveCommand implements SubCommand {
 
     private final PlayerRepository playerRepository = PersistenceContext.repositories().players();
     private final ClanRepository clanRepository = PersistenceContext.repositories().clans();
 
-    public void leaveClan(CommandSender sender, String[] args) {
+    @Override
+    public void run(CommandSender sender, String[] args) {
         if (!PermissionsManager.hasAndWarn(sender, args[0])) {
             return;
         }
@@ -34,7 +35,7 @@ public class LeaveHandler {
             return;
         }
 
-        clan.remove(player);
+        clan.kick(player);
         clanRepository.update(clan);
 
         player.leaveClan();

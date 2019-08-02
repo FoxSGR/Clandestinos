@@ -4,6 +4,7 @@ import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clan.ClanTag;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.persistence.PlayerRepository;
+import foxsgr.clandestinos.util.TaskUtil;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -12,16 +13,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
-class PlayerRepositoryYAML extends YAMLRepository implements PlayerRepository {
+public class PlayerRepositoryYAML extends YAMLRepository implements PlayerRepository {
 
-    private Map<String, ClanPlayer> cache;
+    private static Map<String, ClanPlayer> cache = new ConcurrentHashMap<>();
 
     private static final String CLAN_TAG = "clan-tag";
+    private static final Lock MUTEX = new ReentrantLock();
 
     PlayerRepositoryYAML(JavaPlugin plugin) {
         super(plugin, "players");
-        cache = new HashMap<>();
     }
 
     @Override
@@ -31,7 +35,10 @@ class PlayerRepositoryYAML extends YAMLRepository implements PlayerRepository {
             return clanPlayer;
         }
 
+        MUTEX.lock();
         ConfigurationSection playerSection = file(id.toLowerCase());
+        MUTEX.unlock();
+
         if (playerSection == null) {
             return null;
         }
@@ -55,12 +62,17 @@ class PlayerRepositoryYAML extends YAMLRepository implements PlayerRepository {
             fileConfiguration.set(CLAN_TAG, null);
         }
 
+        MUTEX.lock();
         saveFile(fileConfiguration, id.toLowerCase());
+        MUTEX.unlock();
     }
 
     @Override
     public void load(String id) {
+        MUTEX.lock();
         ClanPlayer clanPlayer = find(id);
+        MUTEX.unlock();
+
         if (clanPlayer != null) {
             cache.put(clanPlayer.id().toLowerCase(), clanPlayer);
         }
@@ -74,15 +86,22 @@ class PlayerRepositoryYAML extends YAMLRepository implements PlayerRepository {
     @Override
     public void leaveFromClan(Clan clan) {
         List<String> ids = clan.allPlayers();
-        for (String id : ids) {
-            FileConfiguration fileConfiguration = loadFile(id.toLowerCase());
-            fileConfiguration.set(CLAN_TAG, null);
-            saveFile(fileConfiguration, id.toLowerCase());
 
-            if (cache.containsKey(id.toLowerCase())) {
-                cache.put(id.toLowerCase(), constructPlayer(fileConfiguration, id));
+        TaskUtil.runAsync(MUTEX, plugin, () -> {
+            for (String id : ids) {
+                FileConfiguration fileConfiguration = loadFile(id.toLowerCase());
+                fileConfiguration.set(CLAN_TAG, null);
+                saveFile(fileConfiguration, id.toLowerCase());
+
+                if (cache.containsKey(id.toLowerCase())) {
+                    cache.put(id.toLowerCase(), constructPlayer(fileConfiguration, id));
+                }
             }
-        }
+        });
+    }
+
+    public static Map<String, ClanPlayer> loadedPlayers() {
+        return new HashMap<>(cache);
     }
 
     private static ClanPlayer constructPlayer(ConfigurationSection playerSection, String id) {

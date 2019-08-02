@@ -1,8 +1,8 @@
-package foxsgr.clandestinos.application.handlers;
+package foxsgr.clandestinos.application.clancommand.subcommands;
 
 import foxsgr.clandestinos.application.CommandValidator;
 import foxsgr.clandestinos.application.Finder;
-import foxsgr.clandestinos.application.LanguageManager;
+import foxsgr.clandestinos.application.config.LanguageManager;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.persistence.ClanRepository;
@@ -12,11 +12,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class MakeLeaderHandler {
+public class MakeLeaderCommand implements SubCommand {
 
     private final ClanRepository clanRepository = PersistenceContext.repositories().clans();
 
-    public void promoteToLeader(CommandSender sender, String[] args) {
+    @Override
+    public void run(CommandSender sender, String[] args) {
         Pair<Clan, ClanPlayer> owner = CommandValidator.validateClanOwner(sender, args, 2, LanguageManager.WRONG_MAKE_LEADER_USAGE);
 
         if (owner == null) {

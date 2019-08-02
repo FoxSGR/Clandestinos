@@ -1,4 +1,4 @@
-package foxsgr.clandestinos.application;
+package foxsgr.clandestinos.application.config;
 
 import foxsgr.clandestinos.application.listeners.ChatManager;
 import org.bukkit.configuration.Configuration;
@@ -12,23 +12,39 @@ import java.util.List;
 /**
  * Configuration manager. Manages the plugin's configuration file and its options.
  */
-@SuppressWarnings("WeakerAccess")
 public class ConfigManager {
 
-    public static final String MIN_TAG_LENGTH = "min-tag-length";
-    public static final String MAX_TAG_LENGTH = "max-tag-length";
-    public static final String MIN_NAME_LENGTH = "min-name-length";
-    public static final String MAX_NAME_LENGTH = "max-name-length";
-    public static final String USE_UUIDS = "use-uuids";
-    public static final String FORBIDDEN_TAGS = "forbidden-tags";
-    public static final String CHAT_FORMAT = "chat-format";
-    public static final String LEFT_OF_TAG = "left-of-tag";
-    public static final String RIGHT_OF_TAG = "right-of-tag";
-    public static final String MEMBER_DECORATION_COLOR = "member-decoration-color";
-    public static final String LEADER_DECORATION_COLOR = "leader-decoration-color";
-    public static final String DEFAULT_TAG_COLOR = "default-tag-color";
-    public static final String CLAN_CHAT_FORMAT = "clan-chat-format";
-    public static final String CREATE_CLAN_COST = "create-clan-cost";
+    private static final String ENABLED_MODULE = "enabled";
+
+    private static final String GENERAL_CATEGORY = "general.";
+    public static final String MIN_TAG_LENGTH = GENERAL_CATEGORY + "min-tag-length";
+    public static final String MAX_TAG_LENGTH = GENERAL_CATEGORY + "max-tag-length";
+    public static final String MIN_NAME_LENGTH = GENERAL_CATEGORY + "min-name-length";
+    public static final String MAX_NAME_LENGTH = GENERAL_CATEGORY + "max-name-length";
+    public static final String FORBIDDEN_TAGS = GENERAL_CATEGORY + "forbidden-tags";
+
+    public static final String CREATE_CLAN_COST = "economy.create-clan-cost";
+
+    public static final String USE_UUIDS = "storage.use-uuids";
+
+    private static final String CHAT_CATEGORY = "chat-formatting.";
+    public static final String CHAT_FORMATTING_ENABLED = CHAT_CATEGORY + ENABLED_MODULE;
+    public static final String CHAT_FORMAT = CHAT_CATEGORY + "chat-format";
+    public static final String LEFT_OF_TAG = CHAT_CATEGORY + "left-of-tag";
+    public static final String RIGHT_OF_TAG = CHAT_CATEGORY + "right-of-tag";
+    public static final String MEMBER_DECORATION_COLOR = CHAT_CATEGORY + "member-decoration-color";
+    public static final String LEADER_DECORATION_COLOR = CHAT_CATEGORY + "leader-decoration-color";
+    public static final String DEFAULT_TAG_COLOR = CHAT_CATEGORY + "default-tag-color";
+
+    private static final String CLAN_CHAT_CATEGORY = "clan-chat.";
+    public static final String CLAN_CHAT_ENABLED = CLAN_CHAT_CATEGORY + ENABLED_MODULE;
+    public static final String CLAN_CHAT_FORMAT = CLAN_CHAT_CATEGORY + "clan-chat-format";
+
+    private static final String ANTI_SPAWN_KILL_CATEGORY = "anti-spawn-kill.";
+    public static final String ANTI_SPAWN_KILL_ENABLED = ANTI_SPAWN_KILL_CATEGORY + ENABLED_MODULE;
+    public static final String ANTI_SPAWN_KILL_PERIOD = ANTI_SPAWN_KILL_CATEGORY + "period";
+    public static final String ANTI_SPAWN_KILL_MAX = ANTI_SPAWN_KILL_CATEGORY + "max-kills-in-period";
+    public static final String ANTI_SPAWN_KILL_AREA = ANTI_SPAWN_KILL_CATEGORY + "area";
 
     /**
      * The plugin.
@@ -119,7 +135,7 @@ public class ConfigManager {
      *
      * @param plugin the plugin.
      */
-    static void init(JavaPlugin plugin) {
+    public static void init(JavaPlugin plugin) {
         instance = new ConfigManager(plugin);
         instance.save();
     }
@@ -152,20 +168,28 @@ public class ConfigManager {
         config.addDefault(USE_UUIDS, false);
         config.addDefault(FORBIDDEN_TAGS, Arrays.asList("mod", "admin", "owner", "vip", "mvp", "vip+", "dono", "staff",
                 "helper", "mvp+"));
+        config.addDefault(CREATE_CLAN_COST, 1500);
 
+        config.addDefault(CHAT_FORMATTING_ENABLED, true);
         // Must have at least "{player}" and "{content}"
         config.addDefault(CHAT_FORMAT, String.format("%s%s&f%s &f> &7%s", ChatManager.FORMATTED_CLAN_TAG_PLACEHOLDER,
                 ChatManager.PREFIX_PLACEHOLDER, ChatManager.PLAYER_PLACEHOLDER,
                 ChatManager.CONTENT_PLACEHOLDER));
-        config.addDefault(CREATE_CLAN_COST, 1500);
         config.addDefault(LEFT_OF_TAG, "[");
         config.addDefault(RIGHT_OF_TAG, "]");
         config.addDefault(MEMBER_DECORATION_COLOR, "&7");
         config.addDefault(LEADER_DECORATION_COLOR, "&4");
         config.addDefault(DEFAULT_TAG_COLOR, "&7");
+
+        config.addDefault(CLAN_CHAT_ENABLED, true);
         config.addDefault(CLAN_CHAT_FORMAT,
                 String.format("&7[&6Chat %s&7] &f%s &6> &e%s", ChatManager.COLORED_CLAN_TAG_PLACEHOLDER,
                         ChatManager.PLAYER_PLACEHOLDER, ChatManager.CONTENT_PLACEHOLDER));
+
+        config.addDefault(ANTI_SPAWN_KILL_ENABLED, true);
+        config.addDefault(ANTI_SPAWN_KILL_PERIOD, 90);
+        config.addDefault(ANTI_SPAWN_KILL_MAX, 4);
+        config.addDefault(ANTI_SPAWN_KILL_AREA, 4);
         config.options().copyDefaults(true);
     }
 }

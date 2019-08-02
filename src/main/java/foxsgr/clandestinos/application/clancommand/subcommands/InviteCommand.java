@@ -1,8 +1,8 @@
-package foxsgr.clandestinos.application.handlers;
+package foxsgr.clandestinos.application.clancommand.subcommands;
 
 import foxsgr.clandestinos.application.CommandValidator;
 import foxsgr.clandestinos.application.Finder;
-import foxsgr.clandestinos.application.LanguageManager;
+import foxsgr.clandestinos.application.config.LanguageManager;
 import foxsgr.clandestinos.domain.model.Invite;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clan.ClanTag;
@@ -16,11 +16,12 @@ import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
-public class InviteHandler {
+public class InviteCommand implements SubCommand {
 
     private final InviteRepository inviteRepository = PersistenceContext.repositories().invites();
 
-    public void invitePlayer(CommandSender sender, String[] args) {
+    @Override
+    public void run(CommandSender sender, String[] args) {
         Pair<Clan, ClanPlayer> clanLeader = CommandValidator.validateClanLeader(sender, args, 2,
                 LanguageManager.WRONG_INVITE_USAGE);
         if (clanLeader == null) {

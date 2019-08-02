@@ -1,8 +1,8 @@
-package foxsgr.clandestinos.application.handlers;
+package foxsgr.clandestinos.application.clancommand.subcommands;
 
 import foxsgr.clandestinos.application.CommandValidator;
 import foxsgr.clandestinos.application.Finder;
-import foxsgr.clandestinos.application.LanguageManager;
+import foxsgr.clandestinos.application.config.LanguageManager;
 import foxsgr.clandestinos.domain.model.NeutralityRequest;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
@@ -12,13 +12,14 @@ import foxsgr.clandestinos.persistence.PersistenceContext;
 import foxsgr.clandestinos.util.Pair;
 import org.bukkit.command.CommandSender;
 
-public class EnemyHandler {
+public class EnemyCommand implements SubCommand {
 
     private final ClanRepository clanRepository = PersistenceContext.repositories().clans();
     private final NeutralityRequestRepository neutralityRequestRepository = PersistenceContext.repositories()
             .neutralityRequests();
 
-    public void declareEnemy(CommandSender sender, String[] args) {
+    @Override
+    public void run(CommandSender sender, String[] args) {
         Pair<Clan, ClanPlayer> clanLeader = CommandValidator.validateClanLeader(sender, args, 2,
                 LanguageManager.WRONG_ENEMY_USAGE);
         if (clanLeader == null) {
@@ -41,7 +42,7 @@ public class EnemyHandler {
         }
 
         if (!playerClan.addEnemy(otherClan) || !otherClan.addEnemy(playerClan)) {
-            LanguageManager.send(sender, LanguageManager.ALREADY_YOUR_ENEMY);
+            LanguageManager.send(sender, LanguageManager.ALREADY_YOUR_ENEMY, otherClan.tag());
         } else {
             LanguageManager.broadcast(sender.getServer(), LanguageManager.ENEMY_DECLARATION, playerClan.tag(),
                     otherClan.tag());

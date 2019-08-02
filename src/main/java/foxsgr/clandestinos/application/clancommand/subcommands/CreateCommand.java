@@ -1,6 +1,8 @@
-package foxsgr.clandestinos.application.handlers;
+package foxsgr.clandestinos.application.clancommand.subcommands;
 
 import foxsgr.clandestinos.application.*;
+import foxsgr.clandestinos.application.config.ConfigManager;
+import foxsgr.clandestinos.application.config.LanguageManager;
 import foxsgr.clandestinos.domain.exceptions.NonLetterInTagException;
 import foxsgr.clandestinos.domain.exceptions.WrongNameSizeException;
 import foxsgr.clandestinos.domain.exceptions.WrongTagSizeException;
@@ -13,14 +15,15 @@ import foxsgr.clandestinos.util.TextUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class CreateHandler {
+public class CreateCommand implements SubCommand {
 
     private final ClanRepository clanRepository = PersistenceContext.repositories().clans();
     private final PlayerRepository playerRepository = PersistenceContext.repositories().players();
     private final ConfigManager configManager = ConfigManager.getInstance();
     private final EconomyManager economyManager = EconomyManager.getInstance();
 
-    public void createClan(CommandSender sender, String[] args) {
+    @Override
+    public void run(CommandSender sender, String[] args) {
         if (!validate(sender, args)) {
             return;
         }

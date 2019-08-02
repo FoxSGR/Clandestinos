@@ -1,7 +1,7 @@
 package foxsgr.clandestinos.application.listeners;
 
 import foxsgr.clandestinos.application.Clandestinos;
-import foxsgr.clandestinos.application.ConfigManager;
+import foxsgr.clandestinos.application.config.ConfigManager;
 import foxsgr.clandestinos.application.Finder;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;

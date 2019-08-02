@@ -1,8 +1,8 @@
-package foxsgr.clandestinos.application.handlers;
+package foxsgr.clandestinos.application.clancommand.subcommands;
 
 import foxsgr.clandestinos.application.CommandValidator;
 import foxsgr.clandestinos.application.Finder;
-import foxsgr.clandestinos.application.LanguageManager;
+import foxsgr.clandestinos.application.config.LanguageManager;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.persistence.ClanRepository;
@@ -11,12 +11,13 @@ import foxsgr.clandestinos.persistence.PlayerRepository;
 import foxsgr.clandestinos.util.Pair;
 import org.bukkit.command.CommandSender;
 
-public class KickHandler {
+public class KickCommand implements SubCommand {
 
     private final ClanRepository clanRepository = PersistenceContext.repositories().clans();
     private final PlayerRepository playerRepository = PersistenceContext.repositories().players();
 
-    public void kickPlayer(CommandSender sender, String[] args) {
+    @Override
+    public void run(CommandSender sender, String[] args) {
         Pair<Clan, ClanPlayer> clanLeader = CommandValidator.validateClanLeader(sender, args, 2,
                 LanguageManager.WRONG_KICK_USAGE);
         if (clanLeader == null) {
@@ -36,7 +37,7 @@ public class KickHandler {
     }
 
     private void kick(CommandSender sender, ClanPlayer player, Clan clan) {
-        clan.remove(player);
+        clan.kick(player);
         player.leaveClan();
         clanRepository.update(clan);
         playerRepository.save(player);
@@ -46,6 +47,10 @@ public class KickHandler {
     }
 
     private static boolean canKick(CommandSender sender, ClanPlayer kicker, ClanPlayer kicked, Clan clan) {
+        if (kicked == null) {
+            return false;
+        }
+
         if (clan.isLeader(kicked)) {
             if (clan.isOwner(kicker)) {
                 return true;

@@ -1,5 +1,9 @@
-package foxsgr.clandestinos.application;
+package foxsgr.clandestinos.application.clanchatcommand;
 
+import foxsgr.clandestinos.application.Finder;
+import foxsgr.clandestinos.application.PermissionsManager;
+import foxsgr.clandestinos.application.config.ConfigManager;
+import foxsgr.clandestinos.application.config.LanguageManager;
 import foxsgr.clandestinos.application.listeners.ChatManager;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clan.ClanTag;
@@ -56,7 +60,7 @@ public class ClanChatCommand implements CommandExecutor {
         return true;
     }
 
-    static void toggleSpyBlacklist(CommandSender sender) {
+    public static void toggleSpyBlacklist(CommandSender sender) {
         if (sender instanceof ConsoleCommandSender) {
             sender.sendMessage("The console will always receive the clan messages.");
         }
@@ -71,7 +75,7 @@ public class ClanChatCommand implements CommandExecutor {
         }
     }
 
-    void setup() {
+    public void setup() {
         ConfigManager configManager = ConfigManager.getInstance();
         format = configManager.getString(ConfigManager.CLAN_CHAT_FORMAT);
     }

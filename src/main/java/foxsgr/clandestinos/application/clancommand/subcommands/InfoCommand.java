@@ -1,11 +1,12 @@
-package foxsgr.clandestinos.application.handlers;
+package foxsgr.clandestinos.application.clancommand.subcommands;
 
 import foxsgr.clandestinos.application.CommandValidator;
 import foxsgr.clandestinos.application.Finder;
-import foxsgr.clandestinos.application.LanguageManager;
+import foxsgr.clandestinos.application.config.LanguageManager;
 import foxsgr.clandestinos.application.PermissionsManager;
 import foxsgr.clandestinos.domain.model.KDR;
 import foxsgr.clandestinos.domain.model.clan.Clan;
+import foxsgr.clandestinos.domain.model.clan.ClanName;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.domain.services.CalculateClanKDRService;
 import foxsgr.clandestinos.persistence.ClanRepository;
@@ -17,7 +18,7 @@ import org.bukkit.command.CommandSender;
 import java.util.List;
 import java.util.Set;
 
-public class InfoHandler {
+public class InfoCommand implements SubCommand {
 
     private final ClanRepository clanRepository = PersistenceContext.repositories().clans();
     private final PlayerRepository playerRepository = PersistenceContext.repositories().players();
@@ -26,7 +27,8 @@ public class InfoHandler {
     private static final String CLAN_TYPE = "clan";
     private static final String PLAYER_TYPE = "player";
 
-    public void showInfo(CommandSender sender, String[] args) {
+    @Override
+    public void run(CommandSender sender, String[] args) {
         if (!PermissionsManager.hasAndWarn(sender, args[0])) {
             return;
         }
@@ -71,7 +73,7 @@ public class InfoHandler {
     }
 
     private void trialAndError(CommandSender sender, String identifier) {
-        Clan clan = clanRepository.findByTag(identifier);
+        Clan clan = clanRepository.find(identifier);
         if (clan != null) {
             showClanInfo(sender, clan);
             return;
@@ -87,9 +89,14 @@ public class InfoHandler {
 
     private void showClanInfo(CommandSender sender, Clan clan) {
         StringBuilder infoBuilder = new StringBuilder();
-        infoBuilder.append(languageManager.get(LanguageManager.INFO)).append(' ').append(clan.tag()).append('\n')
-                .append(languageManager.get(LanguageManager.NAME)).append(clan.name()).append('\n')
-                .append(LanguageManager.OWNER).append(' ').append(clan.owner()).append('\n')
+        infoBuilder.append(languageManager.get(LanguageManager.INFO)).append(' ').append(clan.tag()).append('\n');
+
+        ClanName clanName = clan.name();
+        if (!clanName.value().isEmpty()) {
+            infoBuilder.append(languageManager.get(LanguageManager.NAME)).append(clan.name()).append('\n');
+        }
+
+        infoBuilder.append(languageManager.get(LanguageManager.OWNER)).append(' ').append(clan.owner()).append('\n')
                 .append(languageManager.get(LanguageManager.LEADERS)).append('\n');
 
         for (String id : clan.leaders()) {
@@ -106,12 +113,16 @@ public class InfoHandler {
             }
         }
 
-        Set<ClanPlayer> clanPlayers = Finder.playersInClan(clan);
-        CalculateClanKDRService calculateClanKDRService = new CalculateClanKDRService();
-        KDR kdr = calculateClanKDRService.calculateClanKDR(clanPlayers);
+        KDR kdr = clan.kdr();
+        if (kdr == null) {
+            Set<ClanPlayer> clanPlayers = Finder.playersInClan(clan);
+            CalculateClanKDRService calculateClanKDRService = new CalculateClanKDRService();
+            calculateClanKDRService.calculateClanKDR(clan, clanPlayers);
+            kdr = clan.kdr();
+        }
 
         infoBuilder.append('\n').append(languageManager.get(LanguageManager.KDR)).append(' ')
-                .append(String.format("%.2f", kdr.kdr())).append('\n')
+                .append(kdr).append('\n')
                 .append(languageManager.get(LanguageManager.KILLS)).append(' ').append(kdr.kills()).append('\n')
                 .append(languageManager.get(LanguageManager.DEATHS)).append(' ').append(kdr.deaths());
         sender.sendMessage(TextUtil.translateColoredText(infoBuilder.toString()));
@@ -126,8 +137,7 @@ public class InfoHandler {
 
         String info = languageManager.get(LanguageManager.PLAYER) + ' ' + name + '\n'
                 + languageManager.get(LanguageManager.CLAN) + ' ' + clan + '\n'
-                + languageManager.get(LanguageManager.KDR) + ' '
-                + String.format("%.2f", kdr.kdr()) + '\n'
+                + languageManager.get(LanguageManager.KDR) + ' ' + kdr + '\n'
                 + languageManager.get(LanguageManager.KILLS) + ' ' + kdr.kills() + '\n'
                 + languageManager.get(LanguageManager.DEATHS) + ' ' + kdr.deaths();
         sender.sendMessage(TextUtil.translateColoredText(info));

@@ -1,6 +1,9 @@
-package foxsgr.clandestinos.application;
+package foxsgr.clandestinos.application.clancommand;
 
-import foxsgr.clandestinos.application.handlers.*;
+import foxsgr.clandestinos.application.clanchatcommand.ClanChatCommand;
+import foxsgr.clandestinos.application.PermissionsManager;
+import foxsgr.clandestinos.application.config.LanguageManager;
+import foxsgr.clandestinos.application.clancommand.subcommands.*;
 import foxsgr.clandestinos.util.TextUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -39,8 +42,11 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
     private static final String SPY_COMMAND = "spy";
     private static final String MAKE_LEADER_COMMAND = "makeleader";
     private static final String REMOVE_LEADER_COMMAND = "removeleader";
+    private static final String DEBUG_COMMAND = "debug";
+    private static final String LIST_COMMAND = "list";
+    private static final String TOP_COMMAND = "top";
 
-    ClanCommand(JavaPlugin plugin) {
+    public ClanCommand(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -51,11 +57,9 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        String subCommand = args[0].toLowerCase();
-        switch (subCommand) {
-            case CREATE_COMMAND:
-                new CreateHandler().createClan(sender, args);
-                break;
+        SubCommand subCommand;
+        String subCommandId = args[0].toLowerCase();
+        switch (subCommandId) {
             case RELOAD_COMMAND:
                 if (PermissionsManager.hasAndWarn(sender, RELOAD_COMMAND)) {
                     // Not very reliable
@@ -64,53 +68,69 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
                     plugin.reloadConfig();
                     sender.sendMessage(ChatColor.AQUA + "Reloaded.");
                 }
+
+                return true;
+            case CREATE_COMMAND:
+                subCommand = new CreateCommand();
                 break;
             case INVITE_COMMAND:
-                new InviteHandler().invitePlayer(sender, args);
+                subCommand = new InviteCommand();
                 break;
             case UNINVITE_COMMAND:
-                new UninvitePlayerHandler().uninvitePlayer(sender, args);
+                subCommand = new UninviteSubCommand();
                 break;
             case JOIN_COMMAND:
-                new JoinHandler().joinClan(sender, args);
+                subCommand = new JoinCommand();
                 break;
             case LEAVE_COMMAND:
-                new LeaveHandler().leaveClan(sender, args);
+                subCommand = new LeaveCommand();
                 break;
             case DISBAND_COMMAND:
-                new DisbandHandler().disbandClan(sender, args);
+                subCommand = new DisbandCommand();
                 break;
             case INFO_COMMAND:
-                new InfoHandler().showInfo(sender, args);
+                subCommand = new InfoCommand();
                 break;
             case KICK_COMMAND:
-                new KickHandler().kickPlayer(sender, args);
+                subCommand = new KickCommand();
                 break;
             case MODTAG_COMMAND:
-                new ModTagHandler().modifyTag(sender, args);
+                subCommand = new ModTagCommand();
                 break;
             case SPY_COMMAND:
                 if (PermissionsManager.hasAndWarn(sender, "clandestinos.spy")) {
                     ClanChatCommand.toggleSpyBlacklist(sender);
                 }
-                break;
+
+                return true;
             case ENEMY_COMMAND:
-                new EnemyHandler().declareEnemy(sender, args);
+                subCommand = new EnemyCommand();
                 break;
             case UNENEMY_COMMAND:
-                new UnenemyHandler().requestNeutrality(sender, args);
+                subCommand = new UnenemySubCommand();
                 break;
             case MAKE_LEADER_COMMAND:
-                new MakeLeaderHandler().promoteToLeader(sender, args);
+                subCommand = new MakeLeaderCommand();
                 break;
             case REMOVE_LEADER_COMMAND:
-                new RemoveLeaderHandler().demoteToMember(sender, args);
+                subCommand = new RemoveLeaderCommand();
+                break;
+            case DEBUG_COMMAND:
+                subCommand = new DebugCommand();
+                break;
+            case LIST_COMMAND:
+                subCommand = new ListCommand();
+                break;
+            case TOP_COMMAND:
+                subCommand = new ListCommand();
+                args[0] = LIST_COMMAND;
                 break;
             default:
                 LanguageManager.send(sender, LanguageManager.UNKNOWN_COMMAND);
-                break;
+                return true;
         }
 
+        subCommand.run(sender, args);
         return true;
     }
 
@@ -120,7 +140,7 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
             return PermissionsManager.commandsWithPermission(sender, CREATE_COMMAND, INFO_COMMAND, INVITE_COMMAND,
                     UNINVITE_COMMAND, LEAVE_COMMAND, RELOAD_COMMAND, DISBAND_COMMAND, KICK_COMMAND, DISBAND_COMMAND,
                     ENEMY_COMMAND, JOIN_COMMAND, SPY_COMMAND, MAKE_LEADER_COMMAND, REMOVE_LEADER_COMMAND,
-                    MODTAG_COMMAND, UNENEMY_COMMAND)
+                    MODTAG_COMMAND, UNENEMY_COMMAND, LIST_COMMAND, TOP_COMMAND)
                     .stream().filter(c -> c.toLowerCase().startsWith(args[0].toLowerCase()))
                     .collect(Collectors.toList());
         }
@@ -139,6 +159,7 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
         builder.append(LanguageManager.getInstance().get(LanguageManager.COMMANDS_HEADER));
         appendSubCommand(sender, builder, CREATE_COMMAND, LanguageManager.CREATE_USAGE);
         appendSubCommand(sender, builder, INFO_COMMAND, LanguageManager.INFO_USAGE);
+        appendSubCommand(sender, builder, LIST_COMMAND, LanguageManager.LIST_USAGE);
         appendSubCommand(sender, builder, INVITE_COMMAND, LanguageManager.INVITE_USAGE);
         appendSubCommand(sender, builder, UNINVITE_COMMAND, LanguageManager.UNINVITE_USAGE);
         appendSubCommand(sender, builder, LEAVE_COMMAND, LanguageManager.LEAVE_USAGE);
