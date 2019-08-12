@@ -141,7 +141,7 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
                     UNINVITE_COMMAND, LEAVE_COMMAND, RELOAD_COMMAND, DISBAND_COMMAND, KICK_COMMAND, DISBAND_COMMAND,
                     ENEMY_COMMAND, JOIN_COMMAND, SPY_COMMAND, MAKE_LEADER_COMMAND, REMOVE_LEADER_COMMAND,
                     MODTAG_COMMAND, UNENEMY_COMMAND, LIST_COMMAND, TOP_COMMAND)
-                    .stream().filter(c -> c.toLowerCase().startsWith(args[0].toLowerCase()))
+                    .stream().filter(c -> c.toLowerCase().contains(args[0].toLowerCase()))
                     .collect(Collectors.toList());
         }
 
@@ -150,7 +150,7 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
         }
 
         return sender.getServer().getOnlinePlayers().stream().map(HumanEntity::getName)
-                .filter(p -> p.toLowerCase().startsWith(args[args.length - 1].toLowerCase()))
+                .filter(p -> p.toLowerCase().contains(args[args.length - 1].toLowerCase()))
                 .collect(Collectors.toList());
     }
 
