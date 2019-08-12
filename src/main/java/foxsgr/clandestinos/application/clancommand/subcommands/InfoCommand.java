@@ -104,11 +104,24 @@ public class InfoCommand implements SubCommand {
             infoBuilder.append("- ").append(name).append('\n');
         }
 
-        infoBuilder.append(languageManager.get(LanguageManager.MEMBERS)).append('\n');
+        infoBuilder.append(languageManager.get(LanguageManager.MEMBERS)).append(" (").append(clan.allPlayers().size())
+                .append("):\n");
         List<String> allPlayers = clan.allPlayers();
         for (int i = 0; i < allPlayers.size(); i++) {
             infoBuilder.append(allPlayers.get(i));
             if (i != allPlayers.size() - 1) {
+                infoBuilder.append(", ");
+            }
+        }
+
+        List<String> enemies = clan.enemyClans();
+        if (!enemies.isEmpty()) {
+            infoBuilder.append('\n').append(languageManager.get(LanguageManager.ENEMIES)).append('\n');
+        }
+
+        for (int i = 0; i < enemies.size(); i++) {
+            infoBuilder.append(enemies.get(i).toUpperCase());
+            if (i != enemies.size() - 1) {
                 infoBuilder.append(", ");
             }
         }
@@ -121,6 +134,7 @@ public class InfoCommand implements SubCommand {
             kdr = clan.kdr();
         }
 
+        assert kdr != null;
         infoBuilder.append('\n').append(languageManager.get(LanguageManager.KDR)).append(' ')
                 .append(kdr).append('\n')
                 .append(languageManager.get(LanguageManager.KILLS)).append(' ').append(kdr.kills()).append('\n')
