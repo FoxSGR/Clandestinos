@@ -3,6 +3,7 @@ package foxsgr.clandestinos.application.listeners;
 import foxsgr.clandestinos.application.Finder;
 import foxsgr.clandestinos.application.antispawnkill.AntiSpawnKill;
 import foxsgr.clandestinos.application.config.ConfigManager;
+import foxsgr.clandestinos.application.config.LanguageManager;
 import foxsgr.clandestinos.domain.model.KDR;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
@@ -38,8 +39,14 @@ public class DeathListener implements Listener {
         killed.incDeathCount();
         playerRepository.save(killed);
 
-        updateClanKDR(killer, true);
-        updateClanKDR(killed, false);
+        Clan killerClan = Finder.clanFromPlayer(killer);
+        Clan killedClan = Finder.clanFromPlayer(killed);
+        boolean killerTurnedEnemy = updateClan(killerClan, killedClan, true);
+        boolean killedTurnedEnemy = updateClan(killedClan, killedClan, false);
+        if (killerTurnedEnemy || killedTurnedEnemy) {
+            LanguageManager.broadcast(killerPlayer.getServer(), LanguageManager.CLANS_NOW_ENEMIES, killerClan.tag(),
+                    killedClan.tag());
+        }
 
         if (antiSpawnKill != null) {
             antiSpawnKill.add(playerDeathEvent.getEntity().getLocation(), killerPlayer, playerDeathEvent.getEntity());
@@ -52,19 +59,19 @@ public class DeathListener implements Listener {
 
         if (ConfigManager.getInstance().getBoolean(ConfigManager.ANTI_SPAWN_KILL_ENABLED)) {
             antiSpawnKill = new AntiSpawnKill();
+        } else { // else clause necessary in case plugin gets reloaded with different anti spawn kill enabled setting
+            antiSpawnKill = null;
         }
     }
 
-    private void updateClanKDR(ClanPlayer player, boolean isKiller) {
-        Clan clan = Finder.clanFromPlayer(player);
+    private boolean updateClan(Clan clan, Clan otherClan, boolean isKiller) {
         if (clan == null) {
-            return;
+            return false;
         }
 
         KDR kdr = clan.kdr();
         if (kdr == null) {
-            calculateKDR(clan);
-            return;
+            kdr = calculateKDR(clan);
         }
 
         KDR newKDR;
@@ -74,13 +81,20 @@ public class DeathListener implements Listener {
             newKDR = kdr.addDeaths(1);
         }
 
+        boolean turnedEnemy = false;
+        if (otherClan != null && !clan.equals(otherClan) && !clan.isEnemy(otherClan)) {
+            clan.addEnemy(otherClan);
+            turnedEnemy = true;
+        }
+
         clan.updateKDR(newKDR);
         clanRepository.update(clan);
+        return turnedEnemy;
     }
 
-    private void calculateKDR(Clan clan) {
+    private KDR calculateKDR(Clan clan) {
         Set<ClanPlayer> clanPlayers = Finder.playersInClan(clan);
         CalculateClanKDRService calculateClanKDRService = new CalculateClanKDRService();
-        calculateClanKDRService.calculateClanKDR(clan, clanPlayers);
+        return calculateClanKDRService.calculateClanKDR(clan, clanPlayers);
     }
 }
