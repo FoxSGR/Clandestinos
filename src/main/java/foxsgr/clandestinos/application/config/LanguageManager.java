@@ -116,6 +116,7 @@ public class LanguageManager {
     public static final String NEUTRAL_CANCELED = GENERAL_CATEGORY + "neutral-canceled";
     public static final String OTHERS_NEUTRAL_CANCELED = GENERAL_CATEGORY + "others-neutral-canceled";
     public static final String KICKED_FOR_SPAWN_KILL = GENERAL_CATEGORY + "kicked-for-spawn-kill";
+    public static final String CLANS_NOW_ENEMIES = GENERAL_CATEGORY + "clans-now-enemies";
 
     private static final String INFO_CATEGORY = "info.";
     public static final String OWNER = INFO_CATEGORY + "owner";
@@ -128,6 +129,7 @@ public class LanguageManager {
     public static final String NAME = INFO_CATEGORY + "name";
     public static final String PLAYER = INFO_CATEGORY + "player";
     public static final String CLAN = INFO_CATEGORY + "clan";
+    public static final String ENEMIES = INFO_CATEGORY + "enemies";
 
     private static final String LIST_CATEGORY = "list.";
     public static final String CLANS_LIST_HEADER = LIST_CATEGORY + "clans-list-header";
@@ -400,36 +402,37 @@ public class LanguageManager {
                 "&cYou don't have enough money to create a clan. You need at least {0}.");
         fileConfiguration.addDefault(OWNER_CANT_LEAVE,
                 "&cYou are the owner of your clan. To leave your clan, you must use &b/clan makeowner (player) &cor &b/clan disband");
-        fileConfiguration.addDefault(CLAN_DISBANDED, "&aThe clan {0} &awas disbanded.");
-        fileConfiguration.addDefault(LEFT_CLAN, "&a{0} &aleft {1}&a.");
+        fileConfiguration.addDefault(CLAN_DISBANDED, "&cThe clan {0} &cwas disbanded.");
+        fileConfiguration.addDefault(LEFT_CLAN, "&c{0} &cleft {1}&c.");
         fileConfiguration.addDefault(UNKNOWN_PLAYER, "&cThat player is not in the clan database.");
         fileConfiguration.addDefault(UNKNOWN_PLAYER_CLAN, "&cThat player or clan is not in the clan database.");
         fileConfiguration.addDefault(INFO, "&bInfo");
         fileConfiguration.addDefault(OWNER, "&bOwner:&f");
         fileConfiguration.addDefault(LEADERS, "&bLeaders:&f");
-        fileConfiguration.addDefault(MEMBERS, "&bMembers:&f");
+        fileConfiguration.addDefault(MEMBERS, "&bMembers");
         fileConfiguration.addDefault(KDR, "&bKDR:&f");
         fileConfiguration.addDefault(KILLS, "&bKills:&f");
         fileConfiguration.addDefault(DEATHS, "&bDeaths:&f");
         fileConfiguration.addDefault(NAME, "&bName:&f");
         fileConfiguration.addDefault(CLAN, "&bClan:&f");
+        fileConfiguration.addDefault(ENEMIES, "&bEnemies:&f");
         fileConfiguration.addDefault(MONEY_TAKEN, "&a{0} has been removed from your account.");
         fileConfiguration.addDefault(PLAYER, "&bPlayer&f");
         fileConfiguration.addDefault(NOT_IN_YOUR_CLAN, "&cThat player is not in your clan.");
         fileConfiguration.addDefault(ONLY_OWNER_KICK_LEADER, "&cOnly the owner of the clan can kick a leader.");
-        fileConfiguration.addDefault(PLAYER_KICKED, "&a{0} &awas kicked out of {1}&a.");
+        fileConfiguration.addDefault(PLAYER_KICKED, "&c{0} &cwas kicked out of {1}&c.");
         fileConfiguration.addDefault(CANNOT_KICK_YOURSELF,
                 "&cYou can't kick yourself. Use &b/clan leave &cto leave your clan or &b/clan disband &cif you're the owner.");
         fileConfiguration.addDefault(NO_INVITE_PENDING, "&cThat player doesn't have a pending invite from your clan.");
         fileConfiguration.addDefault(PLAYER_UNINVITED, "&a{0} &ais no longer invited to your clan.");
-        fileConfiguration.addDefault(YOU_WERE_UNINVITED, "&aYou are no longer invited to {0}&a.");
+        fileConfiguration.addDefault(YOU_WERE_UNINVITED, "&cYou are no longer invited to {0}&c.");
         fileConfiguration.addDefault(ONLY_CHANGE_COLORS, "&cYou can only change the tag's colors and letter case.");
         fileConfiguration.addDefault(NEW_TAG_INFO, "{0} &ais now known as {1}&a.");
         fileConfiguration.addDefault(SPY_DISABLED, "&bClan chat spy disabled.");
         fileConfiguration.addDefault(SPY_ENABLED, "&bClan chat spy enabled.");
         fileConfiguration.addDefault(CHANGE_SAME_TAG, "{0} &calready is your clan tag.");
         fileConfiguration.addDefault(ALREADY_YOUR_ENEMY, "{0} &cis already your enemy.");
-        fileConfiguration.addDefault(ENEMY_DECLARATION, "{0} &adeclared {1} &aas their enemy.");
+        fileConfiguration.addDefault(ENEMY_DECLARATION, "{0} &cdeclared {1} &cas their enemy.");
         fileConfiguration.addDefault(NOT_YOUR_ENEMY, "&cThat clan is not your enemy.");
         fileConfiguration.addDefault(ALREADY_REQUESTED_NEUTRALITY, "&cYou have already requested neutrality to clan.");
         fileConfiguration.addDefault(CANNOT_PROMOTE_LEADER, "&cThat player is already a leader.");
@@ -438,7 +441,7 @@ public class LanguageManager {
         fileConfiguration.addDefault(PROMOTED, "&bYou are now a leader of your clan.");
         fileConfiguration.addDefault(CANNOT_DEMOTE_MEMBER, "&c{0} isn't a leader.");
         fileConfiguration.addDefault(CANNOT_DEMOTE_YOURSELF, "&cYou cannot demote yourself.");
-        fileConfiguration.addDefault(SUCCESSFUL_DEMOTE, "&b{0} is no longer a leader.");
+        fileConfiguration.addDefault(SUCCESSFUL_DEMOTE, "&c{0} &cis no longer a leader.");
         fileConfiguration.addDefault(DEMOTED, "&bYou are no longer a leader of your clan.");
         fileConfiguration.addDefault(CLANS_NOW_NEUTRAL, "{0} &aand {1} &aare now neutral.");
         fileConfiguration.addDefault(CLAN_WANTS_NEUTRAL, "{0} &awants to be neutral with {1}&a.");
@@ -453,6 +456,7 @@ public class LanguageManager {
         fileConfiguration.addDefault(THERE_ARE_NO_CLANS, "&bThere are no clans.");
         fileConfiguration.addDefault(KICKED_FOR_SPAWN_KILL,
                 "&cYou were kicked for killing the same player too many times.");
+        fileConfiguration.addDefault(CLANS_NOW_ENEMIES, "{0} &cand {1} &care now enemies.");
 
         fileConfiguration.options().copyDefaults(true);
         return fileConfiguration;
