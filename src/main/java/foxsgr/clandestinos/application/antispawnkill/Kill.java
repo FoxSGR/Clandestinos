@@ -1,19 +1,19 @@
 package foxsgr.clandestinos.application.antispawnkill;
 
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import java.util.Date;
 import java.util.Objects;
 
 class Kill {
 
-    final OfflinePlayer killer;
-    final OfflinePlayer killed;
-    final Date date;
+    private final Player killer;
+    private final Player killed;
+    private final Date date;
     final Location location;
 
-    Kill(Location location, OfflinePlayer killer, OfflinePlayer killed) {
+    Kill(Location location, Player killer, Player killed) {
         this.location = location;
         this.killer = killer;
         this.killed = killed;
@@ -25,11 +25,13 @@ class Kill {
         if (this == object) {
             return true;
         }
+
         if (!(object instanceof Kill)) {
             return false;
         }
+
         Kill otherKill = (Kill) object;
-        return killer.equals(otherKill.killer) &&
+        return killer.getName().equals(otherKill.killer.getName()) &&
                 killed.equals(otherKill.killed);
     }
 
@@ -38,7 +40,7 @@ class Kill {
         return Objects.hash(killer, killed);
     }
 
-    public long dateDifferenceInSeconds(Kill otherKill) {
+    long dateDifferenceInSeconds(Kill otherKill) {
         return (date.getTime() - otherKill.date.getTime()) / 1000;
     }
 }
