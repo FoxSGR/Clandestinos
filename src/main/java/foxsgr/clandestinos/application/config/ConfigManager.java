@@ -22,6 +22,7 @@ public class ConfigManager {
     public static final String MIN_NAME_LENGTH = GENERAL_CATEGORY + "min-name-length";
     public static final String MAX_NAME_LENGTH = GENERAL_CATEGORY + "max-name-length";
     public static final String FORBIDDEN_TAGS = GENERAL_CATEGORY + "forbidden-tags";
+    public static final String DEFAULT_TAG_COLOR = GENERAL_CATEGORY + "default-tag-color";
 
     public static final String CREATE_CLAN_COST = "economy.create-clan-cost";
 
@@ -29,16 +30,17 @@ public class ConfigManager {
 
     private static final String CHAT_CATEGORY = "chat-formatting.";
     public static final String CHAT_FORMATTING_ENABLED = CHAT_CATEGORY + ENABLED_MODULE;
-    public static final String CHAT_FORMAT = CHAT_CATEGORY + "chat-format";
-    public static final String LEFT_OF_TAG = CHAT_CATEGORY + "left-of-tag";
-    public static final String RIGHT_OF_TAG = CHAT_CATEGORY + "right-of-tag";
-    public static final String MEMBER_DECORATION_COLOR = CHAT_CATEGORY + "member-decoration-color";
-    public static final String LEADER_DECORATION_COLOR = CHAT_CATEGORY + "leader-decoration-color";
-    public static final String DEFAULT_TAG_COLOR = CHAT_CATEGORY + "default-tag-color";
+    public static final String CHAT_FORMAT = CHAT_CATEGORY + "format";
+
+    private static final String TAGS_CATEGORY = "tag-formatting.";
+    public static final String LEFT_OF_TAG = TAGS_CATEGORY + "left-of-tag";
+    public static final String RIGHT_OF_TAG = TAGS_CATEGORY + "right-of-tag";
+    public static final String MEMBER_DECORATION_COLOR = TAGS_CATEGORY + "member-decoration-color";
+    public static final String LEADER_DECORATION_COLOR = TAGS_CATEGORY + "leader-decoration-color";
 
     private static final String CLAN_CHAT_CATEGORY = "clan-chat.";
     public static final String CLAN_CHAT_ENABLED = CLAN_CHAT_CATEGORY + ENABLED_MODULE;
-    public static final String CLAN_CHAT_FORMAT = CLAN_CHAT_CATEGORY + "clan-chat-format";
+    public static final String CLAN_CHAT_FORMAT = CLAN_CHAT_CATEGORY + "format";
 
     private static final String ANTI_SPAWN_KILL_CATEGORY = "anti-spawn-kill.";
     public static final String ANTI_SPAWN_KILL_ENABLED = ANTI_SPAWN_KILL_CATEGORY + ENABLED_MODULE;
@@ -189,7 +191,7 @@ public class ConfigManager {
         config.addDefault(ANTI_SPAWN_KILL_ENABLED, true);
         config.addDefault(ANTI_SPAWN_KILL_PERIOD, 90);
         config.addDefault(ANTI_SPAWN_KILL_MAX, 4);
-        config.addDefault(ANTI_SPAWN_KILL_AREA, 4);
+        config.addDefault(ANTI_SPAWN_KILL_AREA, 3);
         config.options().copyDefaults(true);
     }
 }
