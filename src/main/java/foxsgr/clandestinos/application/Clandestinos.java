@@ -7,6 +7,7 @@ import foxsgr.clandestinos.application.config.LanguageManager;
 import foxsgr.clandestinos.application.hooks.ClandestinosPAPIExpansion;
 import foxsgr.clandestinos.application.listeners.ChatManager;
 import foxsgr.clandestinos.application.listeners.DeathListener;
+import foxsgr.clandestinos.application.listeners.FriendlyFireBlocker;
 import foxsgr.clandestinos.application.listeners.JoinQuitListener;
 import foxsgr.clandestinos.persistence.PersistenceContext;
 import foxsgr.clandestinos.util.Plugins;
@@ -38,6 +39,11 @@ public class Clandestinos extends JavaPlugin {
      * The player death listener.
      */
     private final DeathListener deathListener;
+
+    /**
+     * The friendly fire blocker event listener.
+     */
+    private final FriendlyFireBlocker friendlyFireBlocker;
 
     /**
      * The plugin's main command.
@@ -72,6 +78,8 @@ public class Clandestinos extends JavaPlugin {
         chatManager = new ChatManager(this);
         joinQuitListener = new JoinQuitListener();
         deathListener = new DeathListener();
+        friendlyFireBlocker = new FriendlyFireBlocker();
+
         clanCommand = new ClanCommand(this);
         clanChatCommand = new ClanChatCommand();
 
@@ -107,8 +115,8 @@ public class Clandestinos extends JavaPlugin {
         Plugins.registerCommand(this, CLAN_COMMAND, clanCommand);
         Plugins.registerTabCompleter(this, CLAN_COMMAND, clanCommand);
 
-
         Bukkit.getPluginManager().registerEvents(deathListener, this);
+        Bukkit.getPluginManager().registerEvents(friendlyFireBlocker, this);
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             usingPAPI = true;
