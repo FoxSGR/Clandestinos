@@ -24,6 +24,10 @@ public class PlayerRepositoryYAML extends YAMLRepository implements PlayerReposi
     private static final String CLAN_TAG = "clan-tag";
     private static final Lock MUTEX = new ReentrantLock();
 
+    private static final String KILL_COUNT_FIELD = "kill-count";
+    private static final String DEATH_COUNT_FIELD = "death-count";
+    private static final String FRIENDLY_FIRE_FIELD = "friendly-fire-enabled";
+
     PlayerRepositoryYAML(JavaPlugin plugin) {
         super(plugin, "players");
     }
@@ -52,8 +56,8 @@ public class PlayerRepositoryYAML extends YAMLRepository implements PlayerReposi
         cache.put(id.toLowerCase(), clanPlayer);
 
         FileConfiguration fileConfiguration = loadFile(id.toLowerCase());
-        fileConfiguration.set("kill-count", clanPlayer.killCount().value());
-        fileConfiguration.set("death-count", clanPlayer.deathCount().value());
+        fileConfiguration.set(KILL_COUNT_FIELD, clanPlayer.killCount().value());
+        fileConfiguration.set(DEATH_COUNT_FIELD, clanPlayer.deathCount().value());
 
         Optional<ClanTag> clanTag = clanPlayer.clan();
         if (clanTag.isPresent()) {
@@ -105,9 +109,12 @@ public class PlayerRepositoryYAML extends YAMLRepository implements PlayerReposi
     }
 
     private static ClanPlayer constructPlayer(ConfigurationSection playerSection, String id) {
-        int killCount = playerSection.getInt("kill-count");
-        int deathCount = playerSection.getInt("death-count");
+        playerSection.addDefault(FRIENDLY_FIRE_FIELD, ClanPlayer.DEFAULT_FRIENDLY_FIRE_ENABLED);
+
+        int killCount = playerSection.getInt(KILL_COUNT_FIELD);
+        int deathCount = playerSection.getInt(DEATH_COUNT_FIELD);
         String clanTag = playerSection.getString(CLAN_TAG);
-        return new ClanPlayer(id, killCount, deathCount, clanTag);
+        boolean friendlyFireEnabled = playerSection.getBoolean(FRIENDLY_FIRE_FIELD);
+        return new ClanPlayer(id, killCount, deathCount, clanTag, friendlyFireEnabled);
     }
 }

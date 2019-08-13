@@ -11,10 +11,15 @@ import java.util.Optional;
 
 public class ClanPlayer {
 
+    public static final boolean DEFAULT_FRIENDLY_FIRE_ENABLED = true;
+
     private final String id;
+
+    private boolean friendlyFireEnabled;
     private KillCount killCount;
     private DeathCount deathCount;
     private ClanTag clan;
+
     private transient KDR kdr; // Shouldn't be persisted
 
     public ClanPlayer(String id) {
@@ -24,9 +29,10 @@ public class ClanPlayer {
         deathCount = new DeathCount();
         clan = null;
         kdr = new KDR(killCount, deathCount);
+        friendlyFireEnabled = DEFAULT_FRIENDLY_FIRE_ENABLED;
     }
 
-    public ClanPlayer(String id, int killCount, int deathCount, String clanTag) {
+    public ClanPlayer(String id, int killCount, int deathCount, String clanTag, boolean friendlyFireEnabled) {
         Preconditions.ensureNotEmpty(id, "The id of a player cannot be null or empty.");
         this.id = id;
         this.killCount = new KillCount(killCount);
@@ -36,6 +42,7 @@ public class ClanPlayer {
             this.clan = new ClanTag(clanTag);
         }
 
+        this.friendlyFireEnabled = friendlyFireEnabled;
         kdr = new KDR(this.killCount, this.deathCount);
     }
 
@@ -72,6 +79,10 @@ public class ClanPlayer {
 
     public DeathCount deathCount() {
         return deathCount;
+    }
+
+    public boolean isFriendlyFireEnabled() {
+        return friendlyFireEnabled;
     }
 
     public boolean inClan() {

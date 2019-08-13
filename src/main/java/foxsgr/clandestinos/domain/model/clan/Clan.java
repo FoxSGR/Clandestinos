@@ -14,8 +14,11 @@ import java.util.*;
 @SuppressWarnings({"BooleanMethodIsAlwaysInverted", "UnusedReturnValue"})
 public class Clan {
 
+    public static final boolean DEFAULT_FRIENDLY_FIRE_SETTING = false;
+
     private ClanTag tag;
     private ClanName name;
+    private boolean friendlyFireEnabled;
     private final String owner;
     private final Set<String> leaders;
     private final Set<String> members;
@@ -24,20 +27,23 @@ public class Clan {
     private transient KDR kdr; // Should not be persisted
 
     public Clan(String tag, String name, ClanPlayer owner) {
-        this(tag, name, owner.id(), new LinkedHashSet<>(), new LinkedHashSet<>(), new LinkedHashSet<>());
+        this(tag, name, owner.id(), new LinkedHashSet<>(), new LinkedHashSet<>(), new LinkedHashSet<>(),
+                DEFAULT_FRIENDLY_FIRE_SETTING);
     }
 
     public Clan(String tag, String name, String owner, Collection<String> leaders, Collection<String> members,
-                Collection<String> enemyClans) {
+                Collection<String> enemyClans, boolean friendlyFireEnabled) {
         validate(owner, leaders, members, enemyClans);
 
         this.tag = new ClanTag(tag);
         this.name = new ClanName(name);
+        this.friendlyFireEnabled = friendlyFireEnabled;
 
         this.owner = owner;
         this.leaders = new LinkedHashSet<>(leaders);
-        this.members = new LinkedHashSet<>(members);
         this.leaders.add(owner); // IF this.leaders WAS A LIST THERE HAD TO BE A CONTAINS CHECK
+
+        this.members = new LinkedHashSet<>(members);
 
         this.enemyClans = new LinkedHashSet<>(enemyClans);
     }
@@ -64,6 +70,10 @@ public class Clan {
     @NotNull
     public ClanTag tag() {
         return tag;
+    }
+
+    public boolean isFriendlyFireEnabled() {
+        return friendlyFireEnabled;
     }
 
     @NotNull

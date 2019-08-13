@@ -28,6 +28,7 @@ class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
     private static final String LEADERS_FIELD = "leaders";
     private static final String MEMBERS_FIELD = "members";
     private static final String ENEMY_CLANS_FIELD = "enemy-clans";
+    private static final String FRIENDLY_FIRE_FIELD = "friendly-fire-enabled";
 
     private static final Lock MUTEX = new ReentrantLock();
 
@@ -144,13 +145,17 @@ class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
     }
 
     private Clan constructClan(FileConfiguration fileConfiguration) {
+        fileConfiguration.addDefault(FRIENDLY_FIRE_FIELD, Clan.DEFAULT_FRIENDLY_FIRE_SETTING);
+        fileConfiguration.options().copyDefaults(true);
+
         String name = fileConfiguration.getString(NAME_FIELD);
         String owner = fileConfiguration.getString(OWNER_FIELD);
         String coloredTag = fileConfiguration.getString(TAG_FIELD);
         List<String> leaders = fileConfiguration.getStringList(LEADERS_FIELD);
         List<String> members = fileConfiguration.getStringList(MEMBERS_FIELD);
         List<String> enemyClans = fileConfiguration.getStringList(ENEMY_CLANS_FIELD);
-        Clan clan = new Clan(coloredTag, name, owner, leaders, members, enemyClans);
+        boolean friendlyFireEnabled = fileConfiguration.getBoolean(FRIENDLY_FIRE_FIELD);
+        Clan clan = new Clan(coloredTag, name, owner, leaders, members, enemyClans, friendlyFireEnabled);
         cache.put(clan.simpleTag(), clan);
         return clan;
     }
