@@ -6,6 +6,7 @@ import foxsgr.clandestinos.domain.exceptions.WrongTagSizeException;
 import foxsgr.clandestinos.util.Preconditions;
 import foxsgr.clandestinos.util.TextUtil;
 import org.bukkit.ChatColor;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -45,7 +46,11 @@ public class ClanTag {
         return tagValue;
     }
 
-    public boolean equalsIgnoreColor(ClanTag otherClanTag) {
+    public boolean equalsIgnoreColor(@Nullable ClanTag otherClanTag) {
+        if (otherClanTag == null) {
+            return false;
+        }
+
         return withoutColor().value().equalsIgnoreCase(otherClanTag.withoutColor().value());
     }
 
