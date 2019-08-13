@@ -24,6 +24,9 @@ public class ConfigManager {
     public static final String FORBIDDEN_TAGS = GENERAL_CATEGORY + "forbidden-tags";
     public static final String DEFAULT_TAG_COLOR = GENERAL_CATEGORY + "default-tag-color";
 
+    private static final String GAMEPLAY_CATEGORY = "gameplay.";
+    public static final String TURN_ENEMY_ON_KILL = "turn-enemy-on-kill";
+
     public static final String CREATE_CLAN_COST = "economy.create-clan-cost";
 
     public static final String USE_UUIDS = "storage.use-uuids";
@@ -182,6 +185,8 @@ public class ConfigManager {
         config.addDefault(MEMBER_DECORATION_COLOR, "&7");
         config.addDefault(LEADER_DECORATION_COLOR, "&4");
         config.addDefault(DEFAULT_TAG_COLOR, "&7");
+
+        config.addDefault(TURN_ENEMY_ON_KILL, true);
 
         config.addDefault(CLAN_CHAT_ENABLED, true);
         config.addDefault(CLAN_CHAT_FORMAT,

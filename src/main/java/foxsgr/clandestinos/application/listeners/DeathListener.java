@@ -24,6 +24,8 @@ public class DeathListener implements Listener {
     private ClanRepository clanRepository;
     private AntiSpawnKill antiSpawnKill;
 
+    private final ConfigManager configManager = ConfigManager.getInstance();
+
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent playerDeathEvent) {
         Player killerPlayer = playerDeathEvent.getEntity().getKiller();
@@ -33,20 +35,8 @@ public class DeathListener implements Listener {
 
         ClanPlayer killed = Finder.getPlayer(playerDeathEvent.getEntity());
         ClanPlayer killer = Finder.getPlayer(killerPlayer);
-        killer.incKillCount();
-        playerRepository.save(killer);
-
-        killed.incDeathCount();
-        playerRepository.save(killed);
-
-        Clan killerClan = Finder.clanFromPlayer(killer);
-        Clan killedClan = Finder.clanFromPlayer(killed);
-        boolean killerTurnedEnemy = updateClan(killerClan, killedClan, true);
-        boolean killedTurnedEnemy = updateClan(killedClan, killedClan, false);
-        if (killerTurnedEnemy || killedTurnedEnemy) {
-            LanguageManager.broadcast(killerPlayer.getServer(), LanguageManager.CLANS_NOW_ENEMIES, killerClan.tag(),
-                    killedClan.tag());
-        }
+        updateKDRs(killer, killed);
+        updateClans(killerPlayer, killer, killed);
 
         if (antiSpawnKill != null) {
             antiSpawnKill.add(playerDeathEvent.getEntity().getLocation(), killerPlayer, playerDeathEvent.getEntity());
@@ -61,6 +51,28 @@ public class DeathListener implements Listener {
             antiSpawnKill = new AntiSpawnKill();
         } else { // else clause necessary in case plugin gets reloaded with different anti spawn kill enabled setting
             antiSpawnKill = null;
+        }
+    }
+
+    private void updateKDRs(ClanPlayer killer, ClanPlayer killed) {
+        killer.incKillCount();
+        playerRepository.save(killer);
+
+        killed.incDeathCount();
+        playerRepository.save(killed);
+    }
+
+    @SuppressWarnings("squid:S2259") // With the way things are implemented, NullPointerExceptions won't occur
+    private void updateClans(Player killerPlayer, ClanPlayer killer, ClanPlayer killed) {
+        Clan killerClan = Finder.clanFromPlayer(killer);
+        Clan killedClan = Finder.clanFromPlayer(killed);
+        boolean killerTurnedEnemy = updateClan(killerClan, killedClan, true);
+        boolean killedTurnedEnemy = updateClan(killedClan, killedClan, false);
+        if (killerTurnedEnemy || killedTurnedEnemy) {
+            assert killerClan != null;
+            assert killedClan != null;
+            LanguageManager.broadcast(killerPlayer.getServer(), LanguageManager.CLANS_NOW_ENEMIES, killerClan.tag(),
+                    killedClan.tag());
         }
     }
 
@@ -82,7 +94,8 @@ public class DeathListener implements Listener {
         }
 
         boolean turnedEnemy = false;
-        if (otherClan != null && !clan.equals(otherClan) && !clan.isEnemy(otherClan)) {
+        if (configManager.getBoolean(ConfigManager.TURN_ENEMY_ON_KILL) && otherClan != null
+                && !clan.equals(otherClan) && !clan.isEnemy(otherClan)) {
             clan.addEnemy(otherClan);
             turnedEnemy = true;
         }
