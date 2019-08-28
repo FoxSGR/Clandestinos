@@ -34,11 +34,14 @@ public class FriendlyFireBlocker implements Listener {
         }
 
         Clan clan = Finder.findClanEnsureExists(damager);
+
+        // If friendly fire is enabled in the clan, don't cancel the event
         if (clan.isFriendlyFireEnabled()) {
             return;
         }
 
-        if (damager.isFriendlyFireEnabled() || damaged.isFriendlyFireEnabled()) {
+        // If one of the players has friendly fire disabled, cancel the event
+        if (!damager.isFriendlyFireEnabled() || !damaged.isFriendlyFireEnabled()) {
             event.setCancelled(true);
         }
     }

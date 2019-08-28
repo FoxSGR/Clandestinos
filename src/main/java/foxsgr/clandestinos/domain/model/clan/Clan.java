@@ -122,6 +122,11 @@ public class Clan {
         this.kdr = kdr;
     }
 
+    public boolean toggleFriendlyFire() {
+        friendlyFireEnabled = !friendlyFireEnabled;
+        return friendlyFireEnabled;
+    }
+
     public boolean isOwner(ClanPlayer player) {
         return owner.equals(player.id());
     }
@@ -200,5 +205,4 @@ public class Clan {
             Preconditions.ensureNotNull(enemyClan, "An enemy clan cannot be null.");
         }
     }
-
 }

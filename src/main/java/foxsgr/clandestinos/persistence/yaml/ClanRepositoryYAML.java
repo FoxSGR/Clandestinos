@@ -168,6 +168,7 @@ class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
         fileConfiguration.set(LEADERS_FIELD, clan.leaders());
         fileConfiguration.set(MEMBERS_FIELD, clan.members());
         fileConfiguration.set(ENEMY_CLANS_FIELD, clan.enemyClans());
+        fileConfiguration.set(FRIENDLY_FIRE_FIELD, clan.isFriendlyFireEnabled());
         MUTEX.lock();
         saveFile(fileConfiguration, clan.simpleTag());
         MUTEX.unlock();

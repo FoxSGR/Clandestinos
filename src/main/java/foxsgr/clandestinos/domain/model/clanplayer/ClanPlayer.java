@@ -102,6 +102,11 @@ public class ClanPlayer {
         clan = null;
     }
 
+    public boolean toggleFriendlyFire() {
+        friendlyFireEnabled = !friendlyFireEnabled;
+        return friendlyFireEnabled;
+    }
+
     public void incKillCount() {
         killCount = killCount.increment();
         kdr = new KDR(killCount, deathCount);

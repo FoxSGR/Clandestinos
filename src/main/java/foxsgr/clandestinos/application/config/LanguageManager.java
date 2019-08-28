@@ -39,6 +39,8 @@ public class LanguageManager {
     public static final String MAKE_LEADER_USAGE = USAGE_CATEGORY + "make-leader";
     public static final String REMOVE_LEADER_USAGE = USAGE_CATEGORY + "remove-leader";
     public static final String LIST_USAGE = USAGE_CATEGORY + "list";
+    public static final String FF_USAGE = USAGE_CATEGORY + "friendly-fire";
+    public static final String CLAN_FF_USAGE = USAGE_CATEGORY + "clan-friendly-fire";
 
     private static final String WRONG_USAGE_CATEGORY = "wrong-usage.";
     public static final String WRONG_CREATE_USAGE = WRONG_USAGE_CATEGORY + "create";
@@ -117,6 +119,10 @@ public class LanguageManager {
     public static final String OTHERS_NEUTRAL_CANCELED = GENERAL_CATEGORY + "others-neutral-canceled";
     public static final String KICKED_FOR_SPAWN_KILL = GENERAL_CATEGORY + "kicked-for-spawn-kill";
     public static final String CLANS_NOW_ENEMIES = GENERAL_CATEGORY + "clans-now-enemies";
+    public static final String FF_DISABLED = GENERAL_CATEGORY + "ff-disabled";
+    public static final String FF_ENABLED = GENERAL_CATEGORY + "ff-enabled";
+    public static final String CLAN_FF_DISABLED = GENERAL_CATEGORY + "clan-ff-disabled";
+    public static final String CLAN_FF_ENABLED = GENERAL_CATEGORY + "clan-ff-enabled";
 
     private static final String INFO_CATEGORY = "info.";
     public static final String OWNER = INFO_CATEGORY + "owner";
@@ -358,6 +364,8 @@ public class LanguageManager {
         fileConfiguration.addDefault(REMOVE_LEADER_USAGE,
                 "&b/clan removeleader (player) - Demote a player from leader.");
         fileConfiguration.addDefault(LIST_USAGE, "&b/clan list [page] - List all clans.");
+        fileConfiguration.addDefault(FF_USAGE, "&b/clan ff - Disable personal friendly fire.");
+        fileConfiguration.addDefault(CLAN_FF_USAGE, "&b/clan clanff - Disable clan friendly fire.");
 
         fileConfiguration.addDefault(WRONG_CREATE_USAGE, "&cTo create a clan, use: &b/clan create (tag) [name]");
         fileConfiguration.addDefault(WRONG_INVITE_USAGE, "&cTo invite a player, use: &b/clan invite (player)");
@@ -457,6 +465,10 @@ public class LanguageManager {
         fileConfiguration.addDefault(KICKED_FOR_SPAWN_KILL,
                 "&cYou were kicked for killing the same player too many times.");
         fileConfiguration.addDefault(CLANS_NOW_ENEMIES, "{0} &cand {1} &care now enemies.");
+        fileConfiguration.addDefault(FF_DISABLED, "&bPersonal friendly fire &adisabled&b.");
+        fileConfiguration.addDefault(FF_ENABLED, "&bPersonal friendly fire &cenabled&b.");
+        fileConfiguration.addDefault(CLAN_FF_DISABLED, "&bClan friendly fire &adisabled&b.");
+        fileConfiguration.addDefault(CLAN_FF_ENABLED, "&bClan friendly fire &cenabled&b.");
 
         fileConfiguration.options().copyDefaults(true);
         return fileConfiguration;

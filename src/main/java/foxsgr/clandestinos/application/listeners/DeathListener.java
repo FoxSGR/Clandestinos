@@ -24,7 +24,7 @@ public class DeathListener implements Listener {
     private ClanRepository clanRepository;
     private AntiSpawnKill antiSpawnKill;
 
-    private final ConfigManager configManager = ConfigManager.getInstance();
+    private ConfigManager configManager;
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent playerDeathEvent) {
@@ -52,6 +52,8 @@ public class DeathListener implements Listener {
         } else { // else clause necessary in case plugin gets reloaded with different anti spawn kill enabled setting
             antiSpawnKill = null;
         }
+
+        configManager = ConfigManager.getInstance();
     }
 
     private void updateKDRs(ClanPlayer killer, ClanPlayer killed) {

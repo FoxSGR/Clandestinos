@@ -58,6 +58,7 @@ public class PlayerRepositoryYAML extends YAMLRepository implements PlayerReposi
         FileConfiguration fileConfiguration = loadFile(id.toLowerCase());
         fileConfiguration.set(KILL_COUNT_FIELD, clanPlayer.killCount().value());
         fileConfiguration.set(DEATH_COUNT_FIELD, clanPlayer.deathCount().value());
+        fileConfiguration.set(FRIENDLY_FIRE_FIELD, clanPlayer.isFriendlyFireEnabled());
 
         Optional<ClanTag> clanTag = clanPlayer.clan();
         if (clanTag.isPresent()) {
