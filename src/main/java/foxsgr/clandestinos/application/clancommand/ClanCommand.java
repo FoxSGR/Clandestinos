@@ -179,7 +179,7 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
         appendSubCommand(sender, builder, MAKE_LEADER_COMMAND, LanguageManager.MAKE_LEADER_USAGE);
         appendSubCommand(sender, builder, REMOVE_LEADER_COMMAND, LanguageManager.REMOVE_LEADER_USAGE);
         appendSubCommand(sender, builder, FF_COMMAND, LanguageManager.FF_USAGE);
-        appendSubCommand(sender, builder, CLAN_FF_COMMAND, LanguageManager.CLAN_FF_DISABLED);
+        appendSubCommand(sender, builder, CLAN_FF_COMMAND, LanguageManager.CLAN_FF_USAGE);
 
         appendSubCommand(sender, builder, RELOAD_COMMAND, LanguageManager.RELOAD_USAGE);
         sender.sendMessage(TextUtil.translateColoredText(builder.toString()));

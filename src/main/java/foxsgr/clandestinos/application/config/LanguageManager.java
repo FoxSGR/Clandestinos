@@ -346,31 +346,31 @@ public class LanguageManager {
     private static FileConfiguration createFileConfiguration() {
         FileConfiguration fileConfiguration = new YamlConfiguration();
 
-        fileConfiguration.addDefault(COMMANDS_HEADER, "&9Clan Commands");
+        fileConfiguration.addDefault(COMMANDS_HEADER, "&b - &3Clan Commands &b-");
 
-        fileConfiguration.addDefault(CREATE_USAGE, "&b/clan create (tag) [name] - Create a clan.");
-        fileConfiguration.addDefault(INVITE_USAGE, "&b/clan invite (name) - Invite a player to your clan.");
-        fileConfiguration.addDefault(UNINVITE_USAGE, "&b/clan uninvite (name) - Cancel an invite.");
-        fileConfiguration.addDefault(RELOAD_USAGE, "&b/clan reload - Reload configurations.");
-        fileConfiguration.addDefault(LEAVE_USAGE, "&b/clan leave - Leave your clan.");
-        fileConfiguration.addDefault(DISBAND_USAGE, "&b/clan disband - Disband your clan.");
+        fileConfiguration.addDefault(CREATE_USAGE, "&b/clan create (tag) [name] - &3Create a clan.");
+        fileConfiguration.addDefault(INVITE_USAGE, "&b/clan invite (name) - &3Invite a player to your clan.");
+        fileConfiguration.addDefault(UNINVITE_USAGE, "&b/clan uninvite (name) - &3Cancel an invite.");
+        fileConfiguration.addDefault(RELOAD_USAGE, "&b/clan reload - &3Reload configurations.");
+        fileConfiguration.addDefault(LEAVE_USAGE, "&b/clan leave - &3Leave your clan.");
+        fileConfiguration.addDefault(DISBAND_USAGE, "&b/clan disband - &3Disband your clan.");
         fileConfiguration.addDefault(INFO_USAGE,
-                "&b/clan info [clan/player] (tag/player name) - Show clan/player information.");
-        fileConfiguration.addDefault(KICK_USAGE, "&b/clan kick (name) - Kick a player from your clan.");
-        fileConfiguration.addDefault(MODTAG_USAGE, "&b/clan modtag (newtag) - Change the colors of your clan tag.");
-        fileConfiguration.addDefault(ENEMY_USAGE, "&b/clan enemy (tag) - Declare that a clan is your enemy.");
-        fileConfiguration.addDefault(UNENEMY_USAGE, "&b/clan unenemy (tag) - Request neutrality to an enemy clan.");
-        fileConfiguration.addDefault(MAKE_LEADER_USAGE, "&b/clan makeleader (player) - Promote a player to leader.");
+                "&b/clan info [clan/player] (tag/player name) - &3Show clan/player information.");
+        fileConfiguration.addDefault(KICK_USAGE, "&b/clan kick (name) - &3Kick a player from your clan.");
+        fileConfiguration.addDefault(MODTAG_USAGE, "&b/clan modtag (newtag) - &3Change the colors of your clan tag.");
+        fileConfiguration.addDefault(ENEMY_USAGE, "&b/clan enemy (tag) - &3Declare that a clan is your enemy.");
+        fileConfiguration.addDefault(UNENEMY_USAGE, "&b/clan unenemy (tag) - &3Request neutrality to an enemy clan.");
+        fileConfiguration.addDefault(MAKE_LEADER_USAGE, "&b/clan makeleader (player) - &3Promote a player to leader.");
         fileConfiguration.addDefault(REMOVE_LEADER_USAGE,
-                "&b/clan removeleader (player) - Demote a player from leader.");
-        fileConfiguration.addDefault(LIST_USAGE, "&b/clan list [page] - List all clans.");
-        fileConfiguration.addDefault(FF_USAGE, "&b/clan ff - Disable personal friendly fire.");
-        fileConfiguration.addDefault(CLAN_FF_USAGE, "&b/clan clanff - Disable clan friendly fire.");
+                "&b/clan removeleader (player) - &3Demote a player from leader.");
+        fileConfiguration.addDefault(LIST_USAGE, "&b/clan list [page] - &3List all clans.");
+        fileConfiguration.addDefault(FF_USAGE, "&b/clan ff - &3Disable personal friendly fire.");
+        fileConfiguration.addDefault(CLAN_FF_USAGE, "&b/clan clanff - &3Disable clan friendly fire.");
 
         fileConfiguration.addDefault(WRONG_CREATE_USAGE, "&cTo create a clan, use: &b/clan create (tag) [name]");
         fileConfiguration.addDefault(WRONG_INVITE_USAGE, "&cTo invite a player, use: &b/clan invite (player)");
         fileConfiguration.addDefault(WRONG_UNINVITE_USAGE, "&cTo cancel an invite, use: &b/clan uninvite (player)");
-        fileConfiguration.addDefault(WRONG_JOIN_USAGE, "&cTo join a clan, use: &b/clan join (tag)");
+        fileConfiguration.addDefault(WRONG_JOIN_USAGE, "&cTo join a clan, use: &b/clan join [tag]");
         fileConfiguration.addDefault(WRONG_INFO_USAGE,
                 "&cTo show clan/player information, use: &b/clan info [clan/player] (tag/player name)");
         fileConfiguration.addDefault(WRONG_KICK_USAGE, "&cTo kick a player from your clan, use: &b/clan kick (player)");
@@ -399,7 +399,7 @@ public class LanguageManager {
         fileConfiguration.addDefault(PLAYER_NOT_ONLINE, "&cThat player was not found.");
         fileConfiguration.addDefault(PLAYER_INVITED, "&aThe player {0} &ahas been invited to join your clan.");
         fileConfiguration.addDefault(RECEIVED_INVITE,
-                "&aYou were invited to join the {0} &aclan. Use /clan join {1} &ato accept.");
+                "&aYou were invited to join the {0} &aclan. Use &b/clan join {1} &ato accept.");
         fileConfiguration.addDefault(ALREADY_INVITED, "&cThat player has already been invited to your clan.");
         fileConfiguration.addDefault(ALREADY_IN_YOUR_CLAN, "&cThat player is already in your clan.");
         fileConfiguration.addDefault(CLAN_DOESNT_EXIST, "&cThat clan does not exist.");
