@@ -11,6 +11,7 @@ import foxsgr.clandestinos.persistence.NeutralityRequestRepository;
 import foxsgr.clandestinos.persistence.PersistenceContext;
 import foxsgr.clandestinos.util.Pair;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class UnenemySubCommand implements SubCommand {
 
@@ -55,6 +56,8 @@ public class UnenemySubCommand implements SubCommand {
         neutralityRequestRepository.save(neutralityRequest);
         LanguageManager.broadcast(sender.getServer(), LanguageManager.CLAN_WANTS_NEUTRAL, requester.tag(),
                 requestee.tag());
+
+        warnRequesteeLeaders(sender, requestee, requester);
     }
 
     private void declareNeutral(CommandSender sender, NeutralityRequest neutralityRequest, Clan requester, Clan requestee) {
@@ -67,5 +70,24 @@ public class UnenemySubCommand implements SubCommand {
 
         requestee.removeEnemy(requester);
         clanRepository.update(requestee);
+    }
+
+    @SuppressWarnings("squid:S135")
+    private void warnRequesteeLeaders(CommandSender sender, Clan requestee, Clan requester) {
+        for (Player player : sender.getServer().getOnlinePlayers()) {
+            ClanPlayer clanPlayer = Finder.findPlayer(player);
+            if (clanPlayer == null) {
+                continue;
+            }
+
+            Clan clan = Finder.clanFromPlayer(clanPlayer);
+            if (clan == null) {
+                continue;
+            }
+
+            if (clan.equals(requestee) && clan.isLeader(clanPlayer)) {
+                LanguageManager.send(player, LanguageManager.ACCEPT_NEUTRAL_HELP, requester.tag().withoutColor());
+            }
+        }
     }
 }

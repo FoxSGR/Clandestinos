@@ -180,14 +180,15 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
         appendSubCommand(sender, builder, REMOVE_LEADER_COMMAND, LanguageManager.REMOVE_LEADER_USAGE);
         appendSubCommand(sender, builder, FF_COMMAND, LanguageManager.FF_USAGE);
         appendSubCommand(sender, builder, CLAN_FF_COMMAND, LanguageManager.CLAN_FF_USAGE);
-
         appendSubCommand(sender, builder, RELOAD_COMMAND, LanguageManager.RELOAD_USAGE);
         sender.sendMessage(TextUtil.translateColoredText(builder.toString()));
     }
 
     private static void appendSubCommand(CommandSender sender, StringBuilder builder, String command, String commandDescriptionId) {
+        LanguageManager languageManager = LanguageManager.getInstance();
         if (PermissionsManager.has(sender, command)) {
-            builder.append('\n').append(LanguageManager.getInstance().get(commandDescriptionId));
+            String commandUsage = languageManager.get(commandDescriptionId);
+            builder.append('\n').append(commandUsage);
         }
     }
 }
