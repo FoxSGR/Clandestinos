@@ -118,28 +118,29 @@ class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
     public void remove(Clan clan) {
         TaskUtil.runAsync(MUTEX, plugin, () -> {
             String properTag = clan.simpleTag();
-            if (makeFile(properTag).delete()) {
-                cache.remove(properTag);
-
-                File[] clanFiles = listFiles();
-                for (File clanFile : clanFiles) {
-                    String clanFileName = clanFile.getName();
-                    FileConfiguration fileConfiguration = file(clanFileName);
-                    if (fileConfiguration == null) {
-                        // Should never happen
-                        continue;
-                    }
-
-                    List<String> enemyClans = fileConfiguration.getStringList(ENEMY_CLANS_FIELD);
-                    if (enemyClans.contains(properTag)) {
-                        enemyClans.remove(properTag);
-                        fileConfiguration.set(ENEMY_CLANS_FIELD, enemyClans);
-                        saveFile(fileConfiguration, clanFileName);
-                        constructClan(fileConfiguration);
-                    }
-                }
-            } else {
+            if (!makeFile(properTag).delete()) {
                 logger().log(Level.WARNING, "Could not delete the clan file {0}", properTag);
+                return;
+            }
+
+            cache.remove(properTag);
+
+            File[] clanFiles = listFiles();
+            for (File clanFile : clanFiles) {
+                String clanFileName = clanFile.getName();
+                FileConfiguration fileConfiguration = file(clanFileName);
+                if (fileConfiguration == null) {
+                    // Should never happen
+                    continue;
+                }
+
+                List<String> enemyClans = fileConfiguration.getStringList(ENEMY_CLANS_FIELD);
+                if (enemyClans.contains(properTag)) {
+                    enemyClans.remove(properTag);
+                    fileConfiguration.set(ENEMY_CLANS_FIELD, enemyClans);
+                    saveFile(fileConfiguration, clanFileName);
+                    constructClan(fileConfiguration);
+                }
             }
         });
     }

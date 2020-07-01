@@ -1,8 +1,5 @@
 package foxsgr.clandestinos.persistence;
 
-import foxsgr.clandestinos.persistence.yaml.YAMLRepositoryFactory;
-import org.bukkit.plugin.java.JavaPlugin;
-
 public final class PersistenceContext {
 
     private static RepositoryFactory repositoryFactory;
@@ -18,7 +15,7 @@ public final class PersistenceContext {
         return repositoryFactory;
     }
 
-    public static void init(JavaPlugin plugin) {
-        repositoryFactory = new YAMLRepositoryFactory(plugin);
+    public static void init(RepositoryFactory repositoryFactory) {
+        PersistenceContext.repositoryFactory = repositoryFactory;
     }
 }

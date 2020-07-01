@@ -10,6 +10,8 @@ import foxsgr.clandestinos.application.listeners.DeathListener;
 import foxsgr.clandestinos.application.listeners.FriendlyFireBlocker;
 import foxsgr.clandestinos.application.listeners.JoinQuitListener;
 import foxsgr.clandestinos.persistence.PersistenceContext;
+import foxsgr.clandestinos.persistence.mysql.MySQLRepositoryFactory;
+import foxsgr.clandestinos.persistence.yaml.YAMLRepositoryFactory;
 import foxsgr.clandestinos.util.Plugins;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -93,13 +95,19 @@ public class Clandestinos extends JavaPlugin {
     public void onEnable() {
         ConfigManager.init(this);
         LanguageManager.init(this);
-        PersistenceContext.init(this);
 
-        // Must be after PersistenceContext.init(this)
+        ConfigManager configManager = ConfigManager.getInstance();
+        System.out.println(getConfig().getConfigurationSection("mysql"));
+        if (configManager.getBoolean(ConfigManager.MYSQL_ENABLED)) {
+            PersistenceContext.init(new MySQLRepositoryFactory());
+        } else {
+            PersistenceContext.init(new YAMLRepositoryFactory(this));
+        }
+
+        // Must be after PersistenceContext.init()
         joinQuitListener.setup();
         deathListener.setup();
 
-        ConfigManager configManager = ConfigManager.getInstance();
         if (configManager.getBoolean(ConfigManager.CHAT_FORMATTING_ENABLED)) {
             chatManager.setup();
             Bukkit.getPluginManager().registerEvents(chatManager, this);

@@ -51,6 +51,14 @@ public class ConfigManager {
     public static final String ANTI_SPAWN_KILL_MAX = ANTI_SPAWN_KILL_CATEGORY + "max-kills-in-period";
     public static final String ANTI_SPAWN_KILL_AREA = ANTI_SPAWN_KILL_CATEGORY + "area";
 
+    private static final String MYSQL_CATEGORY = "mysql.";
+    public static final String MYSQL_ENABLED = MYSQL_CATEGORY + ENABLED_MODULE;
+    public static final String MYSQL_HOST = MYSQL_CATEGORY + "host";
+    public static final String MYSQL_PORT = MYSQL_CATEGORY + "port";
+    public static final String MYSQL_DATABASE = MYSQL_CATEGORY + "database";
+    public static final String MYSQL_USERNAME = MYSQL_CATEGORY + "username";
+    public static final String MYSQL_PASSWORD = MYSQL_CATEGORY + "password";
+
     /**
      * The plugin.
      */
@@ -197,6 +205,14 @@ public class ConfigManager {
         config.addDefault(ANTI_SPAWN_KILL_PERIOD, 90);
         config.addDefault(ANTI_SPAWN_KILL_MAX, 4);
         config.addDefault(ANTI_SPAWN_KILL_AREA, 3);
+
+        config.addDefault(MYSQL_ENABLED, false);
+        config.addDefault(MYSQL_HOST, "localhost");
+        config.addDefault(MYSQL_PORT, "3306");
+        config.addDefault(MYSQL_DATABASE, "clandestinos");
+        config.addDefault(MYSQL_USERNAME, "root");
+        config.addDefault(MYSQL_PASSWORD, "root");
+
         config.options().copyDefaults(true);
     }
 }
