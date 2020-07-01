@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -16,11 +17,11 @@ public final class SQLConnectionManager {
 
     private static Connection connection;
 
-    private static String host = "localhost";
-    private static String port = "3306";
-    private static String database = "clandestinos";
-    private static String username = "root";
-    private static String password = "root";
+    private static String host;
+    private static String port;
+    private static String database;
+    private static String username;
+    private static String password;
 
     private static final Object LOCK = new Object();
 
@@ -65,6 +66,10 @@ public final class SQLConnectionManager {
         execute(sql, params, null);
     }
 
+    public static void execute(String sql) {
+        execute(sql, new ArrayList<>());
+    }
+
     public static Connection getConnection() {
         try {
             if (connection != null && !connection.isClosed()) {
@@ -88,22 +93,34 @@ public final class SQLConnectionManager {
         }
     }
 
-    public static String nullableParam(String param) {
-        return param == null ? "NULL" : format("'%s'", param);
+    public static String param(Object param) {
+        if (param == null) {
+            return "NULL";
+        }
+
+        if (param instanceof List<?>) {
+            return arrayParam((List<?>) param);
+        }
+
+        if (param instanceof String) {
+            return format("'%s'", param);
+        }
+
+        return format("%s", param);
     }
 
-    public static String arrayParam(List<Object> list) {
+    public static String arrayParam(List<?> list) {
         StringBuilder builder = new StringBuilder()
-                .append('\'');
+                .append('(');
 
         for (int i = 0; i < list.size(); i++) {
-            builder.append(list.get(i));
+            builder.append(param(list.get(i)));
 
             if (i != list.size() - 1) {
                 builder.append(',');
             }
         }
 
-        return builder.append('\'').toString();
+        return builder.append(')').toString();
     }
 }

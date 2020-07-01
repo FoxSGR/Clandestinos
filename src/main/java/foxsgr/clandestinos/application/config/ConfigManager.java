@@ -25,7 +25,7 @@ public class ConfigManager {
     public static final String DEFAULT_TAG_COLOR = GENERAL_CATEGORY + "default-tag-color";
 
     private static final String GAMEPLAY_CATEGORY = "gameplay.";
-    public static final String TURN_ENEMY_ON_KILL = "turn-enemy-on-kill";
+    public static final String TURN_ENEMY_ON_KILL = GAMEPLAY_CATEGORY + "turn-enemy-on-kill";
 
     public static final String CREATE_CLAN_COST = "economy.create-clan-cost";
 

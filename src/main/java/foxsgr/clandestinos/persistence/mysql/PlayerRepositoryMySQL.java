@@ -3,42 +3,53 @@ package foxsgr.clandestinos.persistence.mysql;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.persistence.PlayerRepository;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Arrays;
+import java.util.List;
 
-import static foxsgr.clandestinos.persistence.mysql.SQLConnectionManager.createStatement;
 import static foxsgr.clandestinos.persistence.mysql.SQLConnectionManager.execute;
+import static foxsgr.clandestinos.util.TaskUtil.runAsync;
 
-public class PlayerRepositoryMySQL implements PlayerRepository {
+@SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
+public class PlayerRepositoryMySQL extends MySQLRepository implements PlayerRepository {
+
+    public PlayerRepositoryMySQL(JavaPlugin plugin) {
+        super(plugin);
+    }
 
     @Override
     public ClanPlayer find(String id) {
-        return null;
+        return execute("SELECT * FROM player WHERE id = :1", Arrays.asList(id), statement -> {
+            try (ResultSet resultSet = statement.getResultSet()) {
+                return new ClanPlayer(
+                        resultSet.getString("id"),
+                        resultSet.getInt("kill_count"),
+                        resultSet.getInt("death_count"),
+                        resultSet.getString("tag"),
+                        resultSet.getBoolean("player_friendly_fire")
+                );
+            } catch (SQLException throwables) {
+                return null;
+            }
+        });
     }
 
     @Override
     public void save(ClanPlayer clanPlayer) {
-        execute("SELECT id FROM player cp WHERE cp.id = :1", Arrays.asList(clanPlayer.id()),
-                statement -> {
-                    try (ResultSet resultSet = statement.getResultSet()) {
-                        System.out.println("has result, should update");
-                    } catch (SQLException throwables) {
-                        System.out.println("no result, should create");
-                        throwables.printStackTrace();
-                    }
+        runAsync(plugin,
+                () -> execute("SELECT id FROM player cp WHERE cp.id = :1", Arrays.asList(clanPlayer.id()),
+                        statement -> {
+                            try (ResultSet ignored = statement.getResultSet()) {
+                                execute("CALL update_player(:1, :2, :3, :4, :5)", createPlayerParams(clanPlayer));
+                            } catch (SQLException throwables) {
+                                execute("INSERT INTO player VALUES (:1, :2, :3, :4, :5)", createPlayerParams(clanPlayer));
+                            }
 
-                    return null;
-                });
-
-        try (Statement statement = createStatement()) {
-            statement.executeUpdate(String.format(
-                    "INSERT INTO clan_player (id, friendly_fire_enabled, kill_count, death_count, clan_tag) VALUES ('%s', '%s', '%d', '%d', '%s')"));
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+                            return null;
+                        }));
     }
 
     @Override
@@ -54,5 +65,15 @@ public class PlayerRepositoryMySQL implements PlayerRepository {
     @Override
     public void leaveFromClan(Clan clan) {
 
+    }
+
+    private static List<Object> createPlayerParams(ClanPlayer player) {
+        return Arrays.asList(
+                player.id(),
+                player.isFriendlyFireEnabled(),
+                player.killCount().value(),
+                player.deathCount().value(),
+                player.clan().orElse(null)
+        );
     }
 }

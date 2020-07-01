@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS clan
     tag                VARCHAR(10) PRIMARY KEY,
     clan_name          VARCHAR(40),
     clan_friendly_fire BOOLEAN,
-    clan_owner         VARCHAR(36) NOT NULL,
+    clan_owner         VARCHAR(36) UNIQUE NOT NULL,
     FOREIGN KEY (clan_owner) REFERENCES player (id)
 );
 

@@ -2,15 +2,19 @@ package foxsgr.clandestinos.persistence.mysql;
 
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.persistence.ClanRepository;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static foxsgr.clandestinos.persistence.mysql.SQLConnectionManager.execute;
 
-public class ClanRepositoryMySQL implements ClanRepository {
+public class ClanRepositoryMySQL extends MySQLRepository implements ClanRepository {
+
+    public ClanRepositoryMySQL(JavaPlugin plugin) {
+        super(plugin);
+    }
 
     @Override
     public Clan find(String tag) {
@@ -21,12 +25,18 @@ public class ClanRepositoryMySQL implements ClanRepository {
                         String name = null;
                         String owner = null;
                         boolean friendlyFire = false;
+                        Set<String> leaders = new HashSet<>();
+                        Set<String> members = new HashSet<>();
+                        Set<String> enemies = new HashSet<>();
 
                         while (results.next()) {
                             foundTag = results.getString("tag");
                             name = results.getString("clan_name");
                             owner = results.getString("clan_owner");
                             friendlyFire = results.getBoolean("clan_friendly_fire");
+                            leaders.add(results.getString("leader_id"));
+                            members.add(results.getString("member_id"));
+                            enemies.add(results.getString("enemy_tag"));
                         }
 
                         if (foundTag == null) {
@@ -37,6 +47,9 @@ public class ClanRepositoryMySQL implements ClanRepository {
                                 foundTag,
                                 name,
                                 owner,
+                                leaders,
+                                members,
+                                enemies,
                                 friendlyFire
                         );
                     } catch (SQLException throwables) {
