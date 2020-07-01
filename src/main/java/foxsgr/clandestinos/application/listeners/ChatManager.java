@@ -41,9 +41,12 @@ public class ChatManager implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
+        String prefix = "";
+        if (chat != null) {
+            chat.getPlayerPrefix(player);
+        }
 
         String formattedClanTag = formatClanTag(player);
-        String prefix = chat.getPlayerPrefix(player);
         String messageFormat = format.replace(PREFIX_PLACEHOLDER, prefix)
                 .replace(FORMATTED_CLAN_TAG_PLACEHOLDER, formattedClanTag)
                 .replace(PLAYER_PLACEHOLDER, "%s")
@@ -72,10 +75,10 @@ public class ChatManager implements Listener {
 
         RegisteredServiceProvider<Chat> rsp = plugin.getServer().getServicesManager().getRegistration(Chat.class);
         if (rsp == null) {
-            throw new IllegalStateException("Could not setup chat. This plugin requires Vault");
+            chat = null;
+        } else {
+            chat = rsp.getProvider();
         }
-
-        chat = rsp.getProvider();
     }
 
     public String formatClanTag(OfflinePlayer player) {

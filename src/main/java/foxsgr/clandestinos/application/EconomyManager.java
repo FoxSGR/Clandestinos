@@ -36,7 +36,7 @@ public class EconomyManager {
         economy = setupEconomy();
 
         if (economy == null) {
-            throw new IllegalStateException("Could not setup economy. This plugin requires Vault.");
+            throw new IllegalStateException("Could not setup economy. This plugin requires Vault and an economy provider.");
         }
     }
 
