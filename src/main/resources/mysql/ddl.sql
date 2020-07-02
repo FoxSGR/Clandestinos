@@ -16,14 +16,15 @@ CREATE TABLE IF NOT EXISTS player
 CREATE TABLE IF NOT EXISTS clan
 (
     tag                VARCHAR(10) PRIMARY KEY,
-    clan_name          VARCHAR(40),
-    clan_friendly_fire BOOLEAN,
+    styled_tag         VARCHAR(20) UNIQUE NOT NULL,
+    clan_name          VARCHAR(40)        NOT NULL,
+    clan_friendly_fire BOOLEAN            NOT NULL,
     clan_owner         VARCHAR(36) UNIQUE NOT NULL,
     FOREIGN KEY (clan_owner) REFERENCES player (id)
 );
 
-ALTER TABLE player
-    ADD FOREIGN KEY (tag) REFERENCES clan (tag);
+# ALTER TABLE player
+#     ADD FOREIGN KEY (tag) REFERENCES clan (tag);
 
 CREATE TABLE IF NOT EXISTS clan_leader
 (

@@ -24,13 +24,17 @@ public class PlayerRepositoryMySQL extends MySQLRepository implements PlayerRepo
     public ClanPlayer find(String id) {
         return execute("SELECT * FROM player WHERE id = :1", Arrays.asList(id), statement -> {
             try (ResultSet resultSet = statement.getResultSet()) {
-                return new ClanPlayer(
-                        resultSet.getString("id"),
-                        resultSet.getInt("kill_count"),
-                        resultSet.getInt("death_count"),
-                        resultSet.getString("tag"),
-                        resultSet.getBoolean("player_friendly_fire")
-                );
+                if (resultSet.next()) {
+                    return new ClanPlayer(
+                            resultSet.getString("id"),
+                            resultSet.getInt("kill_count"),
+                            resultSet.getInt("death_count"),
+                            resultSet.getString("tag"),
+                            resultSet.getBoolean("player_friendly_fire")
+                    );
+                } else {
+                    return null;
+                }
             } catch (SQLException throwables) {
                 return null;
             }
@@ -39,17 +43,21 @@ public class PlayerRepositoryMySQL extends MySQLRepository implements PlayerRepo
 
     @Override
     public void save(ClanPlayer clanPlayer) {
-        runAsync(plugin,
-                () -> execute("SELECT id FROM player cp WHERE cp.id = :1", Arrays.asList(clanPlayer.id()),
-                        statement -> {
-                            try (ResultSet ignored = statement.getResultSet()) {
-                                execute("CALL update_player(:1, :2, :3, :4, :5)", createPlayerParams(clanPlayer));
-                            } catch (SQLException throwables) {
-                                execute("INSERT INTO player VALUES (:1, :2, :3, :4, :5)", createPlayerParams(clanPlayer));
-                            }
+        execute("SELECT id FROM player cp WHERE cp.id = :1", Arrays.asList(clanPlayer.id()),
+                statement -> {
+                    try (ResultSet ignored = statement.getResultSet()) {
+                        if (ignored.next()) {
+                            execute("CALL update_player(:1, :2, :3, :4, :5)", createPlayerParams(clanPlayer));
+                        } else {
+                            execute("INSERT INTO player VALUES (:1, :2, :3, :4, :5)",
+                                    createPlayerParams(clanPlayer));
+                        }
+                    } catch (SQLException ignored) {
+                    }
 
-                            return null;
-                        }));
+                    return null;
+                }
+        );
     }
 
     @Override
@@ -64,7 +72,7 @@ public class PlayerRepositoryMySQL extends MySQLRepository implements PlayerRepo
 
     @Override
     public void leaveFromClan(Clan clan) {
-
+        runAsync(plugin, () -> execute("CALL leave_from_clan(:1)", Arrays.asList(clan.simpleTag())));
     }
 
     private static List<Object> createPlayerParams(ClanPlayer player) {
@@ -73,7 +81,7 @@ public class PlayerRepositoryMySQL extends MySQLRepository implements PlayerRepo
                 player.isFriendlyFireEnabled(),
                 player.killCount().value(),
                 player.deathCount().value(),
-                player.clan().orElse(null)
+                player.clan().map(tag -> tag.withoutColor().toString().toLowerCase()).orElse(null)
         );
     }
 }

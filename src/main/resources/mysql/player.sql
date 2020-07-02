@@ -18,3 +18,14 @@ BEGIN
     WHERE id = p_id;
 END
 $$
+
+DROP PROCEDURE IF EXISTS leave_from_clan
+$$
+
+CREATE PROCEDURE leave_from_clan(p_tag VARCHAR(10))
+BEGIN
+    UPDATE player
+    SET tag = NULL
+    WHERE tag = LOWER(p_tag);
+END
+$$

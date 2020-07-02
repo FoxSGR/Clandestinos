@@ -9,7 +9,9 @@ import java.sql.SQLException;
 import java.util.*;
 
 import static foxsgr.clandestinos.persistence.mysql.SQLConnectionManager.execute;
+import static foxsgr.clandestinos.util.TaskUtil.runAsync;
 
+@SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 public class ClanRepositoryMySQL extends MySQLRepository implements ClanRepository {
 
     public ClanRepositoryMySQL(JavaPlugin plugin) {
@@ -30,7 +32,7 @@ public class ClanRepositoryMySQL extends MySQLRepository implements ClanReposito
                         Set<String> enemies = new HashSet<>();
 
                         while (results.next()) {
-                            foundTag = results.getString("tag");
+                            foundTag = results.getString("styled_tag");
                             name = results.getString("clan_name");
                             owner = results.getString("clan_owner");
                             friendlyFire = results.getBoolean("clan_friendly_fire");
@@ -66,16 +68,29 @@ public class ClanRepositoryMySQL extends MySQLRepository implements ClanReposito
 
     @Override
     public boolean add(Clan clan) {
-        return false;
+        return execute("CALL save_clan(:1, :2, :3, :4, :5, :6, :7, :8, FALSE)", clanParams(clan)) != null;
     }
 
     @Override
     public void update(Clan clan) {
-
+        runAsync(plugin, () -> execute("CALL save_clan(:1, :2, :3, :4, :5, :6, :7, :8, TRUE)", clanParams(clan)));
     }
 
     @Override
     public void remove(Clan clan) {
+        runAsync(plugin, () -> execute("CALL remove_clan(:1)", Arrays.asList(clan.simpleTag())));
+    }
 
+    private static List<Object> clanParams(Clan clan) {
+        return Arrays.asList(
+                clan.simpleTag(),
+                clan.tag().toString(),
+                clan.name().toString(),
+                clan.isFriendlyFireEnabled(),
+                clan.owner(),
+                clan.leaders(),
+                clan.members(),
+                clan.enemyClans()
+        );
     }
 }

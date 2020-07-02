@@ -1,5 +1,6 @@
 package foxsgr.clandestinos.persistence.mysql;
 
+import foxsgr.clandestinos.application.Clandestinos;
 import foxsgr.clandestinos.application.config.ConfigManager;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,6 +11,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.logging.Level;
 
 import static java.lang.String.format;
 
@@ -46,9 +48,10 @@ public final class SQLConnectionManager {
     public static <T> T execute(String sql, List<Object> params, @Nullable Function<Statement, T> onExecute) {
         try (Statement statement = createStatement()) {
             for (int i = 0; i < params.size(); i++) {
-                sql = sql.replace(format(":%d", i + 1), params.get(i).toString());
+                sql = sql.replace(format(":%d", i + 1), param(params.get(i)));
             }
 
+            Clandestinos.getInstance().getLogger().log(Level.INFO, "Running SQL statement: {0}", new String[] {sql});
             statement.execute(sql);
 
             if (onExecute != null) {
@@ -62,12 +65,12 @@ public final class SQLConnectionManager {
         }
     }
 
-    public static void execute(String sql, List<Object> params) {
-        execute(sql, params, null);
+    public static Object execute(String sql, List<Object> params) {
+        return execute(sql, params, null);
     }
 
-    public static void execute(String sql) {
-        execute(sql, new ArrayList<>());
+    public static Object execute(String sql) {
+        return execute(sql, new ArrayList<>());
     }
 
     public static Connection getConnection() {
@@ -110,6 +113,10 @@ public final class SQLConnectionManager {
     }
 
     public static String arrayParam(List<?> list) {
+        if (list.size() == 0) {
+            return "''";
+        }
+
         StringBuilder builder = new StringBuilder()
                 .append('(');
 

@@ -97,9 +97,8 @@ public class Clandestinos extends JavaPlugin {
         LanguageManager.init(this);
 
         ConfigManager configManager = ConfigManager.getInstance();
-        System.out.println(getConfig().getConfigurationSection("mysql"));
         if (configManager.getBoolean(ConfigManager.MYSQL_ENABLED)) {
-            PersistenceContext.init(new MySQLRepositoryFactory());
+            PersistenceContext.init(new MySQLRepositoryFactory(this));
         } else {
             PersistenceContext.init(new YAMLRepositoryFactory(this));
         }

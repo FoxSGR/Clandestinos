@@ -21,22 +21,34 @@ BEGIN
 END
 $$
 
-DROP PROCEDURE IF EXISTS add_clan
+DROP PROCEDURE IF EXISTS save_clan
 $$
 
-CREATE PROCEDURE add_clan(p_tag VARCHAR(10),
-                          p_clan_name VARCHAR(40),
-                          p_clan_friendly_fire BOOLEAN,
-                          p_clan_owner VARCHAR(36),
-                          p_clan_leaders VARCHAR(512),
-                          p_clan_members VARCHAR(1024),
-                          p_clan_enemies VARCHAR(512))
+CREATE PROCEDURE save_clan(p_tag VARCHAR(10),
+                           p_styled_tag VARCHAR(40),
+                           p_clan_name VARCHAR(40),
+                           p_clan_friendly_fire BOOLEAN,
+                           p_clan_owner VARCHAR(36),
+                           p_clan_leaders VARCHAR(512),
+                           p_clan_members VARCHAR(1024),
+                           p_clan_enemies VARCHAR(512),
+                           p_update_if_exists BOOLEAN)
 BEGIN
     DECLARE member VARCHAR(36);
 
-    INSERT INTO clan (tag, clan_name, clan_friendly_fire, clan_owner)
-    VALUES (p_tag, p_clan_name, p_clan_friendly_fire, p_clan_owner);
+    IF p_update_if_exists THEN
+        INSERT INTO clan
+        VALUES (p_tag, p_styled_tag, p_clan_name, p_clan_friendly_fire, p_clan_owner)
+        ON DUPLICATE KEY UPDATE tag                = p_tag,
+                                clan_name          = p_clan_name,
+                                clan_friendly_fire = p_clan_friendly_fire,
+                                clan_owner         = p_clan_owner;
+    ELSE
+        INSERT INTO clan
+        VALUES (p_tag, p_styled_tag, p_clan_name, p_clan_friendly_fire, p_clan_owner);
+    END IF;
 
+    DELETE FROM clan_leader WHERE tag = p_tag;
     WHILE p_clan_leaders != ''
         DO
             SET member = SUBSTRING_INDEX(p_clan_leaders, ',', 1);
@@ -49,6 +61,7 @@ BEGIN
             END IF;
         END WHILE;
 
+    DELETE FROM clan_member WHERE tag = p_tag;
     WHILE p_clan_members != ''
         DO
             SET member = SUBSTRING_INDEX(p_clan_members, ',', 1);
@@ -61,6 +74,7 @@ BEGIN
             END IF;
         END WHILE;
 
+    DELETE FROM clan_enemy WHERE tag = p_tag;
     WHILE p_clan_enemies != ''
         DO
             SET member = SUBSTRING_INDEX(p_clan_enemies, ',', 1);
@@ -80,11 +94,12 @@ $$
 
 CREATE PROCEDURE remove_clan(p_tag VARCHAR(10))
 BEGIN
-    DELETE FROM clan_enemy WHERE tag = p_tag;
-    DELETE FROM clan WHERE tag = p_tag;
+    DELETE FROM clan_enemy WHERE tag = LOWER(p_tag);
+    DELETE FROM clan_member WHERE tag = LOWER(p_tag);
+    DELETE FROM clan_leader WHERE tag = LOWER(p_tag);
+    DELETE FROM clan WHERE tag = LOWER(p_tag);
 END
 $$
 
-INSERT INTO player VALUES ('FoxSGR', TRUE, 1, 1, 'NULL');
-CALL remove_clan('ASKO');
-CALL add_clan('ASKO', 'ASKO clan', true, 'FoxSGR', 'FoxSGR', 'FoxSGR', 'ASKO')
+INSERT INTO player VALUES ('FoxSGR', TRUE, 1, 1, NULL)
+CALL save_clan('asko', 'ASKO', '', false, 'FoxSGR', ('FoxSGR'), '', '', FALSE)

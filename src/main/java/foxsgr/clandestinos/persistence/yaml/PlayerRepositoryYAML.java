@@ -19,7 +19,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class PlayerRepositoryYAML extends YAMLRepository implements PlayerRepository {
 
-    private static Map<String, ClanPlayer> cache = new ConcurrentHashMap<>();
+    private static final Map<String, ClanPlayer> cache = new ConcurrentHashMap<>();
 
     private static final String CLAN_TAG = "clan-tag";
     private static final Lock MUTEX = new ReentrantLock();
