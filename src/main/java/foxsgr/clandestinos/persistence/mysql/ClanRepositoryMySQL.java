@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+import static foxsgr.clandestinos.persistence.mysql.SQLConnectionManager.doIfPossible;
 import static foxsgr.clandestinos.persistence.mysql.SQLConnectionManager.execute;
 import static foxsgr.clandestinos.util.TaskUtil.runAsync;
 
@@ -36,9 +37,12 @@ public class ClanRepositoryMySQL extends MySQLRepository implements ClanReposito
                             name = results.getString("clan_name");
                             owner = results.getString("clan_owner");
                             friendlyFire = results.getBoolean("clan_friendly_fire");
-                            leaders.add(results.getString("leader_id"));
-                            members.add(results.getString("member_id"));
-                            enemies.add(results.getString("enemy_tag"));
+
+                            doIfPossible(
+                                    () -> leaders.add(results.getString("leader_id")),
+                                    () -> members.add(results.getString("member_id")),
+                                    () -> enemies.add(results.getString("enemy_tag"))
+                            );
                         }
 
                         if (foundTag == null) {
@@ -54,8 +58,8 @@ public class ClanRepositoryMySQL extends MySQLRepository implements ClanReposito
                                 enemies,
                                 friendlyFire
                         );
-                    } catch (SQLException throwables) {
-                        throwables.printStackTrace();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
                         return null;
                     }
                 });
@@ -68,7 +72,11 @@ public class ClanRepositoryMySQL extends MySQLRepository implements ClanReposito
 
     @Override
     public boolean add(Clan clan) {
-        return execute("CALL save_clan(:1, :2, :3, :4, :5, :6, :7, :8, FALSE)", clanParams(clan)) != null;
+        return execute(
+                "CALL save_clan(:1, :2, :3, :4, :5, :6, :7, :8, FALSE)",
+                clanParams(clan),
+                (statement) -> true
+        ) != null;
     }
 
     @Override

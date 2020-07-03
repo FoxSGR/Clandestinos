@@ -33,12 +33,12 @@ public class MySQLRepositoryFactory implements RepositoryFactory {
 
     @Override
     public @NotNull InviteRepository invites() {
-        return null;
+        return new InviteRepositoryMySQL();
     }
 
     @Override
     public @NotNull NeutralityRequestRepository neutralityRequests() {
-        return null;
+        return new NeutralityRequestRepositoryMySQL();
     }
 
     private static void runDDL() {

@@ -73,6 +73,20 @@ public final class SQLConnectionManager {
         return execute(sql, new ArrayList<>());
     }
 
+    public static void doIfPossible(SQLSafeRunnable runnable) {
+        try {
+            runnable.run();
+        } catch (SQLException e) {
+            // ignore
+        }
+    }
+
+    public static void doIfPossible(SQLSafeRunnable... runnables) {
+        for (SQLSafeRunnable runnable : runnables) {
+            doIfPossible(runnable);
+        }
+    }
+
     public static Connection getConnection() {
         try {
             if (connection != null && !connection.isClosed()) {

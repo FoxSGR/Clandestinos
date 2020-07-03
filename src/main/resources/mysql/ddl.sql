@@ -1,5 +1,7 @@
 -- @DELIMITER ;
 
+SET GLOBAL FOREIGN_KEY_CHECKS = 0;
+
 # ClanPlayer DDL
 
 CREATE TABLE IF NOT EXISTS player
@@ -23,8 +25,8 @@ CREATE TABLE IF NOT EXISTS clan
     FOREIGN KEY (clan_owner) REFERENCES player (id)
 );
 
-# ALTER TABLE player
-#     ADD FOREIGN KEY (tag) REFERENCES clan (tag);
+ALTER TABLE player
+    ADD FOREIGN KEY (tag) REFERENCES clan (tag);
 
 CREATE TABLE IF NOT EXISTS clan_leader
 (

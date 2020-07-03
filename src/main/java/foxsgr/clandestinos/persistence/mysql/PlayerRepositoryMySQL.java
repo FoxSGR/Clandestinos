@@ -45,14 +45,15 @@ public class PlayerRepositoryMySQL extends MySQLRepository implements PlayerRepo
     public void save(ClanPlayer clanPlayer) {
         execute("SELECT id FROM player cp WHERE cp.id = :1", Arrays.asList(clanPlayer.id()),
                 statement -> {
-                    try (ResultSet ignored = statement.getResultSet()) {
-                        if (ignored.next()) {
+                    try (ResultSet resultSet = statement.getResultSet()) {
+                        if (resultSet.next()) {
                             execute("CALL update_player(:1, :2, :3, :4, :5)", createPlayerParams(clanPlayer));
                         } else {
                             execute("INSERT INTO player VALUES (:1, :2, :3, :4, :5)",
                                     createPlayerParams(clanPlayer));
                         }
-                    } catch (SQLException ignored) {
+                    } catch (SQLException e) {
+                        e.printStackTrace();
                     }
 
                     return null;

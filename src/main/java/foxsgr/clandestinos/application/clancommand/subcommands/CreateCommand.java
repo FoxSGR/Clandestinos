@@ -55,16 +55,14 @@ public class CreateCommand implements SubCommand {
         Clan clan = new Clan(clanTag, clanName, clanPlayer);
         clanPlayer.joinClan(clan);
 
-        playerRepository.save(clanPlayer);
         if (!clanRepository.add(clan)) {
             LanguageManager.send(player, LanguageManager.TAG_ALREADY_EXISTS);
             return;
         }
 
-        if (!economyManager.take(player, configManager.getDouble(ConfigManager.CREATE_CLAN_COST))) {
-            throw new IllegalStateException("Could not take money from player after checking that they have enough.");
-        }
+        playerRepository.save(clanPlayer);
 
+        economyManager.take(player, configManager.getDouble(ConfigManager.CREATE_CLAN_COST));
         LanguageManager.broadcast(player.getServer(), LanguageManager.CLAN_CREATED, clan.tag().value());
     }
 
