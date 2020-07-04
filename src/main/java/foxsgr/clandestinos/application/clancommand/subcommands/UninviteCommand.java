@@ -12,7 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class UninviteSubCommand implements SubCommand {
+public class UninviteCommand implements SubCommand {
 
     private final InviteRepository inviteRepository = PersistenceContext.repositories().invites();
 

@@ -79,7 +79,7 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
                 subCommand = new InviteCommand();
                 break;
             case UNINVITE_COMMAND:
-                subCommand = new UninviteSubCommand();
+                subCommand = new UninviteCommand();
                 break;
             case JOIN_COMMAND:
                 subCommand = new JoinCommand();
@@ -109,7 +109,7 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
                 subCommand = new EnemyCommand();
                 break;
             case UNENEMY_COMMAND:
-                subCommand = new UnenemySubCommand();
+                subCommand = new UnenemyCommand();
                 break;
             case MAKE_LEADER_COMMAND:
                 subCommand = new MakeLeaderCommand();

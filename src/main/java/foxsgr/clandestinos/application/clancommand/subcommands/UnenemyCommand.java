@@ -13,7 +13,7 @@ import foxsgr.clandestinos.util.Pair;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class UnenemySubCommand implements SubCommand {
+public class UnenemyCommand implements SubCommand {
 
     private final ClanRepository clanRepository = PersistenceContext.repositories().clans();
     private final NeutralityRequestRepository neutralityRequestRepository = PersistenceContext.repositories()
