@@ -82,7 +82,16 @@ public class ChatManager implements Listener {
     }
 
     public String formatClanTag(OfflinePlayer player) {
-        ClanPlayer clanPlayer = Finder.findPlayer(player);
+        ClanPlayer clanPlayer;
+        try {
+            clanPlayer = Finder.findPlayer(player);
+        } catch (Exception e) {
+            // Prevent chat complete misformating by catching an exception here
+            // It should run without any exceptions, so printing the stack trace is useful
+            e.printStackTrace();
+            return "";
+        }
+
         if (clanPlayer == null || !clanPlayer.inClan()) {
             return "";
         }

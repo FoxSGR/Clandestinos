@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
 
-import static foxsgr.clandestinos.persistence.mysql.SQLConnectionManager.getConnection;
+import static foxsgr.clandestinos.persistence.mysql.DBConnectionManager.getConnection;
 
 public class MySQLRepositoryFactory implements RepositoryFactory {
 
@@ -17,7 +17,7 @@ public class MySQLRepositoryFactory implements RepositoryFactory {
     public MySQLRepositoryFactory(JavaPlugin plugin) {
         this.plugin = plugin;
 
-        SQLConnectionManager.init();
+        DBConnectionManager.init();
         runDDL();
     }
 
@@ -33,12 +33,12 @@ public class MySQLRepositoryFactory implements RepositoryFactory {
 
     @Override
     public @NotNull InviteRepository invites() {
-        return new InviteRepositoryMySQL();
+        return new InviteRepositoryMySQL(plugin);
     }
 
     @Override
     public @NotNull NeutralityRequestRepository neutralityRequests() {
-        return new NeutralityRequestRepositoryMySQL();
+        return new NeutralityRequestRepositoryMySQL(plugin);
     }
 
     private static void runDDL() {

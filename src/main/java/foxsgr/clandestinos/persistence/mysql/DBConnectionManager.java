@@ -9,13 +9,13 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 import java.util.logging.Level;
 
 import static java.lang.String.format;
 
-public final class SQLConnectionManager {
+public final class DBConnectionManager {
 
     private static Connection connection;
 
@@ -45,17 +45,17 @@ public final class SQLConnectionManager {
         }
     }
 
-    public static <T> T execute(String sql, List<Object> params, @Nullable Function<Statement, T> onExecute) {
+    public static <T> T execute(String sql, List<Object> params, @Nullable SQLSafeFunction<T> onExecute) {
         try (Statement statement = createStatement()) {
             for (int i = 0; i < params.size(); i++) {
                 sql = sql.replace(format(":%d", i + 1), param(params.get(i)));
             }
 
-            Clandestinos.getInstance().getLogger().log(Level.INFO, "Running SQL statement: {0}", new String[] {sql});
+            Clandestinos.getInstance().getLogger().log(Level.FINE, "Running SQL statement: {0}", new String[] {sql});
             statement.execute(sql);
 
             if (onExecute != null) {
-                return onExecute.apply(statement);
+                return onExecute.apply(statement.getResultSet());
             }
 
             return null;
@@ -63,6 +63,10 @@ public final class SQLConnectionManager {
             throwables.printStackTrace();
             return null;
         }
+    }
+
+    public static <T> T execute(String sql, @Nullable SQLSafeFunction<T> onExecute) {
+        return execute(sql, Collections.emptyList(), onExecute);
     }
 
     public static Object execute(String sql, List<Object> params) {
@@ -74,6 +78,14 @@ public final class SQLConnectionManager {
     }
 
     public static void doIfPossible(SQLSafeRunnable runnable) {
+        try {
+            runnable.run();
+        } catch (SQLException e) {
+            // ignore
+        }
+    }
+
+    public static <T> void doIfPossible(SQLSafeRunnable runnable, T onError) {
         try {
             runnable.run();
         } catch (SQLException e) {

@@ -1,5 +1,6 @@
 package foxsgr.clandestinos.persistence.mysql;
 
+import foxsgr.clandestinos.domain.builder.ClanBuilder;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.persistence.ClanRepository;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -8,9 +9,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-import static foxsgr.clandestinos.persistence.mysql.SQLConnectionManager.doIfPossible;
-import static foxsgr.clandestinos.persistence.mysql.SQLConnectionManager.execute;
+import static foxsgr.clandestinos.persistence.mysql.DBConnectionManager.execute;
 import static foxsgr.clandestinos.util.TaskUtil.runAsync;
+import static foxsgr.clandestinos.util.UtilUtil.applyIfNotNull;
+import static java.util.Arrays.asList;
 
 @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 public class ClanRepositoryMySQL extends MySQLRepository implements ClanRepository {
@@ -21,53 +23,47 @@ public class ClanRepositoryMySQL extends MySQLRepository implements ClanReposito
 
     @Override
     public Clan find(String tag) {
-        return execute("SELECT * FROM clan c WHERE LOWER(c.tag) = LOWER(:1)", Arrays.asList(tag),
-                statement -> {
-                    try (ResultSet results = statement.getResultSet()) {
-                        String foundTag = null;
-                        String name = null;
-                        String owner = null;
-                        boolean friendlyFire = false;
-                        Set<String> leaders = new HashSet<>();
-                        Set<String> members = new HashSet<>();
-                        Set<String> enemies = new HashSet<>();
+        return execute("CALL find_clan(:1)", asList(tag), results -> {
+            ClanBuilder builder = new ClanBuilder();
 
-                        while (results.next()) {
-                            foundTag = results.getString("styled_tag");
-                            name = results.getString("clan_name");
-                            owner = results.getString("clan_owner");
-                            friendlyFire = results.getBoolean("clan_friendly_fire");
+            while (results.next()) {
+                parseResults(builder, results);
+            }
 
-                            doIfPossible(
-                                    () -> leaders.add(results.getString("leader_id")),
-                                    () -> members.add(results.getString("member_id")),
-                                    () -> enemies.add(results.getString("enemy_tag"))
-                            );
-                        }
+            if (builder.getTag() == null) {
+                return null;
+            }
 
-                        if (foundTag == null) {
-                            return null;
-                        }
-
-                        return new Clan(
-                                foundTag,
-                                name,
-                                owner,
-                                leaders,
-                                members,
-                                enemies,
-                                friendlyFire
-                        );
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                        return null;
-                    }
-                });
+            return builder.build();
+        });
     }
 
     @Override
     public List<Clan> findAll() {
-        return null;
+        return execute("CALL find_all_clans()", results -> {
+            Map<String, ClanBuilder> builders = new HashMap<>();
+
+            while (results.next()) {
+                String tag = results.getString("tag");
+
+                ClanBuilder builder = builders.get(tag);
+                if (builder == null) {
+                    builder = new ClanBuilder();
+                    builders.put(tag, builder);
+                }
+
+                parseResults(builder, results);
+            }
+
+            List<Clan> clans = new ArrayList<>();
+
+            for (String tag : builders.keySet()) {
+                ClanBuilder builder = builders.get(tag);
+                clans.add(builder.build());
+            }
+
+            return clans;
+        });
     }
 
     @Override
@@ -86,11 +82,11 @@ public class ClanRepositoryMySQL extends MySQLRepository implements ClanReposito
 
     @Override
     public void remove(Clan clan) {
-        runAsync(plugin, () -> execute("CALL remove_clan(:1)", Arrays.asList(clan.simpleTag())));
+        runAsync(plugin, () -> execute("CALL remove_clan(:1)", asList(clan.simpleTag())));
     }
 
     private static List<Object> clanParams(Clan clan) {
-        return Arrays.asList(
+        return asList(
                 clan.simpleTag(),
                 clan.tag().toString(),
                 clan.name().toString(),
@@ -100,5 +96,17 @@ public class ClanRepositoryMySQL extends MySQLRepository implements ClanReposito
                 clan.members(),
                 clan.enemyClans()
         );
+    }
+
+    private static void parseResults(ClanBuilder builder, ResultSet results) throws SQLException {
+        builder
+                .withTag(results.getString("styled_tag"))
+                .withName(results.getString("clan_name"))
+                .withOwner(results.getString("clan_owner"))
+                .withFriendlyFireEnabled(results.getBoolean("clan_friendly_fire"));
+
+        applyIfNotNull(results.getString("leader_id"), builder::addLeader);
+        applyIfNotNull(results.getString("member_id"), builder::addMember);
+        applyIfNotNull(results.getString("enemy_tag"), builder::addEnemy);
     }
 }

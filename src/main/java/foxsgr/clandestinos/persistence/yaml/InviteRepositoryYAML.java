@@ -4,7 +4,6 @@ import foxsgr.clandestinos.domain.model.Invite;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clan.ClanTag;
 import foxsgr.clandestinos.persistence.InviteRepository;
-import foxsgr.clandestinos.util.TaskUtil;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -12,6 +11,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
+
+import static foxsgr.clandestinos.util.TaskUtil.runAsync;
 
 public class InviteRepositoryYAML extends YAMLRepository implements InviteRepository {
 
@@ -62,6 +63,6 @@ public class InviteRepositoryYAML extends YAMLRepository implements InviteReposi
 
     @Override
     public void removeAllFrom(Clan clan) {
-        TaskUtil.runAsync(MUTEX, plugin, () -> removeFilesStartingWith(clan.simpleTag()));
+        runAsync(MUTEX, plugin, () -> removeFilesStartingWith(clan.simpleTag()));
     }
 }

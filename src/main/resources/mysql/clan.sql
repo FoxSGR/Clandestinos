@@ -7,6 +7,7 @@ $$
 CREATE PROCEDURE find_clan(target_tag VARCHAR(20))
 BEGIN
     SELECT c.tag                AS tag,
+           c.styled_tag         AS styled_tag,
            c.clan_name          AS clan_name,
            c.clan_owner         AS clan_owner,
            c.clan_friendly_fire AS clan_friendly_fire,
@@ -18,6 +19,26 @@ BEGIN
              LEFT JOIN clan_member cm ON c.tag = cm.tag
              LEFT JOIN clan_enemy ce ON c.tag = ce.tag
     WHERE c.tag = target_tag;
+END
+$$
+
+DROP PROCEDURE IF EXISTS find_all_clans
+$$
+
+CREATE PROCEDURE find_all_clans()
+BEGIN
+    SELECT c.tag                AS tag,
+           c.styled_tag         AS styled_tag,
+           c.clan_name          AS clan_name,
+           c.clan_owner         AS clan_owner,
+           c.clan_friendly_fire AS clan_friendly_fire,
+           cl.leader_id         AS leader_id,
+           cm.member_id         AS member_id,
+           ce.enemy_tag         AS enemy_tag
+    FROM clan c
+             LEFT JOIN clan_leader cl ON c.tag = cl.tag
+             LEFT JOIN clan_member cm ON c.tag = cm.tag
+             LEFT JOIN clan_enemy ce ON c.tag = ce.tag;
 END
 $$
 
@@ -40,6 +61,7 @@ BEGIN
         INSERT INTO clan
         VALUES (p_tag, p_styled_tag, p_clan_name, p_clan_friendly_fire, p_clan_owner)
         ON DUPLICATE KEY UPDATE tag                = p_tag,
+                                styled_tag         = p_styled_tag,
                                 clan_name          = p_clan_name,
                                 clan_friendly_fire = p_clan_friendly_fire,
                                 clan_owner         = p_clan_owner;
@@ -100,6 +122,3 @@ BEGIN
     DELETE FROM clan WHERE tag = LOWER(p_tag);
 END
 $$
-
-INSERT INTO player VALUES ('FoxSGR', TRUE, 1, 1, NULL)
-CALL save_clan('asko', 'ASKO', '', false, 'FoxSGR', ('FoxSGR'), '', '', FALSE)
