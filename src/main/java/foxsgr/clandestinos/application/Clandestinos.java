@@ -3,7 +3,7 @@ package foxsgr.clandestinos.application;
 import foxsgr.clandestinos.application.clanchatcommand.ClanChatCommand;
 import foxsgr.clandestinos.application.clancommand.ClanCommand;
 import foxsgr.clandestinos.application.config.ConfigManager;
-import foxsgr.clandestinos.application.config.LanguageManager;
+import foxsgr.clandestinos.application.config.I18n;
 import foxsgr.clandestinos.application.hooks.ClandestinosPAPIExpansion;
 import foxsgr.clandestinos.application.listeners.ChatManager;
 import foxsgr.clandestinos.application.listeners.DeathListener;
@@ -94,7 +94,7 @@ public class Clandestinos extends JavaPlugin {
     @Override
     public void onEnable() {
         ConfigManager.init(this);
-        LanguageManager.init(this);
+        I18n.init(this);
 
         ConfigManager configManager = ConfigManager.getInstance();
         if (configManager.getBoolean(ConfigManager.MYSQL_ENABLED)) {

@@ -2,7 +2,7 @@ package foxsgr.clandestinos.application.clancommand.subcommands;
 
 import foxsgr.clandestinos.application.CommandValidator;
 import foxsgr.clandestinos.application.Finder;
-import foxsgr.clandestinos.application.config.LanguageManager;
+import foxsgr.clandestinos.application.config.I18n;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.persistence.ClanRepository;
@@ -18,7 +18,7 @@ public class RemoveLeaderCommand implements SubCommand {
 
     @Override
     public void run(CommandSender sender, String[] args) {
-        Pair<Clan, ClanPlayer> clanOwner = CommandValidator.validateClanOwner(sender, args, 2, LanguageManager.WRONG_DEMOTE_LEADER_USAGE);
+        Pair<Clan, ClanPlayer> clanOwner = CommandValidator.validateClanOwner(sender, args, 2, I18n.WRONG_DEMOTE_LEADER_USAGE);
 
         if (clanOwner == null) {
             return;
@@ -36,12 +36,12 @@ public class RemoveLeaderCommand implements SubCommand {
 
     private boolean canDemote(CommandSender sender, ClanPlayer player, Clan clan) {
         if (!clan.allPlayers().contains(player.id())) {
-            LanguageManager.send(sender, LanguageManager.NOT_IN_YOUR_CLAN);
+            I18n.send(sender, I18n.NOT_IN_YOUR_CLAN);
         } else if (clan.isOwner(player)) {
-            LanguageManager.send(sender, LanguageManager.CANNOT_DEMOTE_YOURSELF);
+            I18n.send(sender, I18n.CANNOT_DEMOTE_YOURSELF);
             return false;
         } else if (clan.isMember(player)) {
-            LanguageManager.send(sender, LanguageManager.CANNOT_DEMOTE_MEMBER);
+            I18n.send(sender, I18n.CANNOT_DEMOTE_MEMBER);
             return false;
         }
 
@@ -52,11 +52,11 @@ public class RemoveLeaderCommand implements SubCommand {
         clan.demoteLeader(player);
         clanRepository.update(clan);
 
-        LanguageManager.send(sender, LanguageManager.SUCCESSFUL_DEMOTE, name);
+        I18n.send(sender, I18n.SUCCESSFUL_DEMOTE, name);
 
         Player member = Bukkit.getPlayer(player.id());
         if (member != null) {
-            LanguageManager.send(member, LanguageManager.DEMOTED);
+            I18n.send(member, I18n.DEMOTED);
         }
     }
 }

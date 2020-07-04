@@ -2,7 +2,7 @@ package foxsgr.clandestinos.application.clancommand;
 
 import foxsgr.clandestinos.application.clanchatcommand.ClanChatCommand;
 import foxsgr.clandestinos.application.PermissionsManager;
-import foxsgr.clandestinos.application.config.LanguageManager;
+import foxsgr.clandestinos.application.config.I18n;
 import foxsgr.clandestinos.application.clancommand.subcommands.*;
 import foxsgr.clandestinos.util.TextUtil;
 import org.bukkit.ChatColor;
@@ -134,7 +134,7 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
                 subCommand = new ClanFFCommand();
                 break;
             default:
-                LanguageManager.send(sender, LanguageManager.UNKNOWN_COMMAND);
+                I18n.send(sender, I18n.UNKNOWN_COMMAND);
                 return true;
         }
 
@@ -164,30 +164,30 @@ public class ClanCommand implements CommandExecutor, TabCompleter {
 
     private static void sendSubCommandList(CommandSender sender) {
         StringBuilder builder = new StringBuilder();
-        builder.append(LanguageManager.getInstance().get(LanguageManager.COMMANDS_HEADER));
-        appendSubCommand(sender, builder, CREATE_COMMAND, LanguageManager.CREATE_USAGE);
-        appendSubCommand(sender, builder, INFO_COMMAND, LanguageManager.INFO_USAGE);
-        appendSubCommand(sender, builder, LIST_COMMAND, LanguageManager.LIST_USAGE);
-        appendSubCommand(sender, builder, INVITE_COMMAND, LanguageManager.INVITE_USAGE);
-        appendSubCommand(sender, builder, UNINVITE_COMMAND, LanguageManager.UNINVITE_USAGE);
-        appendSubCommand(sender, builder, LEAVE_COMMAND, LanguageManager.LEAVE_USAGE);
-        appendSubCommand(sender, builder, ENEMY_COMMAND, LanguageManager.ENEMY_USAGE);
-        appendSubCommand(sender, builder, UNENEMY_COMMAND, LanguageManager.UNENEMY_USAGE);
-        appendSubCommand(sender, builder, DISBAND_COMMAND, LanguageManager.DISBAND_USAGE);
-        appendSubCommand(sender, builder, KICK_COMMAND, LanguageManager.KICK_USAGE);
-        appendSubCommand(sender, builder, MODTAG_COMMAND, LanguageManager.MODTAG_USAGE);
-        appendSubCommand(sender, builder, MAKE_LEADER_COMMAND, LanguageManager.MAKE_LEADER_USAGE);
-        appendSubCommand(sender, builder, REMOVE_LEADER_COMMAND, LanguageManager.REMOVE_LEADER_USAGE);
-        appendSubCommand(sender, builder, FF_COMMAND, LanguageManager.FF_USAGE);
-        appendSubCommand(sender, builder, CLAN_FF_COMMAND, LanguageManager.CLAN_FF_USAGE);
-        appendSubCommand(sender, builder, RELOAD_COMMAND, LanguageManager.RELOAD_USAGE);
+        builder.append(I18n.getInstance().get(I18n.COMMANDS_HEADER));
+        appendSubCommand(sender, builder, CREATE_COMMAND, I18n.CREATE_USAGE);
+        appendSubCommand(sender, builder, INFO_COMMAND, I18n.INFO_USAGE);
+        appendSubCommand(sender, builder, LIST_COMMAND, I18n.LIST_USAGE);
+        appendSubCommand(sender, builder, INVITE_COMMAND, I18n.INVITE_USAGE);
+        appendSubCommand(sender, builder, UNINVITE_COMMAND, I18n.UNINVITE_USAGE);
+        appendSubCommand(sender, builder, LEAVE_COMMAND, I18n.LEAVE_USAGE);
+        appendSubCommand(sender, builder, ENEMY_COMMAND, I18n.ENEMY_USAGE);
+        appendSubCommand(sender, builder, UNENEMY_COMMAND, I18n.UNENEMY_USAGE);
+        appendSubCommand(sender, builder, DISBAND_COMMAND, I18n.DISBAND_USAGE);
+        appendSubCommand(sender, builder, KICK_COMMAND, I18n.KICK_USAGE);
+        appendSubCommand(sender, builder, MODTAG_COMMAND, I18n.MODTAG_USAGE);
+        appendSubCommand(sender, builder, MAKE_LEADER_COMMAND, I18n.MAKE_LEADER_USAGE);
+        appendSubCommand(sender, builder, REMOVE_LEADER_COMMAND, I18n.REMOVE_LEADER_USAGE);
+        appendSubCommand(sender, builder, FF_COMMAND, I18n.FF_USAGE);
+        appendSubCommand(sender, builder, CLAN_FF_COMMAND, I18n.CLAN_FF_USAGE);
+        appendSubCommand(sender, builder, RELOAD_COMMAND, I18n.RELOAD_USAGE);
         sender.sendMessage(TextUtil.translateColoredText(builder.toString()));
     }
 
     private static void appendSubCommand(CommandSender sender, StringBuilder builder, String command, String commandDescriptionId) {
-        LanguageManager languageManager = LanguageManager.getInstance();
+        I18n i18n = I18n.getInstance();
         if (PermissionsManager.has(sender, command)) {
-            String commandUsage = languageManager.get(commandDescriptionId);
+            String commandUsage = i18n.get(commandDescriptionId);
             builder.append('\n').append(commandUsage);
         }
     }

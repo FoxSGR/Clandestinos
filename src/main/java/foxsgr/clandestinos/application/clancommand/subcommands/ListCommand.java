@@ -3,7 +3,7 @@ package foxsgr.clandestinos.application.clancommand.subcommands;
 import foxsgr.clandestinos.application.Clandestinos;
 import foxsgr.clandestinos.application.Finder;
 import foxsgr.clandestinos.application.PermissionsManager;
-import foxsgr.clandestinos.application.config.LanguageManager;
+import foxsgr.clandestinos.application.config.I18n;
 import foxsgr.clandestinos.domain.model.KDR;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.services.CalculateClanKDRService;
@@ -18,7 +18,7 @@ import java.util.List;
 public class ListCommand implements SubCommand {
 
     private final ClanRepository clanRepository = PersistenceContext.repositories().clans();
-    private final LanguageManager languageManager = LanguageManager.getInstance();
+    private final I18n i18n = I18n.getInstance();
 
     private static final int CLANS_PER_PAGE = 10;
 
@@ -37,7 +37,7 @@ public class ListCommand implements SubCommand {
             try {
                 pageNumber = Integer.parseInt(args[1]);
             } catch (NumberFormatException e) {
-                LanguageManager.send(sender, LanguageManager.WRONG_LIST_USAGE);
+                I18n.send(sender, I18n.WRONG_LIST_USAGE);
                 return;
             }
         }
@@ -53,11 +53,11 @@ public class ListCommand implements SubCommand {
         }
 
         if (pageNumber <= 0 || pageNumber > maxPageNumber) {
-            LanguageManager.send(sender, LanguageManager.CLANS_LIST_INVALID_PAGE_NUMBER, maxPageNumber);
+            I18n.send(sender, I18n.CLANS_LIST_INVALID_PAGE_NUMBER, maxPageNumber);
             return;
         }
 
-        LanguageManager.send(sender, TextUtil.translateColoredText(makeMessage(clans, pageNumber)));
+        I18n.send(sender, TextUtil.translateColoredText(makeMessage(clans, pageNumber)));
     }
 
     private List<Clan> findClans() {
@@ -87,11 +87,11 @@ public class ListCommand implements SubCommand {
 
     private String makeMessage(List<Clan> clans, int pageNumber) {
         if (clans.isEmpty()) {
-            return languageManager.get(LanguageManager.THERE_ARE_NO_CLANS);
+            return i18n.get(I18n.THERE_ARE_NO_CLANS);
         }
 
         StringBuilder builder = new StringBuilder()
-                .append(languageManager.get(LanguageManager.CLANS_LIST_HEADER)).append('\n');
+                .append(i18n.get(I18n.CLANS_LIST_HEADER)).append('\n');
 
         CalculateClanKDRService calculateClanKDRService = new CalculateClanKDRService();
         pageNumber--;
@@ -104,12 +104,12 @@ public class ListCommand implements SubCommand {
                 kdr = calculateClanKDRService.calculateClanKDR(clan, Finder.playersInClan(clan));
             }
 
-            builder.append(languageManager.get(LanguageManager.CLANS_LIST_INDEX, i + 1)).append(' ').append(clan.tag())
-                    .append(' ').append(languageManager.get(LanguageManager.CLANS_LIST_KDR, kdr)).append('\n');
+            builder.append(i18n.get(I18n.CLANS_LIST_INDEX, i + 1)).append(' ').append(clan.tag())
+                    .append(' ').append(i18n.get(I18n.CLANS_LIST_KDR, kdr)).append('\n');
         }
 
         if (clans.size() > CLANS_PER_PAGE) {
-            builder.append(languageManager.get(LanguageManager.CLANS_LIST_PAGE, pageNumber + 1));
+            builder.append(i18n.get(I18n.CLANS_LIST_PAGE, pageNumber + 1));
         }
 
         return builder.toString();

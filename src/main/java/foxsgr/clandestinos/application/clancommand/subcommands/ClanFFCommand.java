@@ -1,7 +1,7 @@
 package foxsgr.clandestinos.application.clancommand.subcommands;
 
 import foxsgr.clandestinos.application.Finder;
-import foxsgr.clandestinos.application.config.LanguageManager;
+import foxsgr.clandestinos.application.config.I18n;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.persistence.ClanRepository;
@@ -25,9 +25,9 @@ public class ClanFFCommand implements SubCommand {
         clanRepository.update(clan);
 
         if (newState) {
-            LanguageManager.send(sender, LanguageManager.CLAN_FF_ENABLED);
+            I18n.send(sender, I18n.CLAN_FF_ENABLED);
         } else {
-            LanguageManager.send(sender, LanguageManager.CLAN_FF_DISABLED);
+            I18n.send(sender, I18n.CLAN_FF_DISABLED);
         }
     }
 }

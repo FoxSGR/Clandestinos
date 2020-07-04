@@ -1,7 +1,7 @@
 package foxsgr.clandestinos.application.clancommand.subcommands;
 
 import foxsgr.clandestinos.application.CommandValidator;
-import foxsgr.clandestinos.application.config.LanguageManager;
+import foxsgr.clandestinos.application.config.I18n;
 import foxsgr.clandestinos.domain.model.Invite;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
@@ -19,7 +19,7 @@ public class UninviteSubCommand implements SubCommand {
     @Override
     public void run(CommandSender sender, String[] args) {
         Pair<Clan, ClanPlayer> clanLeader = CommandValidator.validateClanLeader(sender, args, 2,
-                LanguageManager.WRONG_UNINVITE_USAGE);
+                I18n.WRONG_UNINVITE_USAGE);
         if (clanLeader == null) {
             return;
         }
@@ -27,16 +27,16 @@ public class UninviteSubCommand implements SubCommand {
         Invite invite = clanLeader.second.clan()
                 .map(tag -> inviteRepository.find(args[1], tag.withoutColor().value())).orElse(null);
         if (invite == null) {
-            LanguageManager.send(sender, LanguageManager.NO_INVITE_PENDING);
+            I18n.send(sender, I18n.NO_INVITE_PENDING);
             return;
         }
 
         inviteRepository.remove(invite);
-        LanguageManager.send(sender, LanguageManager.PLAYER_UNINVITED, args[1]);
+        I18n.send(sender, I18n.PLAYER_UNINVITED, args[1]);
 
         Player uninvited = Bukkit.getPlayerExact(args[1]);
         if (uninvited != null) {
-            LanguageManager.send(uninvited, LanguageManager.YOU_WERE_UNINVITED, clanLeader.first.tag().value());
+            I18n.send(uninvited, I18n.YOU_WERE_UNINVITED, clanLeader.first.tag().value());
         }
     }
 }

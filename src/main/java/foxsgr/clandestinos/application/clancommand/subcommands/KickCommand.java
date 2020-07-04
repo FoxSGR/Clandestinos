@@ -2,7 +2,7 @@ package foxsgr.clandestinos.application.clancommand.subcommands;
 
 import foxsgr.clandestinos.application.CommandValidator;
 import foxsgr.clandestinos.application.Finder;
-import foxsgr.clandestinos.application.config.LanguageManager;
+import foxsgr.clandestinos.application.config.I18n;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.persistence.ClanRepository;
@@ -19,7 +19,7 @@ public class KickCommand implements SubCommand {
     @Override
     public void run(CommandSender sender, String[] args) {
         Pair<Clan, ClanPlayer> clanLeader = CommandValidator.validateClanLeader(sender, args, 2,
-                LanguageManager.WRONG_KICK_USAGE);
+                I18n.WRONG_KICK_USAGE);
         if (clanLeader == null) {
             return;
         }
@@ -27,7 +27,7 @@ public class KickCommand implements SubCommand {
         ClanPlayer kicked = Finder.playerByName(sender, args[1]);
 
         if (clanLeader.second.equals(kicked)) {
-            LanguageManager.send(sender, LanguageManager.CANNOT_KICK_YOURSELF);
+            I18n.send(sender, I18n.CANNOT_KICK_YOURSELF);
             return;
         }
 
@@ -42,7 +42,7 @@ public class KickCommand implements SubCommand {
         clanRepository.update(clan);
         playerRepository.save(player);
 
-        LanguageManager.broadcast(sender.getServer(), LanguageManager.PLAYER_KICKED, Finder.nameFromId(player.id()),
+        I18n.broadcast(sender.getServer(), I18n.PLAYER_KICKED, Finder.nameFromId(player.id()),
                 clan.tag().value());
     }
 
@@ -55,16 +55,16 @@ public class KickCommand implements SubCommand {
             if (clan.isOwner(kicker)) {
                 return true;
             } else {
-                LanguageManager.send(sender, LanguageManager.ONLY_OWNER_KICK_LEADER);
+                I18n.send(sender, I18n.ONLY_OWNER_KICK_LEADER);
                 return false;
             }
         } else if (clan.isMember(kicked)) {
             return true;
         } else if (kicker == kicked) {
-            LanguageManager.send(sender, LanguageManager.CANNOT_KICK_YOURSELF);
+            I18n.send(sender, I18n.CANNOT_KICK_YOURSELF);
             return false;
         } else {
-            LanguageManager.send(sender, LanguageManager.NOT_IN_YOUR_CLAN);
+            I18n.send(sender, I18n.NOT_IN_YOUR_CLAN);
             return false;
         }
     }

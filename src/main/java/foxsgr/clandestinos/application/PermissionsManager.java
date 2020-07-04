@@ -1,6 +1,6 @@
 package foxsgr.clandestinos.application;
 
-import foxsgr.clandestinos.application.config.LanguageManager;
+import foxsgr.clandestinos.application.config.I18n;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public final class PermissionsManager {
      */
     public static boolean hasAndWarn(CommandSender player, String subCommand) {
         if (!has(player, subCommand)) {
-            LanguageManager.send(player, LanguageManager.NO_PERMISSION);
+            I18n.send(player, I18n.NO_PERMISSION);
             return false;
         }
 

@@ -1,6 +1,6 @@
 package foxsgr.clandestinos.application;
 
-import foxsgr.clandestinos.application.config.LanguageManager;
+import foxsgr.clandestinos.application.config.I18n;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -50,7 +50,7 @@ public class EconomyManager {
     public boolean take(Player player, double amount) {
         if (economy.withdrawPlayer(player, amount).transactionSuccess()) {
             if (amount != 0) {
-                LanguageManager.send(player, LanguageManager.MONEY_TAKEN, format(amount));
+                I18n.send(player, I18n.MONEY_TAKEN, format(amount));
             }
 
             return true;

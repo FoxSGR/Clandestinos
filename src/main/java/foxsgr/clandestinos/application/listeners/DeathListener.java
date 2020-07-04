@@ -3,7 +3,7 @@ package foxsgr.clandestinos.application.listeners;
 import foxsgr.clandestinos.application.Finder;
 import foxsgr.clandestinos.application.antispawnkill.AntiSpawnKill;
 import foxsgr.clandestinos.application.config.ConfigManager;
-import foxsgr.clandestinos.application.config.LanguageManager;
+import foxsgr.clandestinos.application.config.I18n;
 import foxsgr.clandestinos.domain.model.KDR;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
@@ -73,7 +73,7 @@ public class DeathListener implements Listener {
         if (killerTurnedEnemy || killedTurnedEnemy) {
             assert killerClan != null;
             assert killedClan != null;
-            LanguageManager.broadcast(killerPlayer.getServer(), LanguageManager.CLANS_NOW_ENEMIES, killerClan.tag(),
+            I18n.broadcast(killerPlayer.getServer(), I18n.CLANS_NOW_ENEMIES, killerClan.tag(),
                     killedClan.tag());
         }
     }

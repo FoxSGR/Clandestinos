@@ -3,7 +3,7 @@ package foxsgr.clandestinos.application.clanchatcommand;
 import foxsgr.clandestinos.application.Finder;
 import foxsgr.clandestinos.application.PermissionsManager;
 import foxsgr.clandestinos.application.config.ConfigManager;
-import foxsgr.clandestinos.application.config.LanguageManager;
+import foxsgr.clandestinos.application.config.I18n;
 import foxsgr.clandestinos.application.listeners.ChatManager;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clan.ClanTag;
@@ -67,10 +67,10 @@ public class ClanChatCommand implements CommandExecutor {
 
         String name = sender.getName();
         if (blacklist.contains(name)) {
-            LanguageManager.send(sender, LanguageManager.SPY_ENABLED);
+            I18n.send(sender, I18n.SPY_ENABLED);
             blacklist.remove(name);
         } else {
-            LanguageManager.send(sender, LanguageManager.SPY_DISABLED);
+            I18n.send(sender, I18n.SPY_DISABLED);
             blacklist.add(name);
         }
     }

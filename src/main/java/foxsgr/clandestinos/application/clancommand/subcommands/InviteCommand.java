@@ -2,7 +2,7 @@ package foxsgr.clandestinos.application.clancommand.subcommands;
 
 import foxsgr.clandestinos.application.CommandValidator;
 import foxsgr.clandestinos.application.Finder;
-import foxsgr.clandestinos.application.config.LanguageManager;
+import foxsgr.clandestinos.application.config.I18n;
 import foxsgr.clandestinos.domain.model.Invite;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clan.ClanTag;
@@ -23,14 +23,14 @@ public class InviteCommand implements SubCommand {
     @Override
     public void run(CommandSender sender, String[] args) {
         Pair<Clan, ClanPlayer> clanLeader = CommandValidator.validateClanLeader(sender, args, 2,
-                LanguageManager.WRONG_INVITE_USAGE);
+                I18n.WRONG_INVITE_USAGE);
         if (clanLeader == null) {
             return;
         }
 
         Player invited = Bukkit.getPlayerExact(args[1]);
         if (invited == null) {
-            LanguageManager.send(sender, LanguageManager.PLAYER_NOT_ONLINE);
+            I18n.send(sender, I18n.PLAYER_NOT_ONLINE);
             return;
         }
 
@@ -46,10 +46,10 @@ public class InviteCommand implements SubCommand {
         Invite invite = new Invite(clan, invitedClanPlayer);
         inviteRepository.add(invite);
 
-        LanguageManager.send(sender, LanguageManager.PLAYER_INVITED, invited.getName());
+        I18n.send(sender, I18n.PLAYER_INVITED, invited.getName());
 
         ClanTag clanTag = clan.tag();
-        LanguageManager.send(invited, LanguageManager.RECEIVED_INVITE, clanTag.value(), clanTag.withoutColor().value());
+        I18n.send(invited, I18n.RECEIVED_INVITE, clanTag.value(), clanTag.withoutColor().value());
     }
 
     private ClanPlayer canBeInvited(CommandSender sender, Player invited, Clan clan) {
@@ -64,12 +64,12 @@ public class InviteCommand implements SubCommand {
         }
 
         if (clanTag.get().equalsIgnoreColor(clan.tag())) {
-            LanguageManager.send(sender, LanguageManager.ALREADY_IN_YOUR_CLAN);
+            I18n.send(sender, I18n.ALREADY_IN_YOUR_CLAN);
             return null;
         }
 
         if (inviteRepository.find(invitedClanPlayer.id(), clan.simpleTag()) != null) {
-            LanguageManager.send(sender, LanguageManager.ALREADY_INVITED);
+            I18n.send(sender, I18n.ALREADY_INVITED);
             return null;
         }
 

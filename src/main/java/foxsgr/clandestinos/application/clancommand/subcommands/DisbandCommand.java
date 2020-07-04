@@ -1,7 +1,7 @@
 package foxsgr.clandestinos.application.clancommand.subcommands;
 
 import foxsgr.clandestinos.application.Finder;
-import foxsgr.clandestinos.application.config.LanguageManager;
+import foxsgr.clandestinos.application.config.I18n;
 import foxsgr.clandestinos.application.PermissionsManager;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
@@ -33,6 +33,6 @@ public class DisbandCommand implements SubCommand {
         inviteRepository.removeAllFrom(clanOwner.first);
         neutralityRequestRepository.removeAllFrom(clanOwner.first);
 
-        LanguageManager.broadcast(sender.getServer(), LanguageManager.CLAN_DISBANDED, clanOwner.first.tag());
+        I18n.broadcast(sender.getServer(), I18n.CLAN_DISBANDED, clanOwner.first.tag());
     }
 }

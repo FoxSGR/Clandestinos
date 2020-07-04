@@ -1,7 +1,7 @@
 package foxsgr.clandestinos.application;
 
 import foxsgr.clandestinos.application.config.ConfigManager;
-import foxsgr.clandestinos.application.config.LanguageManager;
+import foxsgr.clandestinos.application.config.I18n;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clan.ClanTag;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
@@ -68,7 +68,7 @@ public final class Finder {
         PlayerRepository playerRepository = PersistenceContext.repositories().players();
         ClanPlayer found = playerRepository.find(id);
         if (found == null) {
-            LanguageManager.send(sender, LanguageManager.UNKNOWN_PLAYER_CLAN);
+            I18n.send(sender, I18n.UNKNOWN_PLAYER_CLAN);
         }
 
         return found;
@@ -88,7 +88,7 @@ public final class Finder {
         ClanRepository clanRepository = PersistenceContext.repositories().clans();
         Clan found = clanRepository.find(tag);
         if (found == null) {
-            LanguageManager.send(sender, LanguageManager.CLAN_DOESNT_EXIST);
+            I18n.send(sender, I18n.CLAN_DOESNT_EXIST);
         }
 
         return found;
@@ -179,7 +179,7 @@ public final class Finder {
         String id = Finder.idFromPlayer(player);
         ClanPlayer clanPlayer = playerRepository.find(id);
         if (clanPlayer == null) {
-            LanguageManager.send(sender, LanguageManager.MUST_BE_IN_CLAN);
+            I18n.send(sender, I18n.MUST_BE_IN_CLAN);
             return null;
         }
 
@@ -187,7 +187,7 @@ public final class Finder {
         Clan clan = clanPlayer.clan().map(tag -> clanRepository.find(tag.withoutColor().value().toLowerCase()))
                 .orElse(null);
         if (clan == null) {
-            LanguageManager.send(sender, LanguageManager.MUST_BE_IN_CLAN);
+            I18n.send(sender, I18n.MUST_BE_IN_CLAN);
             return null;
         }
 
@@ -205,7 +205,7 @@ public final class Finder {
     public static Clan clanFromPlayer(CommandSender sender, ClanPlayer clanPlayer) {
         Clan clan = clanFromPlayer(clanPlayer);
         if (clan == null) {
-            LanguageManager.send(sender, LanguageManager.MUST_BE_IN_CLAN);
+            I18n.send(sender, I18n.MUST_BE_IN_CLAN);
         }
 
         return clan;
@@ -239,7 +239,7 @@ public final class Finder {
         }
 
         if (!clanLeader.first.isLeader(clanLeader.second)) {
-            LanguageManager.send(sender, LanguageManager.MUST_BE_LEADER);
+            I18n.send(sender, I18n.MUST_BE_LEADER);
             return null;
         }
 
@@ -261,7 +261,7 @@ public final class Finder {
         }
 
         if (!clanOwner.first.isOwner(clanOwner.second)) {
-            LanguageManager.send(sender, LanguageManager.MUST_BE_OWNER);
+            I18n.send(sender, I18n.MUST_BE_OWNER);
             return null;
         }
 

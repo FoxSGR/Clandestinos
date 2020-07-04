@@ -2,7 +2,7 @@ package foxsgr.clandestinos.application.clancommand.subcommands;
 
 import foxsgr.clandestinos.application.*;
 import foxsgr.clandestinos.application.config.ConfigManager;
-import foxsgr.clandestinos.application.config.LanguageManager;
+import foxsgr.clandestinos.application.config.I18n;
 import foxsgr.clandestinos.domain.exceptions.NonLetterInTagException;
 import foxsgr.clandestinos.domain.exceptions.WrongNameSizeException;
 import foxsgr.clandestinos.domain.exceptions.WrongTagSizeException;
@@ -37,11 +37,11 @@ public class CreateCommand implements SubCommand {
         try {
             createAndSaveClan(player, clanPlayer, args);
         } catch (WrongTagSizeException e) {
-            LanguageManager.send(player, LanguageManager.WRONG_SIZE_TAG);
+            I18n.send(player, I18n.WRONG_SIZE_TAG);
         } catch (WrongNameSizeException e) {
-            LanguageManager.send(player, LanguageManager.WRONG_SIZE_NAME);
+            I18n.send(player, I18n.WRONG_SIZE_NAME);
         } catch (NonLetterInTagException e) {
-            LanguageManager.send(player, LanguageManager.ONLY_LETTERS_TAG);
+            I18n.send(player, I18n.ONLY_LETTERS_TAG);
         }
     }
 
@@ -56,27 +56,27 @@ public class CreateCommand implements SubCommand {
         clanPlayer.joinClan(clan);
 
         if (!clanRepository.add(clan)) {
-            LanguageManager.send(player, LanguageManager.TAG_ALREADY_EXISTS);
+            I18n.send(player, I18n.TAG_ALREADY_EXISTS);
             return;
         }
 
         playerRepository.save(clanPlayer);
 
         economyManager.take(player, configManager.getDouble(ConfigManager.CREATE_CLAN_COST));
-        LanguageManager.broadcast(player.getServer(), LanguageManager.CLAN_CREATED, clan.tag().value());
+        I18n.broadcast(player.getServer(), I18n.CLAN_CREATED, clan.tag().value());
     }
 
     private ClanPlayer canCreate(Player player) {
         ClanPlayer clanPlayer = Finder.getPlayer(player);
         if (clanPlayer.inClan()) {
-            LanguageManager.send(player, LanguageManager.CANNOT_IN_CLAN);
+            I18n.send(player, I18n.CANNOT_IN_CLAN);
             return null;
         }
 
         double cost = configManager.getDouble(ConfigManager.CREATE_CLAN_COST);
         if (!economyManager.hasEnough(player, cost)) {
             String formattedCost = economyManager.format(cost);
-            LanguageManager.send(player, LanguageManager.NO_MONEY_CREATE, formattedCost);
+            I18n.send(player, I18n.NO_MONEY_CREATE, formattedCost);
             return null;
         }
 
@@ -94,13 +94,13 @@ public class CreateCommand implements SubCommand {
     }
 
     private boolean validate(CommandSender sender, String[] args) {
-        if (!CommandValidator.validate(sender, args, 2, LanguageManager.WRONG_CREATE_USAGE)) {
+        if (!CommandValidator.validate(sender, args, 2, I18n.WRONG_CREATE_USAGE)) {
             return false;
         }
 
         String rawTag = TextUtil.stripColorAndFormatting(args[1]).toLowerCase();
         if (configManager.getStringList(ConfigManager.FORBIDDEN_TAGS).contains(rawTag)) {
-            LanguageManager.send(sender, LanguageManager.FORBIDDEN_TAG);
+            I18n.send(sender, I18n.FORBIDDEN_TAG);
             return false;
         }
 

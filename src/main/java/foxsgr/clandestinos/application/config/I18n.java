@@ -21,7 +21,7 @@ import java.util.Set;
  * The language/strings manager. Manages the language configuration file.
  */
 @SuppressWarnings("WeakerAccess")
-public class LanguageManager {
+public class I18n {
 
     private static final String USAGE_CATEGORY = "usage.";
     public static final String COMMANDS_HEADER = USAGE_CATEGORY + "commands-header";
@@ -158,7 +158,7 @@ public class LanguageManager {
     /**
      * The class single instance.
      */
-    private static LanguageManager instance;
+    private static I18n instance;
 
     /**
      * The name of the file with the configuration.
@@ -170,7 +170,7 @@ public class LanguageManager {
      *
      * @param plugin the plugin.
      */
-    private LanguageManager(JavaPlugin plugin) {
+    private I18n(JavaPlugin plugin) {
         this.plugin = plugin;
         strings = new HashMap<>();
     }
@@ -192,7 +192,7 @@ public class LanguageManager {
      *
      * @return the (single) language manager class instance.
      */
-    public static LanguageManager getInstance() {
+    public static I18n getInstance() {
         return instance;
     }
 
@@ -227,7 +227,7 @@ public class LanguageManager {
      * @param plugin the plugin.
      */
     public static void init(JavaPlugin plugin) {
-        instance = new LanguageManager(plugin);
+        instance = new I18n(plugin);
         instance.init();
     }
 

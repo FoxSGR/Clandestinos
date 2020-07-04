@@ -1,7 +1,7 @@
 package foxsgr.clandestinos.application.clancommand.subcommands;
 
 import foxsgr.clandestinos.application.Finder;
-import foxsgr.clandestinos.application.config.LanguageManager;
+import foxsgr.clandestinos.application.config.I18n;
 import foxsgr.clandestinos.application.PermissionsManager;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
@@ -31,7 +31,7 @@ public class LeaveCommand implements SubCommand {
         Clan clan = clanPlayer.first;
         ClanPlayer player = clanPlayer.second;
         if (clan.isOwner(player)) {
-            LanguageManager.send(sender, LanguageManager.OWNER_CANT_LEAVE);
+            I18n.send(sender, I18n.OWNER_CANT_LEAVE);
             return;
         }
 
@@ -42,7 +42,7 @@ public class LeaveCommand implements SubCommand {
         playerRepository.save(player);
 
         Player p = (Player) sender;
-        LanguageManager.broadcast(sender.getServer(), LanguageManager.LEFT_CLAN, p.getDisplayName(),
+        I18n.broadcast(sender.getServer(), I18n.LEFT_CLAN, p.getDisplayName(),
                 clan.tag().value());
     }
 }

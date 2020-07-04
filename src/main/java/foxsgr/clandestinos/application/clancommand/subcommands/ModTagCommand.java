@@ -2,7 +2,7 @@ package foxsgr.clandestinos.application.clancommand.subcommands;
 
 import foxsgr.clandestinos.application.CommandValidator;
 import foxsgr.clandestinos.application.config.ConfigManager;
-import foxsgr.clandestinos.application.config.LanguageManager;
+import foxsgr.clandestinos.application.config.I18n;
 import foxsgr.clandestinos.domain.exceptions.ChangeMoreThanColorsException;
 import foxsgr.clandestinos.domain.exceptions.ChangeToSameTagException;
 import foxsgr.clandestinos.domain.exceptions.NonLetterInTagException;
@@ -22,7 +22,7 @@ public class ModTagCommand implements SubCommand {
     @Override
     public void run(CommandSender sender, String[] args) {
         Pair<Clan, ClanPlayer> clanOwner = CommandValidator.validateClanOwner(sender, args, 2,
-                LanguageManager.WRONG_MODTAG_USAGE);
+                I18n.WRONG_MODTAG_USAGE);
         if (clanOwner == null) {
             return;
         }
@@ -39,13 +39,13 @@ public class ModTagCommand implements SubCommand {
             clanRepository.update(clan);
 
             String newTag = clan.tag().value();
-            LanguageManager.broadcast(sender.getServer(), LanguageManager.NEW_TAG_INFO, oldTag, newTag);
+            I18n.broadcast(sender.getServer(), I18n.NEW_TAG_INFO, oldTag, newTag);
         } catch (ChangeMoreThanColorsException e) {
-            LanguageManager.send(sender, LanguageManager.ONLY_CHANGE_COLORS);
+            I18n.send(sender, I18n.ONLY_CHANGE_COLORS);
         } catch (NonLetterInTagException e) {
-            LanguageManager.send(sender, LanguageManager.ONLY_LETTERS_TAG);
+            I18n.send(sender, I18n.ONLY_LETTERS_TAG);
         } catch (ChangeToSameTagException e) {
-            LanguageManager.send(sender, LanguageManager.CHANGE_SAME_TAG, clan.tag().value());
+            I18n.send(sender, I18n.CHANGE_SAME_TAG, clan.tag().value());
         }
     }
 }

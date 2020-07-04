@@ -1,6 +1,6 @@
 package foxsgr.clandestinos.application;
 
-import foxsgr.clandestinos.application.config.LanguageManager;
+import foxsgr.clandestinos.application.config.I18n;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 import foxsgr.clandestinos.domain.model.clanplayer.ClanPlayer;
 import foxsgr.clandestinos.util.Pair;
@@ -39,7 +39,7 @@ public final class CommandValidator {
         }
 
         if (args.length < minArgsLength) {
-            LanguageManager.send(sender, underMinArgsMessage);
+            I18n.send(sender, underMinArgsMessage);
             return false;
         }
 
@@ -48,7 +48,7 @@ public final class CommandValidator {
 
     public static Player playerFromSender(CommandSender sender) {
         if (!(sender instanceof Player)) {
-            LanguageManager.send(sender, LanguageManager.MUST_BE_PLAYER);
+            I18n.send(sender, I18n.MUST_BE_PLAYER);
             return null;
         }
 

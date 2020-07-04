@@ -2,7 +2,7 @@ package foxsgr.clandestinos.application.clancommand.subcommands;
 
 import foxsgr.clandestinos.application.CommandValidator;
 import foxsgr.clandestinos.application.Finder;
-import foxsgr.clandestinos.application.config.LanguageManager;
+import foxsgr.clandestinos.application.config.I18n;
 import foxsgr.clandestinos.application.PermissionsManager;
 import foxsgr.clandestinos.domain.model.KDR;
 import foxsgr.clandestinos.domain.model.clan.Clan;
@@ -22,7 +22,7 @@ public class InfoCommand implements SubCommand {
 
     private final ClanRepository clanRepository = PersistenceContext.repositories().clans();
     private final PlayerRepository playerRepository = PersistenceContext.repositories().players();
-    private final LanguageManager languageManager = LanguageManager.getInstance();
+    private final I18n i18n = I18n.getInstance();
 
     private static final String CLAN_TYPE = "clan";
     private static final String PLAYER_TYPE = "player";
@@ -47,7 +47,7 @@ public class InfoCommand implements SubCommand {
                 specific(sender, args[1], args[2]);
                 break;
             default:
-                LanguageManager.send(sender, LanguageManager.WRONG_INFO_USAGE);
+                I18n.send(sender, I18n.WRONG_INFO_USAGE);
                 break;
         }
     }
@@ -68,7 +68,7 @@ public class InfoCommand implements SubCommand {
 
             showPlayerInfo(sender, identifier, clanPlayer);
         } else {
-            LanguageManager.send(sender, LanguageManager.WRONG_INFO_USAGE);
+            I18n.send(sender, I18n.WRONG_INFO_USAGE);
         }
     }
 
@@ -83,28 +83,28 @@ public class InfoCommand implements SubCommand {
         if (clanPlayer != null) {
             showPlayerInfo(sender, identifier, clanPlayer);
         } else {
-            LanguageManager.send(sender, LanguageManager.UNKNOWN_PLAYER_CLAN);
+            I18n.send(sender, I18n.UNKNOWN_PLAYER_CLAN);
         }
     }
 
     private void showClanInfo(CommandSender sender, Clan clan) {
         StringBuilder infoBuilder = new StringBuilder();
-        infoBuilder.append(languageManager.get(LanguageManager.INFO)).append(' ').append(clan.tag()).append('\n');
+        infoBuilder.append(i18n.get(I18n.INFO)).append(' ').append(clan.tag()).append('\n');
 
         ClanName clanName = clan.name();
         if (!clanName.value().isEmpty()) {
-            infoBuilder.append(languageManager.get(LanguageManager.NAME)).append(clan.name()).append('\n');
+            infoBuilder.append(i18n.get(I18n.NAME)).append(clan.name()).append('\n');
         }
 
-        infoBuilder.append(languageManager.get(LanguageManager.OWNER)).append(' ').append(clan.owner()).append('\n')
-                .append(languageManager.get(LanguageManager.LEADERS)).append('\n');
+        infoBuilder.append(i18n.get(I18n.OWNER)).append(' ').append(clan.owner()).append('\n')
+                .append(i18n.get(I18n.LEADERS)).append('\n');
 
         for (String id : clan.leaders()) {
             String name = Finder.nameFromId(id);
             infoBuilder.append("- ").append(name).append('\n');
         }
 
-        infoBuilder.append(languageManager.get(LanguageManager.MEMBERS, clan.allPlayers().size())).append('\n');
+        infoBuilder.append(i18n.get(I18n.MEMBERS, clan.allPlayers().size())).append('\n');
         List<String> allPlayers = clan.allPlayers();
         for (int i = 0; i < allPlayers.size(); i++) {
             infoBuilder.append(allPlayers.get(i));
@@ -115,7 +115,7 @@ public class InfoCommand implements SubCommand {
 
         List<String> enemies = clan.enemyClans();
         if (!enemies.isEmpty()) {
-            infoBuilder.append('\n').append(languageManager.get(LanguageManager.ENEMIES)).append('\n');
+            infoBuilder.append('\n').append(i18n.get(I18n.ENEMIES)).append('\n');
         }
 
         for (int i = 0; i < enemies.size(); i++) {
@@ -134,10 +134,10 @@ public class InfoCommand implements SubCommand {
         }
 
         assert kdr != null;
-        infoBuilder.append('\n').append(languageManager.get(LanguageManager.KDR)).append(' ')
+        infoBuilder.append('\n').append(i18n.get(I18n.KDR)).append(' ')
                 .append(kdr).append('\n')
-                .append(languageManager.get(LanguageManager.KILLS)).append(' ').append(kdr.kills()).append('\n')
-                .append(languageManager.get(LanguageManager.DEATHS)).append(' ').append(kdr.deaths());
+                .append(i18n.get(I18n.KILLS)).append(' ').append(kdr.kills()).append('\n')
+                .append(i18n.get(I18n.DEATHS)).append(' ').append(kdr.deaths());
         sender.sendMessage(TextUtil.translateColoredText(infoBuilder.toString()));
     }
 
@@ -148,11 +148,11 @@ public class InfoCommand implements SubCommand {
             clan = Finder.findClanEnsureExists(clanPlayer).tag().value();
         }
 
-        String info = languageManager.get(LanguageManager.PLAYER) + ' ' + name + '\n'
-                + languageManager.get(LanguageManager.CLAN) + ' ' + clan + '\n'
-                + languageManager.get(LanguageManager.KDR) + ' ' + kdr + '\n'
-                + languageManager.get(LanguageManager.KILLS) + ' ' + kdr.kills() + '\n'
-                + languageManager.get(LanguageManager.DEATHS) + ' ' + kdr.deaths();
+        String info = i18n.get(I18n.PLAYER) + ' ' + name + '\n'
+                + i18n.get(I18n.CLAN) + ' ' + clan + '\n'
+                + i18n.get(I18n.KDR) + ' ' + kdr + '\n'
+                + i18n.get(I18n.KILLS) + ' ' + kdr.kills() + '\n'
+                + i18n.get(I18n.DEATHS) + ' ' + kdr.deaths();
         sender.sendMessage(TextUtil.translateColoredText(info));
     }
 }
