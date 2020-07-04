@@ -12,7 +12,11 @@ public interface ClanRepository {
 
     Clan find(String tag);
 
-    List<Clan> findAll();
+    default List<Clan> findAll() {
+        return findAll(100, 0);
+    }
+
+    List<Clan> findAll(int limit, int offset);
 
     boolean add(Clan clan);
 

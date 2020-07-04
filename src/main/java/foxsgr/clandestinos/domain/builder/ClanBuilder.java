@@ -1,5 +1,6 @@
 package foxsgr.clandestinos.domain.builder;
 
+import foxsgr.clandestinos.domain.model.KDR;
 import foxsgr.clandestinos.domain.model.clan.Clan;
 
 import java.util.HashSet;
@@ -14,6 +15,7 @@ public class ClanBuilder {
     private Set<String> leaders;
     private Set<String> members;
     private Set<String> enemyClans;
+    private KDR kdr;
 
     public ClanBuilder() {
         leaders = new HashSet<>();
@@ -56,12 +58,17 @@ public class ClanBuilder {
         return this;
     }
 
+    public ClanBuilder withKDR(KDR kdr) {
+        this.kdr = kdr;
+        return this;
+    }
+
     public String getTag() {
         return tag;
     }
 
     public Clan build() {
-        return new Clan(
+        Clan clan = new Clan(
                 tag,
                 name,
                 owner,
@@ -70,5 +77,11 @@ public class ClanBuilder {
                 enemyClans,
                 friendlyFireEnabled
         );
+
+        if (kdr != null) {
+            clan.updateKDR(kdr);
+        }
+
+        return clan;
     }
 }

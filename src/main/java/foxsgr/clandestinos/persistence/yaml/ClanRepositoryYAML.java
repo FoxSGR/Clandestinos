@@ -44,6 +44,7 @@ class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
             return;
         }
 
+        cache.clear();
         for (File file : files) {
             FileConfiguration fileConfiguration = new YamlConfiguration();
             try {
@@ -78,6 +79,16 @@ class ClanRepositoryYAML extends YAMLRepository implements ClanRepository {
     @Override
     public List<Clan> findAll() {
         return new ArrayList<>(cache.values());
+    }
+
+    @Override
+    public List<Clan> findAll(int limit, int offset) {
+        List<Clan> clans = new ArrayList<>(cache.values());
+
+        return clans.subList(
+                Math.min(clans.size(), offset),
+                Math.min(clans.size(), offset + limit)
+        );
     }
 
     @Override

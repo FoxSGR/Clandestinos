@@ -25,20 +25,31 @@ $$
 DROP PROCEDURE IF EXISTS find_all_clans
 $$
 
-CREATE PROCEDURE find_all_clans()
+CREATE PROCEDURE find_all_clans(p_limit INTEGER, p_offset INTEGER)
 BEGIN
-    SELECT c.tag                AS tag,
-           c.styled_tag         AS styled_tag,
-           c.clan_name          AS clan_name,
-           c.clan_owner         AS clan_owner,
-           c.clan_friendly_fire AS clan_friendly_fire,
-           cl.leader_id         AS leader_id,
-           cm.member_id         AS member_id,
-           ce.enemy_tag         AS enemy_tag
+    SELECT c.tag                 AS tag,
+           c.styled_tag          AS styled_tag,
+           c.clan_name           AS clan_name,
+           c.clan_owner          AS clan_owner,
+           c.clan_friendly_fire  AS clan_friendly_fire,
+           cl.leader_id          AS leader_id,
+           cm.member_id          AS member_id,
+           ce.enemy_tag          AS enemy_tag,
+           (SELECT IF(SUM(p.death_count) = 0, SUM(p.kill_count), SUM(p.kill_count) / SUM(p.death_count))
+            FROM player p
+            WHERE p.tag = c.tag) AS kdr,
+           (SELECT SUM(p.kill_count)
+            FROM player p
+            WHERE p.tag = c.tag) AS kill_count,
+           (SELECT SUM(p.death_count)
+            FROM player p
+            WHERE p.tag = c.tag) AS death_count
     FROM clan c
              LEFT JOIN clan_leader cl ON c.tag = cl.tag
              LEFT JOIN clan_member cm ON c.tag = cm.tag
-             LEFT JOIN clan_enemy ce ON c.tag = ce.tag;
+             LEFT JOIN clan_enemy ce ON c.tag = ce.tag
+    ORDER BY kdr
+    LIMIT p_limit OFFSET p_offset;
 END
 $$
 
@@ -74,7 +85,7 @@ BEGIN
     WHILE p_clan_leaders != ''
         DO
             SET member = SUBSTRING_INDEX(p_clan_leaders, ',', 1);
-            INSERT INTO clan_leader (tag, leader_id) VALUES (p_tag, member);
+            INSERT INTO clan_leader VALUES (p_tag, member);
 
             IF LOCATE(',', p_clan_leaders) > 0 THEN
                 SET p_clan_leaders = SUBSTRING(p_clan_leaders, LOCATE(',', p_clan_leaders) + 1);
@@ -96,11 +107,12 @@ BEGIN
             END IF;
         END WHILE;
 
-    DELETE FROM clan_enemy WHERE tag = p_tag;
+    DELETE FROM clan_enemy WHERE tag = p_tag OR enemy_tag = p_tag;
     WHILE p_clan_enemies != ''
         DO
             SET member = SUBSTRING_INDEX(p_clan_enemies, ',', 1);
-            INSERT INTO clan_enemy (tag, enemy_tag) VALUES (p_tag, member);
+            INSERT INTO clan_enemy VALUES (p_tag, member);
+            INSERT INTO clan_enemy VALUES (member, p_tag);
 
             IF LOCATE(',', p_clan_members) > 0 THEN
                 SET p_clan_enemies = SUBSTRING(p_clan_enemies, LOCATE(',', p_clan_enemies) + 1);

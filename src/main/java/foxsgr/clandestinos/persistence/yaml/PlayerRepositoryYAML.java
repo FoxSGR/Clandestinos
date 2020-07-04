@@ -34,13 +34,13 @@ public class PlayerRepositoryYAML extends YAMLRepository implements PlayerReposi
 
     @Override
     public ClanPlayer find(String id) {
-        ClanPlayer clanPlayer = cache.get(id.toLowerCase());
+        ClanPlayer clanPlayer = cache.get(id);
         if (clanPlayer != null) {
             return clanPlayer;
         }
 
         MUTEX.lock();
-        ConfigurationSection playerSection = file(id.toLowerCase());
+        ConfigurationSection playerSection = file(id);
         MUTEX.unlock();
 
         if (playerSection == null) {
@@ -53,7 +53,7 @@ public class PlayerRepositoryYAML extends YAMLRepository implements PlayerReposi
     @Override
     public void save(ClanPlayer clanPlayer) {
         String id = clanPlayer.id();
-        cache.put(id.toLowerCase(), clanPlayer);
+        cache.put(id, clanPlayer);
 
         FileConfiguration fileConfiguration = loadFile(id.toLowerCase());
         fileConfiguration.set(KILL_COUNT_FIELD, clanPlayer.killCount().value());
@@ -79,13 +79,13 @@ public class PlayerRepositoryYAML extends YAMLRepository implements PlayerReposi
         MUTEX.unlock();
 
         if (clanPlayer != null) {
-            cache.put(clanPlayer.id().toLowerCase(), clanPlayer);
+            cache.put(clanPlayer.id(), clanPlayer);
         }
     }
 
     @Override
     public void unload(String id) {
-        cache.remove(id.toLowerCase());
+        cache.remove(id);
     }
 
     @Override
@@ -98,8 +98,8 @@ public class PlayerRepositoryYAML extends YAMLRepository implements PlayerReposi
                 fileConfiguration.set(CLAN_TAG, null);
                 saveFile(fileConfiguration, id.toLowerCase());
 
-                if (cache.containsKey(id.toLowerCase())) {
-                    cache.put(id.toLowerCase(), constructPlayer(fileConfiguration, id));
+                if (cache.containsKey(id)) {
+                    cache.put(id, constructPlayer(fileConfiguration, id));
                 }
             }
         });

@@ -42,8 +42,7 @@ public class ListCommand implements SubCommand {
             }
         }
 
-        clanRepository.load();
-        List<Clan> clans = findClans();
+        List<Clan> clans = findClans(pageNumber);
         int maxPageNumber = clans.size() / CLANS_PER_PAGE;
 
         // 9/10 is 0 and 10/10 is 1, but 10 clans only fills 1 page. Therefore, when amount of clans % page size is not
@@ -60,8 +59,8 @@ public class ListCommand implements SubCommand {
         I18n.send(sender, TextUtil.translateColoredText(makeMessage(clans, pageNumber)));
     }
 
-    private List<Clan> findClans() {
-        List<Clan> clans = clanRepository.findAll();
+    private List<Clan> findClans(int page) {
+        List<Clan> clans = clanRepository.findAll(CLANS_PER_PAGE, (page - 1) * CLANS_PER_PAGE);
         clans.sort((clan1, clan2) -> {
             CalculateClanKDRService calculateClanKDRService = new CalculateClanKDRService();
             KDR clan1KDR = clan1.kdr();

@@ -103,6 +103,8 @@ public class Clandestinos extends JavaPlugin {
             PersistenceContext.init(new YAMLRepositoryFactory(this));
         }
 
+        PersistenceContext.repositories().clans().load();
+
         // Must be after PersistenceContext.init()
         joinQuitListener.setup();
         deathListener.setup();

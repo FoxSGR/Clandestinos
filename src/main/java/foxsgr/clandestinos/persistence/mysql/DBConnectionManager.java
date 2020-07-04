@@ -143,17 +143,20 @@ public final class DBConnectionManager {
             return "''";
         }
 
-        StringBuilder builder = new StringBuilder()
-                .append('(');
+        StringBuilder builder = new StringBuilder().append('\'');
 
         for (int i = 0; i < list.size(); i++) {
-            builder.append(param(list.get(i)));
+            if (list.get(i) instanceof String) {
+                builder.append(list.get(i));
+            } else {
+                builder.append(param(list.get(i)));
+            }
 
             if (i != list.size() - 1) {
                 builder.append(',');
             }
         }
 
-        return builder.append(')').toString();
+        return builder.append('\'').toString();
     }
 }
