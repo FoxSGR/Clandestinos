@@ -418,7 +418,7 @@ public class LanguageManager {
         fileConfiguration.addDefault(INFO, "&bInfo");
         fileConfiguration.addDefault(OWNER, "&bOwner:&f");
         fileConfiguration.addDefault(LEADERS, "&bLeaders:&f");
-        fileConfiguration.addDefault(MEMBERS, "&bMembers");
+        fileConfiguration.addDefault(MEMBERS, "&bMembers ({0}):&f");
         fileConfiguration.addDefault(KDR, "&bKDR:&f");
         fileConfiguration.addDefault(KILLS, "&bKills:&f");
         fileConfiguration.addDefault(DEATHS, "&bDeaths:&f");

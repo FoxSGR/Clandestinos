@@ -108,7 +108,10 @@ public class ListCommand implements SubCommand {
                     .append(' ').append(languageManager.get(LanguageManager.CLANS_LIST_KDR, kdr)).append('\n');
         }
 
-        builder.append(languageManager.get(LanguageManager.CLANS_LIST_PAGE, pageNumber + 1));
+        if (clans.size() > CLANS_PER_PAGE) {
+            builder.append(languageManager.get(LanguageManager.CLANS_LIST_PAGE, pageNumber + 1));
+        }
+
         return builder.toString();
     }
 }

@@ -104,8 +104,7 @@ public class InfoCommand implements SubCommand {
             infoBuilder.append("- ").append(name).append('\n');
         }
 
-        infoBuilder.append(languageManager.get(LanguageManager.MEMBERS)).append(" (").append(clan.allPlayers().size())
-                .append("):\n");
+        infoBuilder.append(languageManager.get(LanguageManager.MEMBERS, clan.allPlayers().size())).append('\n');
         List<String> allPlayers = clan.allPlayers();
         for (int i = 0; i < allPlayers.size(); i++) {
             infoBuilder.append(allPlayers.get(i));
