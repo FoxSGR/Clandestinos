@@ -43,6 +43,11 @@ public class ListCommand implements SubCommand {
         }
 
         List<Clan> clans = findClans(pageNumber);
+        if (clans.size() == 0) {
+            I18n.send(sender, I18n.CLANS_LIST_NO_CLANS);
+            return;
+        }
+
         int maxPageNumber = clans.size() / CLANS_PER_PAGE;
 
         // 9/10 is 0 and 10/10 is 1, but 10 clans only fills 1 page. Therefore, when amount of clans % page size is not

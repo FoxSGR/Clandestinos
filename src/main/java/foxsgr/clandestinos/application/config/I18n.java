@@ -144,6 +144,7 @@ public class I18n {
     public static final String CLANS_LIST_INDEX = LIST_CATEGORY + "clans-list-index";
     public static final String CLANS_LIST_INVALID_PAGE_NUMBER = LIST_CATEGORY + "clans-list-invalid-page-number";
     public static final String CLANS_LIST_KDR = LIST_CATEGORY + "clans-list-kdr";
+    public static final String CLANS_LIST_NO_CLANS = LIST_CATEGORY + "no-clans";
 
     /**
      * The plugin.
@@ -462,6 +463,7 @@ public class I18n {
         fileConfiguration.addDefault(CLANS_LIST_INDEX, "&b{0}.");
         fileConfiguration.addDefault(CLANS_LIST_INVALID_PAGE_NUMBER, "&cInvalid page number. Max page is &b{0}&c.");
         fileConfiguration.addDefault(CLANS_LIST_KDR, "&f{0}");
+        fileConfiguration.addDefault(CLANS_LIST_NO_CLANS, "&cThere are no clans.");
         fileConfiguration.addDefault(THERE_ARE_NO_CLANS, "&bThere are no clans.");
         fileConfiguration.addDefault(KICKED_FOR_SPAWN_KILL,
                 "&cYou were kicked for killing the same player too many times.");
