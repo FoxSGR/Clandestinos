@@ -30,7 +30,11 @@ permissions:
     children:
       clandestinos.reload:
         default: op
+      clandestinos.debug:
+        default: op
       clandestinos.create:
+        default: true
+      clandestinos.info:
         default: true
       clandestinos.invite:
         default: true
@@ -56,9 +60,13 @@ permissions:
         default: true
       clandestinos.makeleader:
         default: true
+      clandestinos.removeleader:
+        default: true
       clandestinos.makemember:
         default: true
-      clandestinos.debug:
-        default: op
+      clandestinos.ff:
+        default: true
+      clandestinos.clanff:
+        default: true
       clandestinos.list:
         default: true
